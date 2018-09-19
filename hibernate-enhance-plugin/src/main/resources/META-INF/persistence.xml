@@ -12,55 +12,38 @@
 
         <properties>
 
+
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <property name="javax.persistence.jdbc.password" value="postgres"/>
 
-
-            <!--
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
-            -->
-
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
-
-            <!--property name="hibernate.transaction.jta.platform"
-                value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform"/ -->
 
             <!--
-       <property name="javax.persistence.jdbc.url" value="jdbc.derby:./testDB;create=true"/>
-       <property name="javax.persistence.jdbc.drive" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-
-       <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-       <property name="javax.persistence.sql-load-script-source" value="db/metadatos.sql" />
-       -->
-
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
+            -->
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
-            <!--property name="hibernate.show_sql" value="true"/--> <!-- Show SQL in console -->
-            <property name="hibernate.format_sql" value="true"/> <!-- Show SQL formatted -->
-
-            <property name="hibernate.generate_statistics" value="true" />
-
-
+            <!--property name="hibernate.show_sql" value="true"/-->
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.generate_statistics" value="true"/>
+            <property name="hibernate.connection.release_mode" value="after_transaction"/>
             <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/ -->
 
-            <property name="hibernate.connection.release_mode" value="after_transaction"/>
 
+            <!-- Connection pool -->
+            <!-- https://www.boraji.com/hibernate-5-hikaricp-configuration-example -->
+            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+            <!--property name="hibernate.hikari.minimumPoolSize" value="1"/-->
+            <property name="hibernate.hikari.maximumPoolSize" value="2"/>
+            <property name="hibernate.hikari.minimumIdle" value="1"/>
+            <property name="hibernate.hikari.connectionTimeout" value="30000"/>
 
-            <!--
-
-               properties.put("hibernate.connection.provider_class", HikariCPConnectionProvider.class.getName());
-   35:         properties.put("hibernate.hikari.minimumPoolSize", "1");
-   36:         properties.put("hibernate.hikari.maximumPoolSize", "2");
-   37:         properties.put("hibernate.hikari.transactionIsolation", "TRANSACTION_SERIALIZABLE");
-   38:         properties.put("hibernate.hikari.dataSourceClassName", dataSourceProvider.dataSourceClassName().getName());
-   39:         properties.put("hibernate.hikari.dataSource.url", dataSourceProvider.url());
-   40:         properties.put("hibernate.hikari.dataSource.user", dataSourceProvider.username());
-   41:         properties.put("hibernate.hikari.dataSource.password", dataSourceProvider.password());
-            -->
-
+            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="hibernate.hikari.dataSource.user" value="postgres"/>
+            <property name="hibernate.hikari.dataSource.password" value="postgres"/>
 
 
         </properties>

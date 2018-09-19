@@ -15,7 +15,7 @@ public class Cc {
 
     private String description;
 
-    @ManyToOne
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "dependency_id")
     private Dependency dependency;
 
@@ -23,7 +23,7 @@ public class Cc {
     @LazyToOne(LazyToOneOption.NO_PROXY)
     private Document document;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "rh_id")
     private HumanResource humanResource;
 
@@ -33,7 +33,6 @@ public class Cc {
         cc.humanResource = humanResource;
         return cc;
     }
-
 
     public void setDocument(Document document) {
         if (Objects.isNull(document) && Objects.nonNull(this.document)) {

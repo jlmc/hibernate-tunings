@@ -23,7 +23,6 @@ public class OneToOneTest {
 
         resultList.forEach(System.out::println);
 
-
     }
 
     @Test
@@ -36,4 +35,14 @@ public class OneToOneTest {
 
         resultList.forEach(System.out::println);
     }
+
+
+    @Test
+    public void shoulGetOne() {
+        Cc cc = provider.em().find(Cc.class, 1);
+
+        System.out.println(cc);
+    }
+
+
 }
