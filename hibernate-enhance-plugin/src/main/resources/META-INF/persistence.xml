@@ -40,10 +40,29 @@
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
             <!--property name="hibernate.show_sql" value="true"/--> <!-- Show SQL in console -->
             <property name="hibernate.format_sql" value="true"/> <!-- Show SQL formatted -->
-            <property name="hibernate.generate_statistics" value="true"/> <!-- log hibernate statistics -->
+
+            <property name="hibernate.generate_statistics" value="true" />
+
+
             <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/ -->
 
-            <!--property name="hibernate.connection.release_mode" value="after_transaction"/-->
+            <property name="hibernate.connection.release_mode" value="after_transaction"/>
+
+
+            <!--
+
+               properties.put("hibernate.connection.provider_class", HikariCPConnectionProvider.class.getName());
+   35:         properties.put("hibernate.hikari.minimumPoolSize", "1");
+   36:         properties.put("hibernate.hikari.maximumPoolSize", "2");
+   37:         properties.put("hibernate.hikari.transactionIsolation", "TRANSACTION_SERIALIZABLE");
+   38:         properties.put("hibernate.hikari.dataSourceClassName", dataSourceProvider.dataSourceClassName().getName());
+   39:         properties.put("hibernate.hikari.dataSource.url", dataSourceProvider.url());
+   40:         properties.put("hibernate.hikari.dataSource.user", dataSourceProvider.username());
+   41:         properties.put("hibernate.hikari.dataSource.password", dataSourceProvider.password());
+            -->
+
+
+
         </properties>
     </persistence-unit>
 </persistence>

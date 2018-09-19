@@ -23,9 +23,14 @@ public class Cc {
     @LazyToOne(LazyToOneOption.NO_PROXY)
     private Document document;
 
-    public static Cc of(final String description) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rh_id")
+    private HumanResource humanResource;
+
+    public static Cc of(final String description, HumanResource humanResource) {
         Cc cc = new Cc();
         cc.description = description;
+        cc.humanResource = humanResource;
         return cc;
     }
 

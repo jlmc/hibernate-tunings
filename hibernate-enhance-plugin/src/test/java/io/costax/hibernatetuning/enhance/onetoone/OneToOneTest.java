@@ -35,7 +35,5 @@ public class OneToOneTest {
         List resultList = provider.em().createQuery("select c from Cc c join fetch c.document").getResultList();
 
         resultList.forEach(System.out::println);
-
-
     }
 }
