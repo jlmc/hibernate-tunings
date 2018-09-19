@@ -1,0 +1,1 @@
+INSERT INTO public.cc (id, description) VALUES (1, 'abcder abc');
