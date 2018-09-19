@@ -15,8 +15,12 @@ public class Cc {
 
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "dependency_id")
+    private Dependency dependency;
+
     @OneToOne(mappedBy = "cc", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    //@LazyToOne(LazyToOneOption.NO_PROXY)
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     private Document document;
 
     public static Cc of(final String description) {
@@ -34,5 +38,13 @@ public class Cc {
         }
 
         this.document = document;
+    }
+
+    @Override
+    public String toString() {
+        return "Cc{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

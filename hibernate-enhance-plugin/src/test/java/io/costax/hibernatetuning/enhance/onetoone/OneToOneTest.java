@@ -6,22 +6,36 @@ import io.costax.jpa.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.List;
+
 public class OneToOneTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
-    public void verifyMappings() {
-        this.provider.beginTransaction();
+    public void selectWithoutFetch() {
+        /**
+         * demonstração do problema N + 1
+         */
 
-        Cc cc = Cc.of("abcder abc");
-        final Document doc = new Document();
-        cc.setDocument(doc);
+        List resultList = provider.em().createQuery("select c from Cc c").getResultList();
 
-        provider.em().persist(cc);
+        resultList.forEach(System.out::println);
 
-        this.provider.commitTransaction();
+
+    }
+
+    @Test
+    public void selectWithtFetch() {
+        /**
+         * Com fetch o N+1 é ignorado
+         */
+
+        List resultList = provider.em().createQuery("select c from Cc c join fetch c.document").getResultList();
+
+        resultList.forEach(System.out::println);
+
 
     }
 }
