@@ -42,6 +42,7 @@ public class OneToOneTest {
         Cc cc = provider.em().find(Cc.class, 1);
 
         System.out.println(cc);
+
     }
 
 

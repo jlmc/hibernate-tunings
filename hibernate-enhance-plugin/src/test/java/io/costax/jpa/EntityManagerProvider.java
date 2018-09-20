@@ -52,6 +52,7 @@ public class EntityManagerProvider implements TestRule {
             public void evaluate() throws Throwable {
                 base.evaluate();
                 em.clear();
+                em.close();
             }
         };
     }

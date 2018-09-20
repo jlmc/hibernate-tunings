@@ -87,8 +87,8 @@
                         <configuration>
                             <failOnError>true</failOnError>
                             <enableLazyInitialization>true</enableLazyInitialization>
-                            <enableDirtyTracking>false</enableDirtyTracking>
-                            <enableAssociationManagement>false</enableAssociationManagement>
+                            <enableDirtyTracking>false</enableDirtyTracking> <!-- -->
+                            <enableAssociationManagement>false</enableAssociationManagement> <!---->
                         </configuration>
                         <goals>
                             <goal>enhance</goal>

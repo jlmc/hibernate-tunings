@@ -23,7 +23,8 @@ public class Cc {
     @LazyToOne(LazyToOneOption.NO_PROXY)
     private Document document;
 
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne //(fetch = FetchType.LAZY)
+    @LazyToOne(LazyToOneOption.NO_PROXY)
     @JoinColumn(name = "rh_id")
     private HumanResource humanResource;
 
