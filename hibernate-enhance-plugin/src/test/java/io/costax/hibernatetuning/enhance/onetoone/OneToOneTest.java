@@ -1,7 +1,6 @@
 package io.costax.hibernatetuning.enhance.onetoone;
 
 import io.costax.hibernatetuning.enhance.model.Cc;
-import io.costax.hibernatetuning.enhance.model.Document;
 import io.costax.jpa.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;

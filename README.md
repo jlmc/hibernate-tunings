@@ -2,6 +2,11 @@
 
 ## Agenda
 
+1 - Get-Started
+
+    1.3 - logging-sql-statements
+    1.4 -
+
 
 ## Performance Facts
 
