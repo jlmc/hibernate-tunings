@@ -5,7 +5,7 @@
 1 - Get-Started
 
     1.3 - logging-sql-statements
-    1.4 -
+    1.4 - schema-management
 
 
 ## Performance Facts
