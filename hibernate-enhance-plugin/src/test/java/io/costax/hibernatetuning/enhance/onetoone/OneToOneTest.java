@@ -1,6 +1,7 @@
 package io.costax.hibernatetuning.enhance.onetoone;
 
 import io.costax.hibernatetuning.enhance.model.Cc;
+import io.costax.hibernatetuning.enhance.model.HumanResource;
 import io.costax.jpa.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,6 +43,17 @@ public class OneToOneTest {
 
         System.out.println(cc);
 
+    }
+
+    @Test
+    public void shouldCreateOneRecord() {
+        provider.beginTransaction();
+
+        HumanResource rh = HumanResource.of("duke", "javaEE for jakarta");
+
+        provider.em().persist(rh);
+
+        provider.commitTransaction();
     }
 
 

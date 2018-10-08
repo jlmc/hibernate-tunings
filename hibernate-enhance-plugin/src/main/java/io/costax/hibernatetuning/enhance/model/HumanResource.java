@@ -22,7 +22,7 @@ public class HumanResource {
         this.name = name;
     }
 
-    private static HumanResource of (String username, String name) {
+    public static HumanResource of (String username, String name) {
         return new HumanResource(username, name);
     }
 
