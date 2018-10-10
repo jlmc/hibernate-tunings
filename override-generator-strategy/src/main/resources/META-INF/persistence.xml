@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <description>Hibernate Performance Tuning</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <properties>
+
+
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres"/>
+
+
+            <!--
+
+             javax.persistence.schema-generation.database.action
+             Defines whether the persistence provider shall create the database, first drop and then recreate it, only drop it or do nothing at all.
+             If this property is not provided, no schema will be created.
+
+             none, create, drop-and-create, drop
+
+             -->
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+
+            <!--
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
+            -->
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <!--property name="hibernate.show_sql" value="true"/-->
+            <property name="hibernate.format_sql" value="true"/>
+            <!--property name="hibernate.use_sql_comments" value="true"/-->
+            <property name="hibernate.generate_statistics" value="true"/>
+
+            <!--property name="hibernate.connection.release_mode" value="after_transaction"/-->
+            <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/ -->
+            <!--property name="hibernate.jdbc.bash_size" value="5"/-->
+
+
+
+
+        </properties>
+    </persistence-unit>
+</persistence>
