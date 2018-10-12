@@ -13,6 +13,7 @@
         <module>helpers</module>
         <module>schema-management</module>
         <module>override-generator-strategy</module>
+        <module>query-pagination-using-window-functions</module>
     </modules>
     <packaging>pom</packaging>
 
