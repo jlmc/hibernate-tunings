@@ -17,7 +17,7 @@ public class P6SypExample {
     private EntityManager em;
 
     // @Rule
-   // public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    // public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
     @BeforeClass
     public static void initEntityManagerFactory() {
         final Map<String, String> settings = new HashMap<>();
@@ -64,7 +64,7 @@ public class P6SypExample {
     public void shouldInser10NewsRh() {
         em.getTransaction().begin();
 
-        for (int i = 10; i < 20; i ++) {
+        for (int i = 10; i < 20; i++) {
             em.persist(HumanResource.of("demo-abc-" + i, "ABC " + i));
         }
 

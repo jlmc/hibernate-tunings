@@ -11,7 +11,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource({"/META-INF/jdbc-postgresql.properties"})
-public class AbstractPostgreSQLFlywayConfiguration extends AbstractFlywayConfiguration{
+public class AbstractPostgreSQLFlywayConfiguration extends AbstractFlywayConfiguration {
 
     @Value("${jdbc.dataSourceClassName}")
     private String dataSourceClassName;

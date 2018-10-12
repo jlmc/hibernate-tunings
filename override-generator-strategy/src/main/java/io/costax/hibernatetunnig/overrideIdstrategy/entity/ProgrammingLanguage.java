@@ -15,7 +15,7 @@ public class ProgrammingLanguage implements Identifiable<Long> {
     @GenericGenerator(name = "programming_language_identity", strategy = AssignedIdentityGenerator.STRATEGY)
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "programming_language_identity")
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable=false, unique = true)
+    @Column(name = "id", updatable = false, unique = true)
     private Long id;
 
     @NaturalId

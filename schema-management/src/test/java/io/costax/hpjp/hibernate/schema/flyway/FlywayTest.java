@@ -15,7 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static io.costax.hpjp.hibernate.schema.flyway.FlywayEntities.*;
+import static io.costax.hpjp.hibernate.schema.flyway.FlywayEntities.Post;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PostgreSQLFlywayConfiguration.class)

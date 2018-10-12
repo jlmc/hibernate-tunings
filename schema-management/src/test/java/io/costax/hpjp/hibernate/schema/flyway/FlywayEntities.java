@@ -16,8 +16,21 @@ public class FlywayEntities {
         private Long id;
 
         private String title;
+        @OneToMany(cascade = CascadeType.ALL, mappedBy = "post",
+                orphanRemoval = true)
+        private List<PostComment> comments = new ArrayList<>();
+        @OneToOne(cascade = CascadeType.ALL, mappedBy = "post",
+                orphanRemoval = true, fetch = FetchType.LAZY)
+        private PostDetails details;
+        @ManyToMany
+        @JoinTable(name = "post_tag",
+                joinColumns = @JoinColumn(name = "post_id"),
+                inverseJoinColumns = @JoinColumn(name = "tag_id")
+        )
+        private List<Tag> tags = new ArrayList<>();
 
-        public Post() {}
+        public Post() {
+        }
 
         public Post(Long id) {
             this.id = id;
@@ -26,21 +39,6 @@ public class FlywayEntities {
         public Post(String title) {
             this.title = title;
         }
-
-        @OneToMany(cascade = CascadeType.ALL, mappedBy = "post",
-                orphanRemoval = true)
-        private List<PostComment> comments = new ArrayList<>();
-
-        @OneToOne(cascade = CascadeType.ALL, mappedBy = "post",
-                orphanRemoval = true, fetch = FetchType.LAZY)
-        private PostDetails details;
-
-        @ManyToMany
-        @JoinTable(name = "post_tag",
-                joinColumns = @JoinColumn(name = "post_id"),
-                inverseJoinColumns = @JoinColumn(name = "tag_id")
-        )
-        private List<Tag> tags = new ArrayList<>();
 
         public Long getId() {
             return id;
@@ -99,14 +97,13 @@ public class FlywayEntities {
 
         @Column(name = "created_by")
         private String createdBy;
+        @OneToOne(fetch = FetchType.LAZY)
+        @MapsId
+        private Post post;
 
         public PostDetails() {
             createdOn = new Date();
         }
-
-        @OneToOne(fetch = FetchType.LAZY)
-        @MapsId
-        private Post post;
 
         public Long getId() {
             return id;
@@ -154,7 +151,8 @@ public class FlywayEntities {
 
         private String review;
 
-        public PostComment() {}
+        public PostComment() {
+        }
 
         public PostComment(String review) {
             this.review = review;
