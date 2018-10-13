@@ -1,9 +1,9 @@
 # Hibernate maven enhance plugin - enable Lazy Initialization 
 
-Este projecto tem como finalidades:
+This project aims to demonstrate how:
  
-* resolver o problema N+1 em relacionamento @OneToOne
-* impactos do enhance plugin em relacionamento @ManyToOne quando este estão marcado com fetch = LAZY
+* Solve the N + 1 problem in @OneToOne relationship
+* Impacts of enhance plugin on @ManyToOne relationship when this is marked with fetch = LAZY
 
 
 other notes:
