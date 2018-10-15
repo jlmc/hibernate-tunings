@@ -1,7 +1,6 @@
 # 3 - Logging SQL Statements
 
-
-
+TODO: write all this things in EN...
 
 ## Porque precisamos de Loggging 
 
