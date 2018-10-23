@@ -10,6 +10,7 @@
 2 - Connections    
 
     2.1 - connection-manager (only documentation)
+    2.2 - connection-lifecycle
     
 
 ## Performance Facts
