@@ -22,7 +22,8 @@
 
 NOTE: 
 
-More compact the type, the better the performance. If we use fewer bytes to represent a certain value, then we can accommodate more rows per page, which is the smallest block of memory:
+More compact the type, the better the performance. 
+If we use fewer bytes to represent a certain value, then we can accommodate more rows per page, which is the smallest block of memory:
 More rows per page (memory or disk)
 Enum are usually a typical case of poor choice of column type in the database, when we choose:
 
@@ -51,7 +52,7 @@ private Status status;
 We can solve the weak readability by creating an extra table, using its register as FK.
 this increases the robustness of our data.
 
-We can even create an auxiliary entity to increase redemption.
+We can even create an auxiliary entity to increase readings possibilities.
 
 ```java
 @Entity(name = "PersonStatusInfo") 
@@ -82,7 +83,7 @@ public class Person {
     @Column(columnDefinition = "tinyint") 
     private Status status;
     
-    // this property is ignored in the updated and inserts, it is a read only field, 
+    // this property is ignored in the updated and insert statements, it is a read only field, 
     // otherwise we have two field controlling the same database column 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", insertable = false, updatable = false) 
