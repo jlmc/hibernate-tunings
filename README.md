@@ -12,6 +12,11 @@
     2.1 - connection-manager (only documentation)
     2.2 - connection-lifecycle
     
+3 - Types
+    
+    3.1 - jpa-and-hibernate-types
+    3.2 - custom-hibernate-types
+    
 
 ## Performance Facts
 
