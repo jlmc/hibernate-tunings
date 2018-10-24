@@ -8,12 +8,11 @@
     <artifactId>hibernate-tunings</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>hibernate-enhance-plugin</module>
+        <module>hibernate-tuning-howtos</module>
         <module>logging-sql-statements</module>
         <module>helpers</module>
         <module>schema-management</module>
-        <module>override-generator-strategy</module>
-        <module>query-pagination-using-window-functions</module>
+
         <module>connection-manager</module>
         <module>connection-lifecycle</module>
     </modules>
