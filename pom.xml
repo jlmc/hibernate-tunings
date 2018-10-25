@@ -12,6 +12,7 @@
         <module>logging-sql-statements</module>
         <module>helpers</module>
         <module>schema-management</module>
+        <module>types</module>
 
         <module>connection-manager</module>
         <module>connection-lifecycle</module>

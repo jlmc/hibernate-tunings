@@ -80,7 +80,7 @@ public class Person {
     private Long id;
 
     @Enumerated(EnumType.ORDINAL) 
-    @Column(columnDefinition = "tinyint") 
+    @Column(columnDefinition = "smallint") 
     private Status status;
     
     // this property is ignored in the updated and insert statements, it is a read only field, 

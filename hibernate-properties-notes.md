@@ -64,3 +64,13 @@ So, make sure that in the application.properties configuration file, you have th
 ```properties
 spring.jpa.open-in-view=false
 ```
+
+# add more information to Session Metrics stats
+
+a project example can be found in: conmection-lifecycle-resource-local-disables_autocommit-property
+
+
+``` xml
+<property name="hibernate.stats.factory" value="io.costax.hibernatetunning.statistics.TransactionStatisticsFactory"/>
+
+```
