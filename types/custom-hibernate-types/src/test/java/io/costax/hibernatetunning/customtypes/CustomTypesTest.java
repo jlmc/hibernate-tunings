@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.time.LocalDate;
 import java.time.Month;
 
-public class CustomTypes {
+public class CustomTypesTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
@@ -18,7 +18,7 @@ public class CustomTypes {
     public void test() {
         provider.beginTransaction();
 
-        Machine machine = Machine.of("ABC", Machine.Type.MAC, LocalDate.of(2017, Month.JANUARY, 3));
+        Machine machine = Machine.of("08:00:2b:01:02:03", Machine.Type.MAC, LocalDate.of(2017, Month.JANUARY, 3));
 
         provider.em().persist(machine);
 

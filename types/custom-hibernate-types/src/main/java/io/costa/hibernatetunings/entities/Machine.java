@@ -2,7 +2,8 @@ package io.costa.hibernatetunings.entities;
 
 import io.costa.hibernatetunings.customtype.IPv4;
 import io.costa.hibernatetunings.customtype.IPv4Type;
-import org.hibernate.annotations.NaturalId;
+import io.costa.hibernatetunings.customtype.MacAddr;
+import io.costa.hibernatetunings.customtype.MacAddrType;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "machine")
 @TypeDef(name = "ipv4", defaultForType = IPv4.class, typeClass = IPv4Type.class)
+@TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class)
 public class Machine {
 
     @Enumerated(EnumType.ORDINAL)
@@ -23,10 +25,6 @@ public class Machine {
     @Column(name = "id", updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @NaturalId
-    @Column(name = "mac_address", nullable = false, unique = true, length = 48)
-    private String macAddress;
-
     @Column(name = "buy_day", nullable = false)
     private LocalDate buyDay;
 
@@ -36,11 +34,14 @@ public class Machine {
     @Column(name = "last_know_ip", columnDefinition = "inet")
     private IPv4 lastKnowIp;
 
+    @Column(name = "mac_address", columnDefinition = "macaddr")
+    private MacAddr macAddress;
+
     public Machine() {
     }
 
     private Machine(final String macAddress, final Type type, final LocalDate buyDay) {
-        this.macAddress = macAddress;
+        this.macAddress = MacAddr.of(macAddress);
         this.type = type;
         this.buyDay = buyDay;
     }
@@ -66,7 +67,7 @@ public class Machine {
         return id;
     }
 
-    public String getMacAddress() {
+    public MacAddr getMacAddress() {
         return macAddress;
     }
 
@@ -82,9 +83,11 @@ public class Machine {
         return lastKnowIp;
     }
 
+
     public void setLastKnowIp(final IPv4 lastKnowIp) {
         this.lastKnowIp = lastKnowIp;
     }
+
 
     public enum Type {
         MAC, PC
