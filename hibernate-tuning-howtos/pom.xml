@@ -16,6 +16,7 @@
         <module>hibernate-enhance-plugin</module>
         <module>query-pagination-using-window-functions</module>
         <module>override-generator-strategy</module>
+        <module>hibernate-soft-delete</module>
     </modules>
 
 </project>
