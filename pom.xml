@@ -100,6 +100,7 @@
                 <groupId>io.costax</groupId>
                 <artifactId>helpers</artifactId>
                 <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
 

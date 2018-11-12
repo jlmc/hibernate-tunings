@@ -11,7 +11,6 @@
 
     <artifactId>hibernate-sequence-optimazer</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>com.vladmihalcea</groupId>
@@ -55,13 +54,13 @@
             <artifactId>helpers</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!--
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-hikaricp</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+
+        <!--
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>

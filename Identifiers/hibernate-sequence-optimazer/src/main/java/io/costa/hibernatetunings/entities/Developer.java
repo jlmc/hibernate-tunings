@@ -6,6 +6,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "depeloper")
@@ -55,5 +56,18 @@ public class Developer extends BaseEntity {
         public Developer createDeveloper() {
             return new Developer(nome, tiket);
         }
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Developer developer = (Developer) o;
+        return getId() != null && Objects.equals(getId(), developer.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31;
     }
 }

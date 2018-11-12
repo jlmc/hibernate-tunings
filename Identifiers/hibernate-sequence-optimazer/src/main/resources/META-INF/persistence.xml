@@ -47,12 +47,17 @@
             <!-- Hibernate 5.2.10, introduced the hibernate.connection.provider_disables_autocommit configuration property which tells
             Hibernate that the underlying JDBC Connection(s) already disabled the auto-commit mode.
             -->
-            <property name="hibernate.connection.provider_disables_autocommit" value="true"/>
+            <property name="hibernate.connection.provider_disables_autocommit" value="false"/>
 
 
             <property name="hibernate.archive.autodetection" value="class"/>
 
 
+            <!--
+            **************
+            ** Connection Pool C3P0
+            **************
+            -->
             <!-- Important -->
             <!--<property name="hibernate.connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider" />-->
             <!--
@@ -63,8 +68,27 @@
             <property name="hibernate.c3p0.max_statements" value="0" />
             <property name="hibernate.c3p0.timeout" value="100" />
             -->
+            <!-- ************** -->
 
+            <!--
+            **************
+            ** Connection Pool hikaricp
+            **************
+            -->
+            <!-- Connection pool -->
+            <!-- https://www.boraji.com/hibernate-5-hikaricp-configuration-example -->
+            <property name="hibernate.connection.provider_class"
+                      value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+            <!--property name="hibernate.hikari.minimumPoolSize" value="1"/-->
+            <property name="hibernate.hikari.maximumPoolSize" value="2"/>
+            <property name="hibernate.hikari.minimumIdle" value="1"/>
+            <property name="hibernate.hikari.connectionTimeout" value="30000"/>
+            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="hibernate.hikari.dataSource.user" value="postgres"/>
+            <property name="hibernate.hikari.dataSource.password" value="postgres"/>
+            <!-- ************** -->
 
+            <!-- Custom statistics implementation, add some extra information to the statistics -->
             <!--property name="hibernate.stats.factory" value="io.costax.hibernatetunning.statistics.TransactionStatisticsFactory"/-->
 
 
