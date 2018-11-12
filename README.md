@@ -16,6 +16,11 @@
     
     3.1 - jpa-and-hibernate-types
     3.2 - custom-hibernate-types
+    3.3 - open source hibernate types
+
+4 - Identifiers
+
+   4.1 - Identifier    
     
 
 ## Performance Facts

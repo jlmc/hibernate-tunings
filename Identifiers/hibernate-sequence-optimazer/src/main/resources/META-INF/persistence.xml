@@ -73,6 +73,24 @@
             <property name="hibernate.order_inserts" value="true"/>
             <property name="hibernate.order_updates" value="true"/>
 
+
+            <!--
+            tell Hibernate which timezone it shall use and set it to a timezone without daylight saving time, e.g. UTC. You can do that with the configuration parameter hibernate.jdbc.time_zone
+            -->
+            <property name="hibernate.jdbc.time_zone" value="UTC"/>
+
+
+            <!-- Identifier optimizer configurations-->
+            <!-- hibernate.id.new_generator_mappings is true by default in hibernate 5,
+                the JPA mapping above will use the **SequenceStyleGenerator**
+                By default, the **SequenceStyleGenerator** and **TableGenerator** identifier generators uses the pooled optimizer.
+                If the **hibernate.id.optimizer.pooled.prefer_lo**
+                configuration property is set to **true**, Hibernate will use the pooled-lo optimizer by default.
+            -->
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="false"/>
+
+
         </properties>
     </persistence-unit>
 </persistence>
