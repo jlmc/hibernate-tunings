@@ -11,6 +11,9 @@
 
     <artifactId>Identifiers</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>hibernate-sequence-optimazer</module>
+    </modules>
 
 
 </project>
