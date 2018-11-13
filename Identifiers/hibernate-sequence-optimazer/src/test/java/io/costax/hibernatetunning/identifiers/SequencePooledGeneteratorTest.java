@@ -1,4 +1,4 @@
-package io.costax.hibernatetunning.customtypes;
+package io.costax.hibernatetunning.identifiers;
 
 import io.costa.hibernatetunings.entities.Developer;
 import io.costa.hibernatetunings.entities.TimePeriod;

@@ -1,8 +1,8 @@
-package io.costax.hibernatetunning.customtypes;
+package io.costax.hibernatetunning.relationships;
 
 import io.costa.hibernatetunings.entities.Developer;
 import io.costa.hibernatetunings.entities.Tiket;
-import io.costax.hibernatetunning.customtypes.functions.InJPAConsumer;
+import io.costax.hibernatetunning.functions.InJPAConsumer;
 import org.hibernate.Session;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
