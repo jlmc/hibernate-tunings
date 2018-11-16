@@ -1,10 +1,12 @@
 package io.costa.hibernatetunings.entities.financial;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 @Entity
+@DiscriminatorValue("Invoice")
 public class Invoice extends FinancialDocument {
 
     @Column(name = "content")
