@@ -10,20 +10,24 @@ import java.util.List;
 @Table(name = "board")
 public class Board {
 
-    @OneToMany(mappedBy = "board",
-            orphanRemoval = true,
-            cascade = CascadeType.ALL)
-    List<FinancialDocument> financialDocuments = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Version
     private short version;
+
     @NaturalId
     @Column(name = "code", unique = true)
     private String code;
+
     @Column(name = "name")
     private String name;
+
+    @OneToMany(mappedBy = "board",
+            orphanRemoval = true,
+            cascade = CascadeType.ALL)
+    private List<FinancialDocument> financialDocuments = new ArrayList<>();
 
     protected Board() {
     }
