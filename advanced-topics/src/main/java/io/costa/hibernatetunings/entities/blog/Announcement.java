@@ -1,12 +1,10 @@
 package io.costa.hibernatetunings.entities.blog;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@DiscriminatorValue("1")
 public class Announcement extends Topic {
 
     @Temporal(TemporalType.DATE)

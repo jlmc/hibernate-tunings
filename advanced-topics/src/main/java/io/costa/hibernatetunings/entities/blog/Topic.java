@@ -9,6 +9,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "topic")
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Topic {
 
     @Id
