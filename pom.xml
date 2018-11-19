@@ -16,6 +16,7 @@
         <module>connection-lifecycle</module>
         <module>types</module>
         <module>Identifiers</module>
+        <module>advanced-topics</module>
     </modules>
     <packaging>pom</packaging>
 
