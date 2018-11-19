@@ -5,7 +5,6 @@ import io.costa.hibernatetunings.entities.financial.CreditNote;
 import io.costa.hibernatetunings.entities.financial.FinancialDocument;
 import io.costa.hibernatetunings.entities.financial.Invoice;
 import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -19,6 +18,10 @@ import java.math.BigDecimal;
 import java.time.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SingleTableTest {
@@ -74,19 +77,45 @@ public class SingleTableTest {
                         .setParameter("code", "t-bone")
                         .getResultList();
 
-        Assert.assertThat(tboneFinancialDocuments, Matchers.hasSize(3));
+        assertThat(tboneFinancialDocuments, hasSize(3));
 
         final List<FinancialDocument> invoices = tboneFinancialDocuments.stream().filter(f -> f instanceof Invoice).collect(Collectors.toList());
         final List<FinancialDocument> creditNotes = tboneFinancialDocuments.stream().filter(f -> f instanceof CreditNote).collect(Collectors.toList());
 
-        Assert.assertThat(invoices, Matchers.hasSize(2));
-        Assert.assertThat(creditNotes, Matchers.hasSize(1));
+        assertThat(invoices, hasSize(2));
+        assertThat(creditNotes, hasSize(1));
+    }
 
+    @Test
+    public void e_should_find_only_the_invoices() {
+        List<FinancialDocument> tboneInvoices =
+                provider.em()
+                        .createQuery("select fd from Invoice fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
+                        .setParameter("code", "t-bone")
+                        .getResultList();
+
+        assertThat(tboneInvoices, hasSize(2));
+    }
+
+
+    @Test
+    public void f_should_find_board_only_the_invoices() {
+        Board tbone =
+                provider.em()
+                        .createQuery("select b from Board b left join fetch b.financialDocuments fd " +
+                                "where b.code = lower(:code) and fd.class = 'Invoice'", Board.class)
+                        .setParameter("code", "t-bone")
+                        .getSingleResult();
+
+        //Assert.assertThat(tboneInvoices, Matchers.hasSize(3));
+
+        assertThat(tbone, notNullValue());
+        assertThat(tbone.getFinancialDocuments(), hasSize(2));
     }
 
     //@Test(expected = org.hibernate.exception.ConstraintViolationException.class)
     @Test(expected = javax.persistence.RollbackException.class)
-    public void e_should_not_add_invoice_without_content() {
+    public void g_should_not_add_invoice_without_content() {
         try {
             provider.beginTransaction();
 

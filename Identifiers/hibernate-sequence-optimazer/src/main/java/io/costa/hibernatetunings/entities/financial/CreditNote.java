@@ -1,11 +1,13 @@
 package io.costa.hibernatetunings.entities.financial;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Entity
+@DiscriminatorValue("CreditNote")
 public class CreditNote extends FinancialDocument {
 
     @Column(name = "expiration_on")

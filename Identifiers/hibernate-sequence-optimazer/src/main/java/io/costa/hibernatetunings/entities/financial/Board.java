@@ -4,6 +4,7 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -39,6 +40,11 @@ public class Board {
 
     public static Board of(String code, final String name) {
         return new Board(code, name);
+    }
+
+
+    public List<FinancialDocument> getFinancialDocuments() {
+        return Collections.unmodifiableList(financialDocuments);
     }
 
     public void add(FinancialDocument fd) {
