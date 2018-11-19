@@ -103,7 +103,7 @@ public class SingleTableTest {
         Board tbone =
                 provider.em()
                         .createQuery("select b from Board b left join fetch b.financialDocuments fd " +
-                                "where b.code = lower(:code) and fd.class = 'Invoice'", Board.class)
+                                "where b.code = lower(:code) and type (fd) = Invoice", Board.class)
                         .setParameter("code", "t-bone")
                         .getSingleResult();
 
