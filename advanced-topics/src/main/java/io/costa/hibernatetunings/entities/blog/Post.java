@@ -1,13 +1,16 @@
 package io.costa.hibernatetunings.entities.blog;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
+@DiscriminatorValue("0")
 public class Post extends Topic {
 
-    private String  content;
+    private String content;
 
-    protected Post() {}
+    protected Post() {
+    }
 
     public Post(final String content) {
         this.content = content;

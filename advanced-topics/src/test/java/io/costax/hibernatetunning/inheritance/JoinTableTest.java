@@ -39,7 +39,6 @@ public class JoinTableTest {
         final Post post = Topics.newPostWith("John Doe", "Inheritance", "Best practices");
         jpa.addTopic(post);
 
-
         final Announcement announcement = Topics.newAnnouncementWith("John Doe", "Release x.y.z.Final", LocalDate.of(2019, 1, 31));
         jpa.addTopic(announcement);
         em.persist(jpa);
