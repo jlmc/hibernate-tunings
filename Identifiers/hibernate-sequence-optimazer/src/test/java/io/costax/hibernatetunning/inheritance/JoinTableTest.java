@@ -24,8 +24,8 @@ public class JoinTableTest {
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
-    public void a_get_all_post_with_jpql() {
-        final List<Topic> topics = provider.em().createQuery("from Topic t", Topic.class).getResultList();
+    public void a_get_all_post_wi_th_jpql() {
+        final List<Topic> topics = provider.em().createQuery("select t from Topic t", Topic.class).getResultList();
     }
 
     @Test
