@@ -1,5 +1,67 @@
 # Performance Note Java Persistence and Hibernate
 
+## Performance Facts
+
+“More than half of application performance bottlenecks originate in the database” - http://www.appdynamics.com/database/
+
+
+“Like us, our users place a lot of value in speed — that's why we've decided to take site speed into account in our search rankings.”
+Google Ranking - https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html
+
+
+“It has been reported that every 100ms of latency costs Amazon 1% of profit.”
+http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
+
+## JPA vs Hibernate
+
+* JPA is only a specification. It describes the interfaces that the client operates with and the standard object-relational mapping metadata (annotations, XML).
+
+* Although it implements the JPA specification, Hibernate retains its native API for both backward compatibility and to accommodate non-standard features.
+
+
+
+
+## HOW TO RUN THIS EXAMPLES
+
+
+
+**Very important note:**
+
+This project is builder at the moment using Java JDK  11, so to compile the project we must execute the following command.
+
+```bash
+mvn clean install -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
+```
+
+or, on the limit to compile a single module: 
+
+```bash
+mvn clean install -rf :hibernate-open-source-custom-types-project -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
+```
+
+otherwise, if you are using java JDK 8 then to run this project you sgould remove the following dependencies from the root main pom file:
+
+```xml
+        <!-- using with JDK 11 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+``` 
+
+And then you can simple execute the maven command:
+
+```bash
+    mvn clean install -DskipTests
+```
+
+
 ## Agenda
 
 1 - Get-Started
@@ -20,26 +82,11 @@
 
 4 - Identifiers
 
-   4.1 - Identifier    
+    4.1 - Identifier  
+   
+5 - Persistence Context and Flushing     
     
 
-## Performance Facts
-
-“More than half of application performance bottlenecks originate in the database” - http://www.appdynamics.com/database/
-
-
-“Like us, our users place a lot of value in speed — that's why we've decided to take site speed into account in our search rankings.”
-Google Ranking - https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html
-
-
-“It has been reported that every 100ms of latency costs Amazon 1% of profit.”
-http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
-
-## JPA vs Hibernate
-
-* JPA is only a specification. It describes the interfaces that the client operates with and the standard object-relational mapping metadata (annotations, XML).
-
-* Although it implements the JPA specification, Hibernate retains its native API for both backward compatibility and to accommodate non-standard features.
 
 
 ## Extra-tunnings
