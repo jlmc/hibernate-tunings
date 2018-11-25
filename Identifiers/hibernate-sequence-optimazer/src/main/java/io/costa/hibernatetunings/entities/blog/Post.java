@@ -1,7 +1,5 @@
 package io.costa.hibernatetunings.entities.blog;
 
-import javafx.geometry.Pos;
-
 import javax.persistence.Entity;
 
 @Entity
