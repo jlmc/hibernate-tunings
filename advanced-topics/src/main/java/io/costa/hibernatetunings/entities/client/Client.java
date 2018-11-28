@@ -1,5 +1,7 @@
 package io.costa.hibernatetunings.entities.client;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -20,6 +22,13 @@ public class Client {
     @NaturalId
     private String slug;
 
+    @Column(name = "create_on", columnDefinition = "timestamp default current_timestamp")
+    @Generated(GenerationTime.INSERT)
+    private String createdOn;
+
+    @Version
+    private int version;
+
     Client() {
     }
 
@@ -31,6 +40,18 @@ public class Client {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

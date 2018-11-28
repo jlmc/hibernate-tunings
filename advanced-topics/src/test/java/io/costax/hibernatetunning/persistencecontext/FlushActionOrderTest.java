@@ -4,7 +4,6 @@ import io.costa.hibernatetunings.entities.client.Client;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,10 +73,10 @@ public class FlushActionOrderTest {
         } catch (PersistenceException e) {
             final Throwable cause = e.getCause();
 
-            if ((cause.getCause() instanceof  org.hibernate.exception.ConstraintViolationException)) {
+            if ((cause.getCause() instanceof org.hibernate.exception.ConstraintViolationException)) {
                 throw (ConstraintViolationException) cause.getCause();
             } else {
-               throw e;
+                throw e;
             }
         }
     }
@@ -100,7 +99,7 @@ public class FlushActionOrderTest {
         } catch (PersistenceException e) {
             final Throwable cause = e.getCause();
 
-            if ((cause.getCause() instanceof  org.hibernate.exception.ConstraintViolationException)) {
+            if ((cause.getCause() instanceof org.hibernate.exception.ConstraintViolationException)) {
                 throw (ConstraintViolationException) cause.getCause();
             } else {
                 throw e;

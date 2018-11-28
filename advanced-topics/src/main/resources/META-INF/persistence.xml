@@ -96,6 +96,7 @@
             <property name="hibernate.jdbc.batch_size" value="25"/>
             <property name="hibernate.order_inserts" value="true"/>
             <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
 
 
             <!--
