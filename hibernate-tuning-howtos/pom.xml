@@ -17,6 +17,7 @@
         <module>query-pagination-using-window-functions</module>
         <module>override-generator-strategy</module>
         <module>hibernate-soft-delete</module>
+        <module>load-file-properties-lazy</module>
     </modules>
 
 </project>
