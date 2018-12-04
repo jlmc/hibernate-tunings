@@ -51,8 +51,11 @@ public class EntityManagerProvider implements TestRule {
             @Override
             public void evaluate() throws Throwable {
                 base.evaluate();
-                em.clear();
-                em.close();
+
+                if (em.isOpen()) {
+                    em.clear();
+                    em.close();
+                }
             }
         };
     }
