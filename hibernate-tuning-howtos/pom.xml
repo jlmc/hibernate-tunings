@@ -18,6 +18,7 @@
         <module>override-generator-strategy</module>
         <module>hibernate-soft-delete</module>
         <module>load-file-properties-lazy</module>
+        <module>one-to-one-fk-in-wrong-side</module>
     </modules>
 
 </project>
