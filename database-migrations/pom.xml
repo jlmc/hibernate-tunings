@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <flyway.version>5.2.1</flyway.version>
+        <flyway.version>5.2.4</flyway.version>
         <flyway.cleanDisabled>true</flyway.cleanDisabled>
         <postgresql.version>9.4.1208</postgresql.version>
     </properties>

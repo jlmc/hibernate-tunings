@@ -22,22 +22,22 @@
     ```
 - Run the migrations
     ```
-    mvn flyway:migrate -Dflyway.configFile=/path/to/conf/local.conf
+    mvn flyway:migrate -Dflyway.configFiles=/path/to/conf/local.conf
     ```
     
     
     eg:
     ```
-    mvn flyway:migrate -Dflyway.configFile=/Users/costa/Documents/junk/dummies-projects/hibernate-tunings/database-migrations/local.conf
+    mvn flyway:migrate -Dflyway.configFiles=/Users/costa/Documents/junk/dummies-projects/hibernate-tunings/database-migrations/local.conf
     ```
     or:
     ```
-    mvn flyway:migrate -Dflyway.configFile=local.conf
+    mvn flyway:migrate -Dflyway.configFiles=local.conf
     ```
     
 - Cleaning down the migration
     ```
     # Using the same local.conf as for running the migrations
-    mvn flyway:clean -Dflyway.configFile=/path/to/conf/local.conf
+    mvn flyway:clean -Dflyway.configFiles=/path/to/conf/local.conf
     ```
 
