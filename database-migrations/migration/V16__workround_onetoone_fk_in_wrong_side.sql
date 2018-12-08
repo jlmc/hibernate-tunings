@@ -5,7 +5,7 @@ create table workarounds.game_report (
   resisted timestamp with time zone not null default now(),
   score_home smallint default 0 not null,
   score_visitor smallint default 0 not null,
-  events bytea,
+  events bytea
 );
 
 create table workarounds.game (
