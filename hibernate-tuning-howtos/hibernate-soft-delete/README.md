@@ -55,6 +55,17 @@ em.remove(a);
 ```
 
 
-https://www.thoughts-on-java.org/implement-soft-delete-hibernate/
+## Examples
 
-https://vladmihalcea.com/the-best-way-to-soft-delete-with-hibernate/
+In this example we are using the following described Domain Model.
+
+Considering we have the following tables in your database:
+
+![domain model](diagrams.png)
+
+As you can see in the diagram above, the **Todo**, **Todo_details**, **Todo_comment**, and **Tag** tables contain a deleted column which dictates the visibility of a given row. 
+What’s interesting about this database table model is that it covers all three database relationship types:
+
+* one-to-one
+* one-to-many
+* many-to-many
