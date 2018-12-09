@@ -64,30 +64,53 @@ And then you can simple execute the maven command:
 
 ## Agenda
 
-1 - Get-Started
+**1 - Get-Started**
 
     1.3 - logging-sql-statements
     1.4 - schema-management
     
-2 - Connections    
+**2 - Connections**    
 
     2.1 - connection-manager (only documentation)
     2.2 - connection-lifecycle
     
-3 - Types
+**3 - Types**
     
     3.1 - jpa-and-hibernate-types
     3.2 - custom-hibernate-types
     3.3 - open source hibernate types
 
-4 - Identifiers
+**4 - Identifiers**
 
-    4.1 - Identifier  
-   
-5 - Persistence Context and Flushing     
+    4.1 - Identifier 
+
+**5 - Relationships**    
     
+    5.1 - equals-and-hash (EqualsConsistentCheckTest)
+    5.2 - one-to-many-and-many-to-one (OneToManyAndManyToOneTest)
+    5.3 - one-to-one
+    5.5 - Many To Many
+    
+**6 - Inheritance**     
+    
+    6.1 - SingleTable (SingleTableTest)
+    6.2 - DiscriminatorColumn
+    6.3 - JoinedInheritance (JoinTableTest)
+    
+       
+**7 - Persistence Context and Flushing** 
+
+7.1 - [PersistenceContext_Flushing](docs/7-Persistence-Context/5-PersistenceContext.md)  
+7.2 - [ActionQueue](docs/7-Persistence-Context/ActionQueue.md)  
+7.3 - [AUTO FlushModeType](docs/7-Persistence-Context/7.2-AUTO-FlushModeType.md)  
+7.4 - [Dirty-Checking](docs/7-Persistence-Context/5.3-Persistence-context-dirty-check.md)  
+    
+all the examples can be found in the module advanced-topics in the package: io.costax.hibernatetunning.persistencecontext
 
 
+**8 - Batching**
+
+8.1 - bash-updates: [BatchProcessingTest](advanced-topics/src/test/java/io/costax/hibernatetunning/persistencecontext/BatchProcessingTest.java)
 
 ## Extra-tunnings
     
