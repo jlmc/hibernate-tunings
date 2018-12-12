@@ -1,4 +1,4 @@
-create schema exchange
+create schema if not exists exchange;
 
 create table exchange.tread
 (
