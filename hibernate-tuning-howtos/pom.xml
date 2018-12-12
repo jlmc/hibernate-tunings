@@ -19,6 +19,7 @@
         <module>hibernate-soft-delete</module>
         <module>load-file-properties-lazy</module>
         <module>one-to-one-fk-in-wrong-side</module>
+        <module>intercept-entity-changes-with-hibernate-event-listeners</module>
     </modules>
 
 </project>
