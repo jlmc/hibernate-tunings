@@ -1,4 +1,4 @@
-create schema tasks;
+create schema if not exists tasks;
 
 create table tasks.todo (
   id bigint null primary key,

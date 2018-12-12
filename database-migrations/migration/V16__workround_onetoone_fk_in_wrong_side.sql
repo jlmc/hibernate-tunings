@@ -1,4 +1,4 @@
-create schema workarounds;
+create schema if not exists workarounds;
 
 create table workarounds.game_report (
   id bigserial primary key,
