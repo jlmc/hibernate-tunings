@@ -100,10 +100,10 @@ And then you can simple execute the maven command:
        
 **7 - Persistence Context and Flushing** 
 
-7.1 - [PersistenceContext_Flushing](docs/7-Persistence-Context/5-PersistenceContext.md)  
-7.2 - [ActionQueue](docs/7-Persistence-Context/ActionQueue.md)  
+7.1 - [PersistenceContext_Flushing](docs/7-Persistence-Context/7.0-PersistenceContext.md)  
+7.2 - [ActionQueue](docs/7-Persistence-Context/7.1-ActionQueue.md)  
 7.3 - [AUTO FlushModeType](docs/7-Persistence-Context/7.2-AUTO-FlushModeType.md)  
-7.4 - [Dirty-Checking](docs/7-Persistence-Context/5.3-Persistence-context-dirty-check.md)  
+7.4 - [Dirty-Checking](docs/7-Persistence-Context/7.3-Persistence-context-dirty-check.md)  
     
 all the examples can be found in the module advanced-topics in the package: io.costax.hibernatetunning.persistencecontext
 

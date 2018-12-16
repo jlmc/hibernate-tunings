@@ -18,6 +18,7 @@
         <module>types</module>
         <module>Identifiers</module>
         <module>advanced-topics</module>
+        <module>bytecode-enhancement-dirty-checking</module>
     </modules>
     <packaging>pom</packaging>
 
