@@ -99,3 +99,18 @@ hibernate.jdbc.time_zone
 ```xml
     <property name="hibernate.jdbc.time_zone" value="UTC"/>
 ```
+
+
+# hibernate.connection.release_mode
+
+* Prior to Hibernate 5.2, the connection acquisition was controlled via the hibernate.connection.acquisition_mode configuration property while the connection release strategy used to be configured through hibernate.connection.release_mode property.
+```
+hibernate.connection.acquisition_mode
+hibernate.connection.release_mode
+```
+
+* Since 5.2, both the connection acquisition and release behavior are defined by the hibernate.connection.handling_mode property.
+
+```
+hibernate.connection.handling_mode
+```

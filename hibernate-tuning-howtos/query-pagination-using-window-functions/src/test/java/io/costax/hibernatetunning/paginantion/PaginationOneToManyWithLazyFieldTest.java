@@ -1,20 +1,20 @@
 package io.costax.hibernatetunning.paginantion;
 
+import io.costax.hibernatetunning.tasks.DistinctDetachTodoResultTransformer;
 import io.costax.hibernatetunning.tasks.Todo;
 import io.costax.hibernatetunning.tasks.TodoComment;
 import io.costax.rules.EntityManagerProvider;
+import org.hibernate.HibernateException;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.BasicTransformerAdapter;
-import org.hibernate.transform.ResultTransformer;
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -76,7 +76,24 @@ public class PaginationOneToManyWithLazyFieldTest {
     }
 
     @Test
-    public void fetchTestPage1() {
+    public void b_should_fetch_commentAttachment_in_using_a_extra_query() {
+        final Todo todo = provider.em().createQuery("select distinct td from Todo td left join fetch td.comments where td.id = :id", Todo.class)
+                .setParameter("id", 1L)
+                .getSingleResult();
+
+        assertThat(todo, notNullValue());
+        assertThat(todo.getComments(), hasSize(3));
+
+        final TodoComment todoComment1 = todo.getComments().stream().filter(todoComment -> todoComment.getId() == 1L).findFirst().orElse(null);
+        assertThat(todoComment1, notNullValue());
+        final byte[] attachment = todoComment1.getAttachment();
+        assertThat(new String(attachment, StandardCharsets.UTF_8), is("todo-comment-1--1"));
+    }
+
+    @Test
+    public void c_should_fetchTestPage1() {
+        provider.beginTransaction();
+
         int page = 0;
         int pageSize = 5;
 
@@ -130,12 +147,12 @@ public class PaginationOneToManyWithLazyFieldTest {
 
         final TodoComment todoComment1 = first.getComments().stream().filter(todoComment -> todoComment.getId() == 1L).findFirst().orElse(null);
         assertThat(todoComment1, notNullValue());
-        final byte[] attachment = todoComment1.getAttachment();
-        assertThat(new String(attachment, StandardCharsets.UTF_8), is("todo-comment-1--1"));
+
+        provider.commitTransaction();
     }
 
     @Test
-    public void fetchTestPage2() {
+    public void c_should_fetchTestPage2() {
         int page = 2;
         int pageSize = 5;
 
@@ -165,11 +182,68 @@ public class PaginationOneToManyWithLazyFieldTest {
                 .unwrap(NativeQuery.class)
                 //.addEntity( "td", Todo.class )
                 //.addEntity( "tdc", TodoComment.class )
-                .setResultTransformer(DistinctTodoResultTransformer.INSTANCE)
+                .setResultTransformer(new DistinctDetachTodoResultTransformer(em))
                 .getResultList();
 
         return todos;
     }
+
+    @Test
+    public void d_should_throw_exception_when_load_fields_lazy() {
+        provider.beginTransaction();
+
+        int page = 0;
+        int pageSize = 5;
+
+        List<Todo> todos = getTodosPage(page, pageSize);
+
+        final Todo todo1 = todos.stream().filter(td -> td.getId() == 1L).findFirst().orElse(null);
+        assertThat(todo1, notNullValue());
+
+        final TodoComment todoComment = todo1.getComments().stream().filter(tdc -> tdc.getId() == 2L).findFirst().orElse(null);
+        assertThat(todoComment, notNullValue());
+
+        try {
+            todoComment.getAttachment();
+
+            Assert.fail("should failed...");
+        } catch (HibernateException e) {
+            Assert.assertThat(e.getMessage(), is("entity is not associated with the session: null"));
+
+            // org.hibernate.HibernateException: entity is not associated with the session: null
+        }
+
+        provider.commitTransaction();
+    }
+
+    @Test
+    public void e_should_fetch_and_paginate_using_denseRank_and_merge() {
+        int page = 0;
+        int pageSize = 5;
+
+        List<Todo> todos = getTodosPage(page, pageSize);
+
+        final Todo todo1 = todos.stream().filter(td -> td.getId() == 1L).findFirst().orElse(null);
+        assertThat(todo1, notNullValue());
+        assertThat(todo1.getComments(), hasSize(3));
+        final TodoComment todoComment1 = todo1.getComments().stream().filter(tdc -> tdc.getId() == 1L).findFirst().orElse(null);
+        assertThat(todoComment1, notNullValue());
+        todo1.removeComment(todoComment1);
+
+
+        final Todo todo10 = todos.stream().filter(td -> td.getId() == 10L).findFirst().orElse(null);
+        assertThat(todo10, notNullValue());
+
+        todo10.addComment(TodoComment.of(598L, "Awesome!"));
+
+        provider.beginTransaction();
+
+        provider.em().merge(todo1);
+        provider.em().merge(todo10);
+
+        provider.commitTransaction();
+    }
+
 
     @Test
     public void z_remove_all_data() {
@@ -179,6 +253,7 @@ public class PaginationOneToManyWithLazyFieldTest {
         provider.commitTransaction();
     }
 
+    /*
     public static class DistinctTodoResultTransformer extends BasicTransformerAdapter {
         static final ResultTransformer INSTANCE = new DistinctTodoResultTransformer();
 
@@ -222,4 +297,5 @@ public class PaginationOneToManyWithLazyFieldTest {
             return new ArrayList<>(identifiableMap.values());
         }
     }
+    */
 }
