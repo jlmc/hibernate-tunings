@@ -1,152 +1,143 @@
 package io.costax.hibernatetunning.paginantion;
 
+import io.costax.hibernatetunning.tasks.Todo;
+import io.costax.hibernatetunning.tasks.TodoComment;
+import io.costax.hibernatetunning.tasks.TodoSummary;
 import io.costax.rules.EntityManagerProvider;
-import org.hibernate.query.NativeQuery;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PaginantionTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
-    @Test
-    public void createRecords() {
+    @Before
+    public void a_populate() {
 
+        long commentsSeq = 1L;
+
+        final EntityManager em = provider.em();
         provider.beginTransaction();
-        EntityManager em = provider.em();
 
-        ProgrammingLanguage java = ProgrammingLanguage.of("Java");
-        ProgrammingLanguage javaScript = ProgrammingLanguage.of("javaScript");
-        ProgrammingLanguage sql = ProgrammingLanguage.of("sql");
-        ProgrammingLanguage python = ProgrammingLanguage.of("python");
-        ProgrammingLanguage scala = ProgrammingLanguage.of("scala");
-        ProgrammingLanguage c = ProgrammingLanguage.of("c");
-        ProgrammingLanguage cplusplus = ProgrammingLanguage.of("cplusplus");
-        ProgrammingLanguage html = ProgrammingLanguage.of("html");
-        ProgrammingLanguage lua = ProgrammingLanguage.of("lua");
-        ProgrammingLanguage vb = ProgrammingLanguage.of("vb");
-        ProgrammingLanguage matlab = ProgrammingLanguage.of("matlab");
-        ProgrammingLanguage php = ProgrammingLanguage.of("PHP");
-        ProgrammingLanguage rubyOnRails = ProgrammingLanguage.of("Ruby on Rails");
-        ProgrammingLanguage iosSwift = ProgrammingLanguage.of("iOS/Swift");
+        for (int i = 1; i < 50; i++) {
+            final Todo td = Todo.of((long) i, "todo-" + i);
 
-        em.persist(java);
-        em.persist(javaScript);
-        em.persist(sql);
-        em.persist(python);
-        em.persist(scala);
-        em.persist(c);
-        em.persist(cplusplus);
-        em.persist(html);
-        em.persist(lua);
-        em.persist(vb);
-        em.persist(matlab);
-        em.persist(php);
-        em.persist(rubyOnRails);
-        em.persist(iosSwift);
-
-        List<ProgrammingLanguage> programmingLanguages = Arrays.asList(
-                java,
-                javaScript,
-                sql,
-                python,
-                scala,
-                c,
-                cplusplus,
-                html,
-                lua,
-                vb,
-                matlab,
-                php,
-                rubyOnRails,
-                iosSwift);
-
-        int size = 1;
-        for (int i = 0; i < 60; i++) {
-            Developer d = Developer.of(String.format("Developer-%d", i), String.format("dukes-%d", i));
-
-            for (int p = 0; p < size; p++) {
-                d.add(programmingLanguages.get(p));
+            if (i == 1) {
+                for (int y = 1; y < 4; y++) {
+                    final String review = "todo-comment-" + td.getId() + "--" + y;
+                    final TodoComment tc = TodoComment.of((commentsSeq++), review);
+                    tc.setAttachment(review.getBytes());
+                    td.addComment(tc);
+                }
             }
 
-            if (i % 10 == 0) {
-                size++;
+            if (i == 3) {
+                for (int y = 1; y < 2; y++) {
+                    final String review = "todo-comment-" + td.getId() + "--" + y;
+                    final TodoComment tc = TodoComment.of((commentsSeq++), review);
+                    tc.setAttachment(review.getBytes());
+                    td.addComment(tc);
+                }
             }
 
-            em.persist(d);
+            if (i == 5) {
+                for (int y = 1; y < 3; y++) {
+                    final TodoComment tc = TodoComment.of((commentsSeq++), "todo-comment-" + td.getId() + "--" + y);
+                    // tc.setAttachment(review.getBytes());
+                    td.addComment(tc);
+                }
+            }
+
+            if (i == 13) {
+                for (int y = 1; y < 7; y++) {
+                    final TodoComment tc = TodoComment.of((commentsSeq++), "todo-comment-" + td.getId() + "--" + y);
+                    td.addComment(tc);
+                }
+            }
+
+            em.persist(td);
         }
 
         provider.commitTransaction();
     }
 
+    @After
+    public void z_remove_all_data() {
+        provider.beginTransaction();
+        provider.em().createQuery("delete from TodoComment ").executeUpdate();
+        provider.em().createQuery("delete from Todo ").executeUpdate();
+        provider.commitTransaction();
+    }
+
+
     @Test
-    public void shouldSetMaxResultsJPQL() {
-        List<Developer> developers = provider.em().createQuery("select d from Developer d order by d.id", Developer.class)
+    public void should_set_max_results_JPQL() {
+        List<Todo> todos = provider.em().createQuery("select d from Todo d order by d.id", Todo.class)
                 .setMaxResults(10)
                 .getResultList();
 
-        assertEquals(10, developers.size());
-        assertEquals("Developer-0", developers.get(0).getName());
-        assertEquals("Developer-9", developers.get(9).getName());
+        assertEquals(10, todos.size());
+        assertEquals("todo-1", todos.get(0).getTitle());
+        assertEquals("todo-10", todos.get(9).getTitle());
     }
 
     @Test
     public void shouldUseSetFirstResultAndSetMaxResultsJPQL() {
-        List<Developer> developers = provider.em().createQuery("select d from Developer d order by d.id", Developer.class)
+        List<Todo> developers = provider.em().createQuery("select d from Todo d order by d.id", Todo.class)
                 .setFirstResult(10)
                 .setMaxResults(10)
                 .getResultList();
 
         assertEquals(10, developers.size());
-        assertEquals("Developer-10", developers.get(0).getName());
-        assertEquals("Developer-19", developers.get(9).getName());
+        assertEquals("todo-11", developers.get(0).getTitle());
+        assertEquals("todo-20", developers.get(9).getTitle());
     }
 
     @Test
     public void shouldUseSetFirstResultAndSetMaxResultsJPQLToDTOProjection() {
-        List<DeveloperSummary> developers = provider.em()
+        List<TodoSummary> todos = provider.em()
                 .createQuery("select " +
-                        "new io.costax.hibernatetunning.paginantion.DeveloperSummary(" +
-                        "   d.id, d.name, count (pl)" +
+                        "new io.costax.hibernatetunning.tasks.TodoSummary(" +
+                        "   d.id, d.title, count (pl)" +
                         ") " +
-                        "from Developer d join d.programmingLanguages pl " +
-                        "group by d.id, d.name order by d.id", DeveloperSummary.class)
-                .setFirstResult(10)
+                        "from Todo d left join d.comments pl " +
+                        "group by d.id, d.title order by d.id", TodoSummary.class)
+                .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
 
-        assertEquals(10, developers.size());
-        assertEquals("Developer-10", developers.get(0).getName());
-        assertThat(developers.get(0).getNumOfProgramingLanguages(), is(2));
-        assertEquals("Developer-19", developers.get(9).getName());
-        assertThat(developers.get(9).getNumOfProgramingLanguages(), is(3));
+        assertEquals(10, todos.size());
+        assertEquals("todo-1", todos.get(0).getTitle());
+        assertThat(todos.get(0).getNumOfComments(), is(3L));
+        assertEquals("todo-10", todos.get(9).getTitle());
+        assertThat(todos.get(9).getNumOfComments(), is(0L));
     }
 
     @Test
     public void usingNativeQuery() {
 
-        List<Tuple> developers = provider.em()
+        List<Tuple> todos = provider.em()
                 .createNativeQuery(
-                        "select d.* from developer d order by d.id", Tuple.class)
-                .setFirstResult(10)
+                        "select d.* from tasks.todo d order by d.id", Tuple.class)
+                .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
 
         // Note That we can use also the Entity unsted of a Tuple
 
-        assertEquals(10, developers.size());
-        assertEquals("Developer-10", developers.get(0).get("name", String.class));
-        assertEquals("Developer-19", developers.get(9).get("name", String.class));
+        assertEquals(10, todos.size());
+        assertEquals("todo-1", todos.get(0).get("title", String.class));
+        assertEquals("todo-10", todos.get(9).get("title", String.class));
     }
 
     /**
@@ -164,15 +155,15 @@ public class PaginantionTest {
      */
     @Test
     public void shouldPaginateInMemoryWhenWeUseJoinFetch() {
-        List<Developer> developers = provider.em()
-                .createQuery("select distinct d from Developer d left join fetch d.programmingLanguages order by d.id", Developer.class)
-                .setFirstResult(10)
+        List<Todo> developers = provider.em()
+                .createQuery("select distinct d from Todo d left join fetch d.comments order by d.id", Todo.class)
+                .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
 
         assertEquals(10, developers.size());
-        assertEquals("Developer-10", developers.get(0).getName());
-        assertEquals("Developer-19", developers.get(9).getName());
+        assertEquals("todo-1", developers.get(0).getTitle());
+        assertEquals("todo-10", developers.get(9).getTitle());
     }
 
     /**
@@ -180,38 +171,7 @@ public class PaginantionTest {
      */
     @Test
     public void paginationUsingNativeQueryWithWindowFunction() {
-
-        final int pageSize = 10;
-        final int page = 1;
-        final int firstRecord = page * pageSize;
-        int lastRecord = firstRecord + pageSize;
-
-        List resultList = provider.em()
-                .createNativeQuery("select p_pc_r.* " +
-                        "from ( " +
-                        "        select d_pls.*, dense_rank() OVER (ORDER BY developer_id) rank " +
-                        "        from ( " +
-                        "                select d.*, l.* as _lName, dpl.developer_id " +
-                        "                from developer d " +
-                        "                left join developer_programmig_language dpl on d.id = dpl.developer_id " +
-                        "                left join programming_language l on dpl.tag_id = l.id " +
-                        "                order by d.id " +
-                        "        ) d_pls " +
-                        ") p_pc_r " +
-                        "where p_pc_r.rank > :firstRecord " +
-                        "and p_pc_r.rank <= :lastRecord ")
-                .setParameter("firstRecord", firstRecord)
-                .setParameter("lastRecord", lastRecord)
-                .unwrap(NativeQuery.class)
-                .addEntity("d", Developer.class)
-                .addEntity("l", ProgrammingLanguage.class)
-                .setResultTransformer(DistinctDeveloperResultTransformer.INSTANCE)
-                .getResultList();
-
-        List<Developer> developers = resultList;
-        assertEquals(10, developers.size());
-        assertEquals("Developer-10", developers.get(0).getName());
-        assertEquals("Developer-19", developers.get(9).getName());
+        // Check the example in the class PaginationOneToManyWithLazyFieldTest
     }
 
 }
