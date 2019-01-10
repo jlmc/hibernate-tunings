@@ -6,15 +6,11 @@ import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.stat.Statistics;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -26,14 +22,17 @@ public class LazyAttachmentFileTest {
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
-    /*
-    id
-6e6540cc-729d-412e-a1c2-f3caf578b610
-76b98e94-3445-40ac-a378-37c2fb12b27a
-     */
+    @After
+    public void after() {
+        provider.beginTransaction();
+        provider.em().createQuery("delete from Attachment").executeUpdate();
+        provider.em().createQuery("delete from Image").executeUpdate();
+        provider.em().createQuery("delete from Message").executeUpdate();
+        provider.commitTransaction();
+    }
 
-    @Test
-    public void a_create_some_attachments() throws IOException {
+    @Before
+    public void before() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
 
@@ -65,10 +64,10 @@ public class LazyAttachmentFileTest {
 
     @Test
     public void b_loadFile() {
+        final Attachment attachment = provider.em().createQuery("select a from Attachment a where a.fileName = :fileName", Attachment.class)
+                .setParameter("fileName", "JPA-States-Diagram")
+                .getSingleResult();
 
-
-        final Attachment attachment = provider.em()
-                .find(Attachment.class, UUID.fromString("6e6540cc-729d-412e-a1c2-f3caf578b610"));
         assertThat(attachment, notNullValue());
         assertThat(attachment.getFileName(), is("JPA-States-Diagram"));
 
@@ -90,4 +89,6 @@ public class LazyAttachmentFileTest {
 
         assertThat(attachments, Matchers.hasSize(2));
     }
+
+
 }

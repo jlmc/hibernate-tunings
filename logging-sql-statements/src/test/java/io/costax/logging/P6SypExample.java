@@ -23,8 +23,8 @@ public class P6SypExample {
         final Map<String, String> settings = new HashMap<>();
 
         settings.put(Environment.DRIVER, "com.p6spy.engine.spy.P6SpyDriver");
-        //settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/postgres-demos");
-        settings.put(Environment.URL, "jdbc:p6spy:postgresql://localhost:5432/postgres-demos");
+        //settings.put(Environment.URL, "jdbc:postgresql://localhost:5432/postgresdemos");
+        settings.put(Environment.URL, "jdbc:p6spy:postgresql://localhost:5432/postgresdemos");
         settings.put(Environment.USER, "postgres");
         settings.put(Environment.PASS, "postgres");
         //settings.put(Environment.HBM2DDL_AUTO, "validate");

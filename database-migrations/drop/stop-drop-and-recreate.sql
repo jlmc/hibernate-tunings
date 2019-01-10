@@ -1,7 +1,7 @@
 SELECT pg_terminate_backend(pid)
 FROM pg_stat_activity
-WHERE datname = 'postgres-demos';
+WHERE datname = 'postgresdemos';
 
-DROP DATABASE IF EXISTS postgres-demos;
+DROP DATABASE IF EXISTS postgresdemos;
 
-CREATE DATABASE postgres-demos WITH OWNER=postgres ENCODING ='UTF8’;
+CREATE DATABASE postgresdemos WITH OWNER=postgres ENCODING ='UTF8';

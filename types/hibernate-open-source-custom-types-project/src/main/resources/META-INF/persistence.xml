@@ -12,7 +12,7 @@
         <properties>
 
 
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <property name="javax.persistence.jdbc.password" value="postgres"/>

@@ -1,10 +1,10 @@
 version: '2'
 services:
-  postgres-demos-db:
+  postgresdemos-db:
     ports:
       - "5433:5432"
     image: "postgres:11"
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: postgres-demos
+      POSTGRES_DB: postgresdemos

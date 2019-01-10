@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -24,12 +25,13 @@ public class Client {
 
     @Column(name = "create_on", columnDefinition = "timestamp default current_timestamp")
     @Generated(GenerationTime.INSERT)
-    private String createdOn;
+    private LocalDateTime createdOn;
+    //private String createdOn;
 
     @Version
     private int version;
 
-    Client() {
+    protected Client() {
     }
 
     public Client(final Integer id, final String slug, final String name) {
@@ -42,7 +44,7 @@ public class Client {
         this.name = name;
     }
 
-    public String getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 

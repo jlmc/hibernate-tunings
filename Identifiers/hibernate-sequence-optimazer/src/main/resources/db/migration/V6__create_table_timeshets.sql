@@ -7,6 +7,6 @@ CREATE TABLE timesheet
     start timestamp with time zone NOT NULL,
     until timestamp with time zone NOT NULL,
     description text,
-    CONSTRAINT timesheet_depeloper_id_fk FOREIGN KEY (developer_id) REFERENCES public.depeloper (id)
+    CONSTRAINT timesheet_developer_id_fk FOREIGN KEY (developer_id) REFERENCES public.developer (id)
 );
 CREATE UNIQUE INDEX timesheet_id_uindex ON public.timesheet (id);

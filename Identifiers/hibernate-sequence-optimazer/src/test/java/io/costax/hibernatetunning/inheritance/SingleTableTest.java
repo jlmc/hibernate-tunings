@@ -30,13 +30,13 @@ public class SingleTableTest {
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
-    public void a_shouldGetAllAllFinancialDocumentsUsingAPolymorphicJPQL() {
+    public void t00_shouldGetAllAllFinancialDocumentsUsingAPolymorphicJPQL() {
         provider.em().createQuery("select fd from FinancialDocument fd",
                 FinancialDocument.class).getResultList();
     }
 
     @Test
-    public void b_shouldCreateABordWithFiancialDocuments() {
+    public void t01_shouldCreateABordWithFiancialDocuments() {
         final ZoneOffset offset = OffsetDateTime.now().getOffset();
         final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
 
@@ -54,7 +54,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void c_shouldCreateABordWithFinancialDocuments() {
+    public void t02_shouldCreateABordWithFinancialDocuments() {
         //final ZoneOffset offset = OffsetDateTime.now().getOffset();
         //final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
 
@@ -70,7 +70,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void d_should_get_all_the_financialDocuments_the_tbone_board() {
+    public void t03_should_get_all_the_financialDocuments_the_tbone_board() {
         List<FinancialDocument> tboneFinancialDocuments =
                 provider.em()
                         .createQuery("select fd from FinancialDocument fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
@@ -87,7 +87,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void e_should_find_only_the_invoices() {
+    public void t04_should_find_only_the_invoices() {
         List<FinancialDocument> tboneInvoices =
                 provider.em()
                         .createQuery("select fd from Invoice fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
@@ -97,9 +97,8 @@ public class SingleTableTest {
         assertThat(tboneInvoices, hasSize(2));
     }
 
-
     @Test
-    public void f_should_find_board_only_the_invoices() {
+    public void t05_should_find_board_only_the_invoices() {
         Board tbone =
                 provider.em()
                         .createQuery("select b from Board b left join fetch b.financialDocuments fd " +
@@ -113,9 +112,8 @@ public class SingleTableTest {
         assertThat(tbone.getFinancialDocuments(), hasSize(2));
     }
 
-    //@Test(expected = org.hibernate.exception.ConstraintViolationException.class)
     @Test(expected = javax.persistence.RollbackException.class)
-    public void g_should_not_add_invoice_without_content() {
+    public void t06_should_not_add_invoice_without_content() {
         try {
             provider.beginTransaction();
 
@@ -141,7 +139,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void z_should_delete_all_using_polymorphic_delete_jpql() {
+    public void t07_should_delete_all_using_polymorphic_delete_jpql() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
 
