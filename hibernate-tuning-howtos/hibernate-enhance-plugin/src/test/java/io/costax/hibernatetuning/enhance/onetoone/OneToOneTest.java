@@ -2,11 +2,12 @@ package io.costax.hibernatetuning.enhance.onetoone;
 
 import io.costax.hibernatetuning.enhance.model.Cc;
 import io.costax.hibernatetuning.enhance.model.HumanResource;
-import io.costax.jpa.EntityManagerProvider;
+import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 public class OneToOneTest {
 
@@ -42,19 +43,26 @@ public class OneToOneTest {
         Cc cc = provider.em().find(Cc.class, 1);
 
         System.out.println(cc);
-
     }
 
     @Test
     public void shouldCreateOneRecord() {
         provider.beginTransaction();
 
-        HumanResource rh = HumanResource.of("duke", "javaEE for jakarta");
+        String userName = "duke - " + UUID.randomUUID();
+
+        HumanResource rh = HumanResource.of(userName, "javaEE for jakarta");
 
         provider.em().persist(rh);
 
         provider.commitTransaction();
+
+        provider.beginTransaction();
+
+        provider.em().createQuery("delete HumanResource  where id = :id")
+                .setParameter("id", rh.getId())
+                .executeUpdate();
+
+        provider.commitTransaction();
     }
-
-
 }

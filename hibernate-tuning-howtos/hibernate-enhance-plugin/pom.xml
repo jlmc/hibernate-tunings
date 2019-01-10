@@ -73,6 +73,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.costax</groupId>
+            <artifactId>helpers</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
