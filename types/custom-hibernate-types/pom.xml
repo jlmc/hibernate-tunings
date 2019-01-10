@@ -90,7 +90,7 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.2.1</version>
                 <configuration>
-                    <url>jdbc:postgresql://localhost:5432/postgres-demos</url>
+                    <url>jdbc:postgresql://localhost:5432/postgresdemos</url>
                     <user>postgres</user>
                     <password>postgres</password>
                     <driver>org.postgresql.Driver</driver>

@@ -3,15 +3,15 @@ package io.costax.hibernatetunning.relationships;
 import io.costa.hibernatetunings.entities.project.Issue;
 import io.costa.hibernatetunings.entities.project.Project;
 import io.costax.rules.EntityManagerProvider;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
 
 /**
  * 5.2 - one-to-many-and-many-to-one
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OneToManyAndManyToOneTest {
 
     @Rule
@@ -21,7 +21,7 @@ public class OneToManyAndManyToOneTest {
      * 1
      */
     @Test
-    public void createANewProject() {
+    public void t00_create_a_new_project() {
         Project project = Project.of("soteria");
 
         provider.beginTransaction();
@@ -33,7 +33,7 @@ public class OneToManyAndManyToOneTest {
      * 2
      */
     @Test
-    public void addAndRemoveIssue() {
+    public void t01_add_and_remove_issue() {
         provider.beginTransaction();
 
         final EntityManager em = provider.em();
@@ -56,7 +56,7 @@ public class OneToManyAndManyToOneTest {
     }
 
     @Test
-    public void name() {
+    public void t02_add_Issue_to_project_and_then_remove() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
         final Project soteria = em.createQuery("from Project p where p.title = :title", Project.class)
@@ -70,7 +70,7 @@ public class OneToManyAndManyToOneTest {
         provider.commitTransaction();
     }
 
-    /**
+    /*
      * The next are only valid for the following relationship configuraton
      * @Entity
      * @Table(name = "issue")
@@ -86,18 +86,28 @@ public class OneToManyAndManyToOneTest {
      * 3
      * create project when create issue
      */
-    @Test
-    @Ignore
-    public void createProjectWhenCreateIssue() {
-
+    @Test(expected = IllegalStateException.class)
+    //@Ignore
+    public void t03_should_not_create_project_when_create_issue() {
         Project jcache = Project.of("jcache");
 
         provider.beginTransaction();
         final Issue todo1 = Issue.of(jcache, "jcache:: todo1");
 
-        provider.em().persist(todo1);
+        try {
+            provider.em().persist(todo1);
 
-        provider.commitTransaction();
+            provider.em().flush();
+
+            provider.commitTransaction();
+
+            Assert.fail("should faild because jcache is transient reference");
+        } catch (IllegalStateException e) {
+            // Caused by: java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: Not-null property references a transient value - transient instance must be saved before current operation : io.costa.hibernatetunings.entities.project.Issue.project -> io.costa.hibernatetunings.entities.project.Project
+            provider.rollbackTransaction();
+
+            throw e;
+        }
     }
 
     /**
@@ -106,8 +116,7 @@ public class OneToManyAndManyToOneTest {
      */
     @Test
     @Ignore
-    public void updateProjectWhenCreateIssue() {
-
+    public void t04_update_project_when_create_issue() {
         Project jcache = Project.of("jcache2");
 
         provider.beginTransaction();
@@ -123,7 +132,7 @@ public class OneToManyAndManyToOneTest {
 
     @Test
     @Ignore
-    public void delete() {
+    public void t05_delete() {
         provider.beginTransaction();
         final Issue issue = provider.em().find(Issue.class, 5L);
 
@@ -132,4 +141,13 @@ public class OneToManyAndManyToOneTest {
         provider.commitTransaction();
     }
 
+    @Test
+    public void t06_delete_all_data() {
+        provider.beginTransaction();
+
+        provider.em().createQuery("delete from Issue ").executeUpdate();
+        provider.em().createQuery("delete from Project ").executeUpdate();
+
+        provider.commitTransaction();
+    }
 }

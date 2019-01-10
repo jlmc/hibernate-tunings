@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(schema = "nplusonetoone", name = "document")
 public class Document {
 
     @Id

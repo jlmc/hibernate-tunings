@@ -12,7 +12,7 @@
         <properties>
 
 
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.user" value="postgres"/>
             <property name="javax.persistence.jdbc.password" value="postgres"/>
@@ -34,7 +34,7 @@
             < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
             -->
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <property name="hibernate.dialect" value="io.costa.hibernatetunning.customdialects.CustomPostgreSqlDialect"/>
             <!--property name="hibernate.show_sql" value="true"/-->
             <property name="hibernate.format_sql" value="true"/>
             <!--property name="hibernate.use_sql_comments" value="true"/-->
@@ -87,10 +87,10 @@
             <property name="hibernate.connection.provider_class"
                       value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
             <!--property name="hibernate.hikari.minimumPoolSize" value="1"/-->
-            <property name="hibernate.hikari.maximumPoolSize" value="2"/>
-            <property name="hibernate.hikari.minimumIdle" value="1"/>
+            <property name="hibernate.hikari.maximumPoolSize" value="8"/>
+            <property name="hibernate.hikari.minimumIdle" value="4"/>
             <property name="hibernate.hikari.connectionTimeout" value="30000"/>
-            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgres-demos"/>
+            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>
             <property name="hibernate.hikari.dataSource.user" value="postgres"/>
             <property name="hibernate.hikari.dataSource.password" value="postgres"/>
             <!-- ************** -->

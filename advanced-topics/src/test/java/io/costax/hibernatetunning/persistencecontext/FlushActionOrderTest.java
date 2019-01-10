@@ -2,8 +2,10 @@ package io.costax.hibernatetunning.persistencecontext;
 
 import io.costa.hibernatetunings.entities.client.Client;
 import io.costax.rules.EntityManagerProvider;
+import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
+import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +13,8 @@ import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FlushActionOrderTest {
@@ -19,7 +23,7 @@ public class FlushActionOrderTest {
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
-    public void a_should_create_some_clients_records() {
+    public void t00_should_create_some_clients_records() {
         provider.beginTransaction();
 
         final EntityManager em = provider.em();
@@ -40,7 +44,7 @@ public class FlushActionOrderTest {
      * by default the remove operation happens after the insert, even when in our implementations have the remove operation before
      */
     @Test
-    public void b_testOperationOrder() {
+    public void t01_test_operation_order() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
 
@@ -58,7 +62,7 @@ public class FlushActionOrderTest {
      * To force the remove to be executed first we must implicitly execute the flush method.
      */
     @Test(expected = org.hibernate.exception.ConstraintViolationException.class)
-    public void b_testOperationOrderConstrainViolations() {
+    public void t02_test_operation_order_constrain_violations() {
         try {
             provider.beginTransaction();
             final EntityManager em = provider.em();
@@ -82,7 +86,7 @@ public class FlushActionOrderTest {
     }
 
     @Test
-    public void c_testOperationOrderWithManualFlush() {
+    public void t03_test_operation_order_with_manual_flush() {
         try {
             provider.beginTransaction();
             final EntityManager em = provider.em();
@@ -107,23 +111,29 @@ public class FlushActionOrderTest {
         }
     }
 
-    /**
-     *
-     */
     @Test
-    public void d_testUpdate() {
-        provider.beginTransaction();
+    public void t04_test_update() {
+        UUID random = UUID.randomUUID();
+
+        final AtomicInteger versionHolder = new AtomicInteger(-1);
+
+
+        provider.doInTx(em -> {
+            final Client bb = provider.em().unwrap(Session.class).bySimpleNaturalId(Client.class).load("BB");
+
+            versionHolder.set(bb.getVersion());
+
+            bb.setName("Bing and Binding - " + random);
+        });
 
         final Client bb = provider.em().unwrap(Session.class).bySimpleNaturalId(Client.class).load("BB");
-
-        bb.setName("Bing and Binding");
-
-        provider.commitTransaction();
+        Assert.assertThat(bb.getName(), Matchers.is("Bing and Binding - " + random));
+        //Assert.assertThat(bb.getVersion(), greaterThan(versionHolder.get()));
     }
 
 
     @Test
-    public void z_removeAllClients() {
+    public void t05_remove_all_clients() {
         provider.beginTransaction();
 
         provider.em().createQuery("delete from Client").executeUpdate();

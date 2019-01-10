@@ -4,11 +4,15 @@ import io.costa.hibernatetunings.entities.Developer;
 import io.costa.hibernatetunings.entities.Event;
 import io.costa.hibernatetunings.entities.Location;
 import io.costax.rules.EntityManagerProvider;
+import org.junit.After;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PostgreSQLJsonBinaryTypeTest {
 
     @Rule
@@ -48,6 +52,21 @@ public class PostgreSQLJsonBinaryTypeTest {
         devox.setPriceBaseValues(new int[]{76, 5});
 
         em.persist(devox);
+        provider.commitTransaction();
+    }
+
+    @After
+    public void cleanup() {
+        final EntityManager em = provider.em();
+        provider.beginTransaction();
+
+        em.createNativeQuery("delete from timesheet").executeUpdate();
+        em.createNativeQuery("delete from event_developer").executeUpdate();
+        em.createQuery("delete from Developer").executeUpdate();
+        em.createQuery("delete from Event").executeUpdate();
+
+        em.flush();
+
         provider.commitTransaction();
     }
 }

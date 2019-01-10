@@ -3,13 +3,13 @@ package io.costa.hibernatetunings.entities.blog;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "topic")
 @Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.INTEGER, columnDefinition = "smallint not null")
 public abstract class Topic {
 
     @Id

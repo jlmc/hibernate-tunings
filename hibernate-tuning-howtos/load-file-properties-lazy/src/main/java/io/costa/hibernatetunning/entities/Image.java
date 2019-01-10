@@ -18,7 +18,7 @@ public class Image {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    //@Column(name = "file", columnDefinition = "oid")
+    @Column(name = "file", columnDefinition = "oid")
     public byte[] file;
 
     @Column(name = "type")

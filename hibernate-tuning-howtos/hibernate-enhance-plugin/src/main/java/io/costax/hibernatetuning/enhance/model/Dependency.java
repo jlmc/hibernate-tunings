@@ -4,8 +4,10 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(schema = "nplusonetoone", name = "dependency")
 public class Dependency {
 
     @Id

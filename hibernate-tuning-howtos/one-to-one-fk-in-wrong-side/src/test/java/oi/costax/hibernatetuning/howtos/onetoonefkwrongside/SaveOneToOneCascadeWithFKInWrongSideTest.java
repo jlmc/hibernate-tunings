@@ -5,19 +5,34 @@ import io.costax.hibernatetuning.howtos.onetoonefkwrongside.Game;
 import io.costax.hibernatetuning.howtos.onetoonefkwrongside.GameReport;
 import io.costax.hibernatetuning.howtos.onetoonefkwrongside.Score;
 import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SaveOneToOneCascadeWithFKInWrongSideTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
-    @Test
+    @Before
     public void a_cleanAnyPreviusData() {
+        provider.beginTransaction();
+        final List<Game> allGames = provider.em().createQuery("select g from Game g", Game.class).getResultList();
+
+        allGames.forEach(System.out::println);
+        System.out.println("****");
+        allGames.forEach(game -> provider.em().remove(game));
+
+        provider.em().flush();
+
+        provider.commitTransaction();
+    }
+
+    @After
+    public void cleanUp() {
         provider.beginTransaction();
         final List<Game> allGames = provider.em().createQuery("select g from Game g", Game.class).getResultList();
 
@@ -99,13 +114,15 @@ public class SaveOneToOneCascadeWithFKInWrongSideTest {
         provider.commitTransaction();
     }
 
-    @Test
+    @After
     public void f_remove() {
         provider.beginTransaction();
 
-        final Game game = provider.em().find(Game.class, 10L);
+        final List<Game> games = provider.em().createQuery("select g from Game g", Game.class).getResultList();
 
-        game.setReport(null);
+        for (Game game : games) {
+            game.setReport(null);
+        }
 
         provider.commitTransaction();
     }

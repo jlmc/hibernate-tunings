@@ -16,14 +16,18 @@ public class Event extends BaseEntity {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "developer_id"))
     Set<Developer> developers = new HashSet<>();
+
     @Column(name = "name")
     private String name;
+
     @Type(type = "jsonb")
     @Column(name = "location")
     private Location location;
+
     @Type(type = "int-array")
     @Column(name = "price_base_values", columnDefinition = "integer[]")
     private int[] priceBaseValues = {};
+
     @Type(type = "string-array")
     @Column(name = "ports_names", columnDefinition = "text[]")
     private String[] portsName = {};

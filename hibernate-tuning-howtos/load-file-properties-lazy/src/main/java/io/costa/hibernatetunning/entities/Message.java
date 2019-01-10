@@ -26,6 +26,10 @@ public class Message {
     @OneToMany(mappedBy = "message", orphanRemoval = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
     private List<Image> images = new ArrayList<>();
 
+    public UUID getId() {
+        return id;
+    }
+
     public Message() {
     }
 
