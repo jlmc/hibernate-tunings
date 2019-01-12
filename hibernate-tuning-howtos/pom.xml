@@ -21,6 +21,7 @@
         <module>one-to-one-fk-in-wrong-side</module>
         <module>intercept-entity-changes-with-hibernate-event-listeners</module>
         <module>custom-identifiers-generator</module>
+        <module>how-to-solve-the-postgresql-cast-operator</module>
     </modules>
 
 </project>
