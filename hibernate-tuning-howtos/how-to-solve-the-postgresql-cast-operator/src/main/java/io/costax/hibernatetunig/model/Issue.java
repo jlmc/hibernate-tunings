@@ -30,7 +30,6 @@ public class Issue extends BaseEntity {
     private String title;
     private String description;
 
-    //@CreationTimestamp
     @Column(name = "create_at")
     private OffsetDateTime createAt;
 
