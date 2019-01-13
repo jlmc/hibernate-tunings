@@ -1,5 +1,6 @@
 package io.costax.hpjp.hibernate.schema.flyway;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import javax.persistence.PersistenceContext;
 
 import static io.costax.hpjp.hibernate.schema.flyway.FlywayEntities.Post;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = PostgreSQLFlywayConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
