@@ -24,7 +24,7 @@ http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
 ## HOW TO RUN THIS EXAMPLES
 
 
-###### 1. First off all, we need to create a Postgres Data Base with the name postgres demos in the port 5432. For example we can use Docker to create that resource:
+###### 1. First off all, we need to create a Postgres Data Base with the name postgresdemos in the port 5432. For example we can use Docker to create that resource:
 
 ```bash
 docker run --name postgresdemos \
@@ -32,7 +32,7 @@ docker run --name postgresdemos \
     -e POSTGRES_USER=postgres \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_DB=postgresdemos \
-    -v $(pwd)"/junk/dockervolumes/postgresdemos:/var/lib/postgresql/data" -d postgres:10
+    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:10
 ```
 
 ###### 2. Run the migrations:
@@ -40,7 +40,7 @@ docker run --name postgresdemos \
 ```bash
 cd database-migrations
     
-mvn flyway:migrate
+mvn flyway:migrate -Dflyway.configFiles=local.conf
 ```
 
 ###### 3. we are able to run the examples.
