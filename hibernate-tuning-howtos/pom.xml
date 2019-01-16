@@ -22,6 +22,7 @@
         <module>intercept-entity-changes-with-hibernate-event-listeners</module>
         <module>custom-identifiers-generator</module>
         <module>how-to-solve-the-postgresql-cast-operator</module>
+        <module>how-to-use-stored-procedures</module>
     </modules>
 
 </project>
