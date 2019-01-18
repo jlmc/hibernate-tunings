@@ -1,9 +1,13 @@
 @TypeDefs({
         @TypeDef(name = "ipv4", defaultForType = IPv4.class, typeClass = IPv4Type.class),
-        @TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class)
+        @TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class),
+
+        //@TypeDef(name = "string-array", defaultForType = String[].class, typeClass = StringArrayType.class),
+        @TypeDef(name = "string-array", defaultForType = String[].class, typeClass = ImmutableStringArrayType.class)
 })
 package io.costa.hibernatetunings.entities;
 
+import io.costa.hibernatetunings.arrays.ImmutableStringArrayType;
 import io.costa.hibernatetunings.customtype.IPv4;
 import io.costa.hibernatetunings.customtype.IPv4Type;
 import io.costa.hibernatetunings.customtype.MacAddr;
