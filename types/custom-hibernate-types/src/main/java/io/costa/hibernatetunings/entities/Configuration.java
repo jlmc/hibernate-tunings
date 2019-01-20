@@ -20,29 +20,39 @@ public class Configuration {
 
     /**
      * We can use any of the next two approaches.
-     *
+     * <p>
      * Eg. 1:
      * <code>
-     *      @Type(type = "string-array")
+     *
+     * @Type(type = "string-array")
      * </code>
-     *
-     *
+     * <p>
+     * <p>
      * Eg. 2:
      * <code>
-     *     @Type(type = "io.costa.hibernatetunings.arrays.StringArrayType")
+     * @Type(type = "io.costa.hibernatetunings.arrays.StringArrayType")
      * </code>
-     *
      */
     @Type(type = "string-array")
     @Column(name = "roles", columnDefinition = "text[] default ARRAY []::text[]")
     private String[] roles = {};
+
+    @Type(type = "int-array")
+    @Column(name = "numbers", columnDefinition = "int[] default ARRAY []::int[]")
+    private int[] numbers = {};
 
     protected Configuration() {
     }
 
     public Configuration(final String tenant, final String[] roles) {
         this.tenant = tenant;
-        this.roles = roles;
+        setRoles(roles);
+    }
+
+    public Configuration(final String tenant, final String[] roles, final int[] numbers) {
+        this.tenant = tenant;
+        setRoles(roles);
+        setNumbers(numbers);
     }
 
     public Long getId() {
@@ -60,9 +70,22 @@ public class Configuration {
     public void setRoles(final String[] roles) {
         if (roles == null) {
             this.roles = null;
+            return;
         }
 
-        assert roles != null;
         this.roles = Arrays.copyOf(roles, roles.length);
+    }
+
+    public int[] getNumbers() {
+        return numbers;
+    }
+
+    public void setNumbers(final int[] n) {
+        if (n == null) {
+            this.numbers = null;
+            return;
+        }
+
+        this.numbers = Arrays.copyOf(n, n.length);
     }
 }

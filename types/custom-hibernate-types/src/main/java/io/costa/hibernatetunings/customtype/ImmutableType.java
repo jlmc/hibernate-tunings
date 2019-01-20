@@ -17,10 +17,10 @@ public abstract class ImmutableType<T> implements UserType {
         this.clazz = clazz;
     }
 
-    protected abstract T get(ResultSet rs,
-                             String[] names,
-                             SharedSessionContractImplementor session,
-                             Object owner) throws SQLException;
+    protected abstract T get(final ResultSet rs,
+                             final String[] names,
+                             final SharedSessionContractImplementor session,
+                             final Object owner) throws SQLException;
 
     protected abstract void set(PreparedStatement st,
                                 T value,
@@ -29,17 +29,17 @@ public abstract class ImmutableType<T> implements UserType {
 
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names,
-                              SharedSessionContractImplementor session,
-                              Object owner) throws SQLException {
+    public Object nullSafeGet(final ResultSet rs, String[] names,
+                              final SharedSessionContractImplementor session,
+                              final Object owner) throws SQLException {
         return get(rs, names, session, owner);
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st,
-                            Object value,
-                            int index,
-                            SharedSessionContractImplementor session) throws SQLException {
+    public void nullSafeSet(final PreparedStatement st,
+                            final Object value,
+                            final int index,
+                            final SharedSessionContractImplementor session) throws SQLException {
         set(st, clazz.cast(value), index, session);
     }
 
