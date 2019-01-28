@@ -23,6 +23,7 @@
         <module>custom-identifiers-generator</module>
         <module>how-to-solve-the-postgresql-cast-operator</module>
         <module>how-to-use-stored-procedures</module>
+        <module>bitwise-custom-type</module>
     </modules>
 
 </project>
