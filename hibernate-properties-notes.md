@@ -114,3 +114,45 @@ hibernate.connection.release_mode
 ```
 hibernate.connection.handling_mode
 ```
+
+
+# Reserved keywords
+
+Because SQL is a declarative language, the keywords that form the grammar of the language are reserved for internal use, and they cannot be employed when defining a database identifier (e.g. catalog, schema, table, column name).
+
+We can make escape from reserved words basically we have two options, **manual** or **global**:
+
+###### Manual
+
+```java
+@Entity(name = "Table")
+@javax.persistence.Table(name = "\"Table\"")
+public class Table {
+ 
+    @Id
+    @GeneratedValue
+    private Long id;
+ 
+    @Column(name = "\"catalog\"")
+    private String catalog;
+ 
+    @Column(name = "\"schema\"")
+    private String schema;
+ 
+    private String name;
+ 
+    @Column(name = "\"desc\"")
+    private String description;
+ 
+    //Getters and setters omitted for brevity
+}
+```
+
+###### Global
+
+Define the hibernate.globally_quoted_identifiers property to true in the persistence.xml configuration file:
+This way, Hibernate is going to escape all database identifiers even those properties or tables that are not reserved words, meaning that we don’t need to manually escape the table or column names:
+
+```xml
+<property name="hibernate.globally_quoted_identifiers" value="true"/>
+```
