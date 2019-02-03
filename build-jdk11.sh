@@ -5,8 +5,12 @@
 #mvn test -Dnet.bytebuddy.experimental=true
 # mvn clean install -X -Dnet.bytebuddy.experimental=true
 
-mvn clean package -Dnet.bytebuddy.experimental=true -DskipTests
+#mvn clean compile -Dnet.bytebuddy.experimental=true -DskipTests
+#mvn package -Dnet.bytebuddy.experimental=true -DskipTests
+#mvn test-compile -Dnet.bytebuddy.experimental=true
+#mvn test -Dnet.bytebuddy.experimental=true
 
-mvn test-compile -Dnet.bytebuddy.experimental=true
-
-mvn test -Dnet.bytebuddy.experimental=true
+mvn clean
+mvn compile
+mvn test-compile
+mvn test

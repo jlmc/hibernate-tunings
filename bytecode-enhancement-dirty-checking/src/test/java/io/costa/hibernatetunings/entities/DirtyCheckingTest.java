@@ -3,16 +3,34 @@ package io.costa.hibernatetunings.entities;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runners.MethodSorters;
+
+import java.sql.Statement;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DirtyCheckingTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+
+
+    @After
+    @Before
+    public void before() {
+        provider.beginTransaction();
+        final Session session = provider.em().unwrap(Session.class);
+
+        session.doWork(connection -> {
+
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("delete from public.article");
+            } catch (Exception ignore) {
+            }
+        });
+
+        provider.commitTransaction();
+    }
 
 
     @Test
