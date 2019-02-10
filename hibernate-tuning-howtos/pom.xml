@@ -24,6 +24,7 @@
         <module>how-to-solve-the-postgresql-cast-operator</module>
         <module>how-to-use-stored-procedures</module>
         <module>how-composite-identifier-automatically-generatedvalue</module>
+        <module>how-to-map-an-entity-to-multiple-tables-with-secondarytable</module>
     </modules>
 
 </project>
