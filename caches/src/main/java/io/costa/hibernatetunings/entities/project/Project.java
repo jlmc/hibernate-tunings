@@ -1,5 +1,8 @@
 package io.costa.hibernatetunings.entities.project;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +18,10 @@ public class Project extends BaseEntity {
 
     private String title;
 
-    // @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+    /**
+     * this is a specific hibernate feature, that allows us to cache the collection
+     */
+    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @OneToMany(
             mappedBy = "project",
             orphanRemoval = true, // when the orphanRemoval is set with true the CascadeType.REMOVE is redundant

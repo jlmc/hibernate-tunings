@@ -140,12 +140,40 @@ But can be used to find more configurations like CacheConcurrencyStrategy
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 public class Project {
 }
+```
 
 
+###### What about the caching of relationship?
+
+- By default Hibernate does not cache the relationship between two entities. Even if the two entities are already in the cache.
+
+- This means that even if two related entities have already ben injected in the cache: it is necessary to execute a query to know that that to entities are related.
+
+- This behavior is almost certainly not what we expect to have when we activate the 2 level cache.
+
+- Based in the JPA specification relationships are not cached.
+
+- Fortunately we can improve this behavior, by annotating the entity relationship with the Hibernate specific annotation.
+    
+```
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 ```
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 ---
-# query 
+# Query cache 

@@ -2,6 +2,7 @@ package io.costa.hibernatetunings.cache;
 
 import io.costa.hibernatetunings.entities.project.Issue;
 import io.costa.hibernatetunings.entities.project.Project;
+import org.hamcrest.Matchers;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +15,9 @@ import java.util.stream.Collectors;
 public class TestSecoundLevelCache {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TestSecoundLevelCache.class);
-
+    private static EntityManagerFactory emf;
     @Rule
     public Watcher watcher = Watcher.timer(LOGGER);
-
-    private static EntityManagerFactory emf;
 
     @BeforeClass
     public static void initEntityManagerFactory() {
@@ -30,38 +29,14 @@ public class TestSecoundLevelCache {
         emf.close();
     }
 
-
-    private Long projectId;
-
-
-    //@Before
-    //@Test
-    @Ignore
-    public void populate() {
-        final EntityManager em = emf.createEntityManager();
-
-        em.getTransaction().begin();
-
-        final Project p1 = Project.of("\"TestSecoundLevelCache\"");
-
-        em.persist(p1);
-        em.flush();
-
-        projectId = p1.getId();
-
-        em.getTransaction().commit();
-
-        em.close();
-    }
-
-
     @Test
     public void test2TX() {
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        Project p1 = em.find(Project.class, 331L);
+        Project p1 = em.find(Project.class, 1L);
+
 
         em.getTransaction().commit();
         em.close();
@@ -70,15 +45,20 @@ public class TestSecoundLevelCache {
         em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        Project p2 = em.find(Project.class, 331L);
+        Project p2 = em.find(Project.class, 1L);
 
         em.getTransaction().commit();
         em.close();
+
+        Assert.assertNotNull(p1);
+        Assert.assertNotNull(p2);
+        Assert.assertThat(p1, Matchers.hasProperty("title", Matchers.equalTo("effective-java-3")));
+        Assert.assertThat(p2, Matchers.hasProperty("title", Matchers.equalTo("effective-java-3")));
+        Assert.assertThat(p2, Matchers.equalTo(p1));
     }
 
     @Test
     public void testRelationshipCaching() {
-
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
@@ -95,15 +75,15 @@ public class TestSecoundLevelCache {
 
         // get project and his issues
         a = em.find(Project.class, 1L);
-        writeMessage(a);
 
+        writeMessage(a);
 
         em.getTransaction().commit();
         em.close();
     }
 
     private void writeMessage(Project a) {
-        LOGGER.info("Project " + a.getTitle() + " contains: "
+        LOGGER.trace("***** Project " + a.getTitle() + " contains: "
                 + a.getIssues().stream().map(Issue::getTitle).collect(Collectors.joining(", ")));
     }
 

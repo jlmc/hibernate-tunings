@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+@Cacheable
 @Entity
 @Table(name = "issue")
 public class Issue extends BaseEntity {
