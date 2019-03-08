@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 
 public class TestSecoundLevelCache {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TestSecoundLevelCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestSecoundLevelCache.class);
+
     private static EntityManagerFactory emf;
     @Rule
     public Watcher watcher = Watcher.timer(LOGGER);
