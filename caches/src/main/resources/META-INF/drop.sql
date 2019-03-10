@@ -1,0 +1,2 @@
+ALTER SEQUENCE project_id_seq RESTART WITH 1;
+ALTER SEQUENCE issue_id_seq RESTART WITH 1;

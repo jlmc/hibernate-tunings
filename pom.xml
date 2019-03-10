@@ -19,6 +19,7 @@
         <module>Identifiers</module>
         <module>advanced-topics</module>
         <module>bytecode-enhancement-dirty-checking</module>
+        <module>caches</module>
     </modules>
     <packaging>pom</packaging>
 
