@@ -1,8 +1,8 @@
-package io.costa.hibernatetunings.cache;
+package io.costax.hibernatetunings.cache.secoundlevel;
 
-import io.costa.hibernatetunings.cache.secoundlevel.TestRetrieveAndStoreMode;
-import io.costa.hibernatetunings.entities.project.Issue;
-import io.costa.hibernatetunings.entities.project.Project;
+import io.costax.hibernatetunings.cache.Watcher;
+import io.costax.hibernatetunings.entities.project.Issue;
+import io.costax.hibernatetunings.entities.project.Project;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;

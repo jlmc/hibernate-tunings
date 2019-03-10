@@ -1,7 +1,7 @@
-package io.costa.hibernatetunings.cache.queries;
+package io.costax.hibernatetunings.cache.queries;
 
-import io.costa.hibernatetunings.cache.Watcher;
-import io.costa.hibernatetunings.entities.project.Project;
+import io.costax.hibernatetunings.cache.Watcher;
+import io.costax.hibernatetunings.entities.project.Project;
 import org.hibernate.Session;
 import org.hibernate.annotations.QueryHints;
 import org.junit.*;
