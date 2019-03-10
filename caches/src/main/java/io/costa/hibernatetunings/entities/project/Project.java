@@ -83,4 +83,8 @@ public class Project extends BaseEntity {
         issue.setProject(null);
         this.issues.remove(issue);
     }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
 }

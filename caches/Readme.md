@@ -1,4 +1,4 @@
-# caching 
+# Caching 
 
 
 caching is another way to improve your read operations, the general idea is to keep a copy of the data in local memory, and avoid the database round trip.
@@ -21,8 +21,7 @@ Hibernate provide us two well know cache level. The *1st level* and the *2nd lev
 - Also keep entities, but is independenty of the hibernate session
 - All the Hibernate sessions share this cache
 - session independent
-- requeres additional configurations
-
+- requires additional configurations
 
 
 ## Query Cache
@@ -32,13 +31,6 @@ O Query cache é uma feacture proprietaria do hibernate, e tem por objectivo faz
 session independent
 requeres additional configurations
 
-
-
----
-
-# 1st level 
-
-- activo 
 
 # 2nd level 
 
@@ -269,3 +261,69 @@ cache.evictAll();
 This can be very useful to remove outdated entities, The Batch jobs are a good example to force the clean of the cache:
 We can find a exanple of use the test case: **TestCacheManagement**
 
+
+
+
+
+
+---
+
+# Hibernate Query Cache
+
+
+- Hibernate specific
+
+  - Only supported by Hibernate and not portable for others JPA implementations 
+  - 1st and 2nd level of cache both cache entities and con not be used for queries
+
+
+- Stores query results session independently
+
+  - The query cache caches queries results in a session independent way 
+
+- Needs to be activated in persistence.xml
+ 
+  - Is not activated by default 
+
+```xml
+<properties>
+    <property name="hibernate.cache.use_query_cache" value="true"/>
+</properties>
+```
+
+- Needs to be explicitly activated for a query
+
+  We need also to activate the cache to each query we want do cache the results that can be do by using the following two methods
+
+```
+org.hibernate.Query.setCacheable(true)
+```
+
+or 
+
+```
+@NamedQuery(name = “…”, query = “…”,
+    hints = QueryHint( name="org.hibernate.cacheable", value="true"))
+```
+
+Having to enable caching for some queries may seem strange at first, but there a good reason for it, we shouldn't use case cache for mostly of our queries:
+
+The result of a Query dependents not only of the Query it self but also on the query values of its Parameters, in other words, the value of the parameters causes the results of the queries to be different. Therefore, Hibernate must store the queries result values for each set of parameter values. That is the reason for the Query Caching does not make sense to most of queries.
+
+Hibernate may have to handle many combinations of parameter values which may require a lot of processing and memory. I do this
+to be able to have a possible benefit that may not be advantageous, because many of the entries of the cache may have already been removed when suggesting the need to be alloys a second time.
+
+We should cache a Query results if and only if we perform a Query with the exact same parameter values very often. E.G. Configuration Data, Reports that are the same for lots of users. 
+
+The Query cache only stores the references to the entities, this means that hibernate have to fetch the properties of each entity. this is the reason it only makes sense to use cache caches in conjunction with the 2nd active cache level, because in this way hibernate can fetch those values in the second level cache, otherwise Hibernate have to perform a query that get the entity from the database.
+
+
+We can find examples of Use in the test case: `TestQueryCache`
+
+
+## Summary
+
+- Stores query results for a query and its parameters,
+- [„FROM Author WHERE id=?“, 1]  [1]
+- Stores only entity references or scalars
+- Always use together with 2nd Level Cache, configuration has to fit to each other

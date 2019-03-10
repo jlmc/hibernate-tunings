@@ -24,6 +24,9 @@
             <property name="hibernate.cache.region.factory_class" value="org.hibernate.testing.cache.CachingRegionFactory"/>
             <!--<property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>-->
 
+            <!-- enable Query Cache -->
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+
 
             <!--
 

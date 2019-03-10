@@ -1,5 +1,6 @@
-package io.costa.hibernatetunings.cache;
+package io.costa.hibernatetunings.cache.secoundlevel;
 
+import io.costa.hibernatetunings.cache.Watcher;
 import io.costa.hibernatetunings.entities.project.Issue;
 import io.costa.hibernatetunings.entities.project.Project;
 import org.hamcrest.Matchers;
@@ -17,6 +18,7 @@ public class TestSecoundLevelCache {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestSecoundLevelCache.class);
 
     private static EntityManagerFactory emf;
+
     @Rule
     public Watcher watcher = Watcher.timer(LOGGER);
 
@@ -32,8 +34,10 @@ public class TestSecoundLevelCache {
 
     @Test
     public void test2TX() {
+        // This example is using transactions, but is not mandatory
 
         EntityManager em = emf.createEntityManager();
+
         em.getTransaction().begin();
 
         Project p1 = em.find(Project.class, 1L);

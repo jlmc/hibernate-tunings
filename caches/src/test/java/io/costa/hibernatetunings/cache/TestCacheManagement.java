@@ -1,5 +1,6 @@
 package io.costa.hibernatetunings.cache;
 
+import io.costa.hibernatetunings.cache.secoundlevel.TestRetrieveAndStoreMode;
 import io.costa.hibernatetunings.entities.project.Issue;
 import io.costa.hibernatetunings.entities.project.Project;
 import org.junit.AfterClass;

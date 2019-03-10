@@ -1,5 +1,6 @@
-package io.costa.hibernatetunings.cache;
+package io.costa.hibernatetunings.cache.secoundlevel;
 
+import io.costa.hibernatetunings.cache.Watcher;
 import io.costa.hibernatetunings.entities.project.Project;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
