@@ -1,4 +1,4 @@
-package io.costa.hibernatetunings.entities.project;
+package io.costax.hibernatetunings.entities.project;
 
 import io.costa.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.CreationTimestamp;

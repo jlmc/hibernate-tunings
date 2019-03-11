@@ -1,27 +1,22 @@
-package io.costa.hibernatetunings.entities.project;
+package io.costax.hibernatetunings.entities.project;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import io.costa.hibernatetunings.entities.base.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-
-@Cacheable
-//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @Entity
 @Table(name = "project")
 public class Project extends BaseEntity {
 
     private String title;
 
-    /**
-     * this is a specific hibernate feature, that allows us to cache the collection
-     */
-    @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
     @OneToMany(
             mappedBy = "project",
             orphanRemoval = true, // when the orphanRemoval is set with true the CascadeType.REMOVE is redundant
@@ -82,9 +77,5 @@ public class Project extends BaseEntity {
     public void removeIssue(Issue issue) {
         issue.setProject(null);
         this.issues.remove(issue);
-    }
-
-    public void setTitle(final String title) {
-        this.title = title;
     }
 }

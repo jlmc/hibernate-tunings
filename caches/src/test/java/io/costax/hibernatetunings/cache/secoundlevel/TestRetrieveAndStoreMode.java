@@ -1,7 +1,7 @@
 package io.costax.hibernatetunings.cache.secoundlevel;
 
-import io.costax.hibernatetunings.cache.Watcher;
 import io.costax.hibernatetunings.entities.project.Project;
+import io.costax.rules.Watcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -18,6 +18,7 @@ public class TestRetrieveAndStoreMode {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRetrieveAndStoreMode.class);
 
     private static EntityManagerFactory emf;
+
     @Rule
     public Watcher watcher = Watcher.timer(LOGGER);
 

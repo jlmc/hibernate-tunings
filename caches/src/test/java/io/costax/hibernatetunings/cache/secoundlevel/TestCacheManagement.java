@@ -1,8 +1,8 @@
 package io.costax.hibernatetunings.cache.secoundlevel;
 
-import io.costax.hibernatetunings.cache.Watcher;
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
+import io.costax.rules.Watcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;

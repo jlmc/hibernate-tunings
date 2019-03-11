@@ -1,7 +1,7 @@
 package io.costax.hibernatetunings.cache.queries;
 
-import io.costax.hibernatetunings.cache.Watcher;
 import io.costax.hibernatetunings.entities.project.Project;
+import io.costax.rules.Watcher;
 import org.hibernate.Session;
 import org.hibernate.annotations.QueryHints;
 import org.junit.*;
@@ -16,6 +16,7 @@ public class TestQueryCache {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestQueryCache.class);
 
     private static EntityManagerFactory emf;
+
     @Rule
     public Watcher watcher = Watcher.timer(LOGGER);
 

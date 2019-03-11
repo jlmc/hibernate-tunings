@@ -1,4 +1,4 @@
-package io.costax.hibernatetunings.cache;
+package io.costax.rules;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;

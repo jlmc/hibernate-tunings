@@ -1,7 +1,7 @@
 package io.costax.hibernatetunning.relationships;
 
-import io.costa.hibernatetunings.entities.project.Issue;
-import io.costa.hibernatetunings.entities.project.Project;
+import io.costax.hibernatetunings.entities.project.Issue;
+import io.costax.hibernatetunings.entities.project.Project;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -103,7 +103,7 @@ public class OneToManyAndManyToOneTest {
 
             Assert.fail("should faild because jcache is transient reference");
         } catch (IllegalStateException e) {
-            // Caused by: java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: Not-null property references a transient value - transient instance must be saved before current operation : io.costa.hibernatetunings.entities.project.Issue.project -> io.costa.hibernatetunings.entities.project.Project
+            // Caused by: java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: Not-null property references a transient value - transient instance must be saved before current operation : Issue.project -> Project
             provider.rollbackTransaction();
 
             throw e;

@@ -38,15 +38,17 @@ public class ReplaceFunctionTest {
     @After
     public void cleanup() {
         provider.beginTransaction();
-
+        provider.em().createQuery("delete from Issue ").executeUpdate();
         provider.em().createQuery("delete from Project ").executeUpdate();
-
         provider.commitTransaction();
     }
 
     @Before
     public void populate() {
         provider.beginTransaction();
+
+        provider.em().createQuery("delete from Issue ").executeUpdate();
+        provider.em().createQuery("delete from Project ").executeUpdate();
 
         IntStream.rangeClosed(1, 5)
                 .unordered()

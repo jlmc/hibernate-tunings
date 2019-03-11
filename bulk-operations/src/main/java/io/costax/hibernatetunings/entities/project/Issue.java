@@ -1,12 +1,12 @@
-package io.costa.hibernatetunings.entities.project;
+package io.costax.hibernatetunings.entities.project;
 
-import io.costa.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+//@Cacheable
 @Entity
 @Table(name = "issue")
 public class Issue extends BaseEntity {
@@ -52,6 +52,22 @@ public class Issue extends BaseEntity {
         this.project = project;
         this.title = title;
 
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public OffsetDateTime getCreateAt() {
+        return createAt;
     }
 
     protected void setProject(final Project project) {
