@@ -134,6 +134,9 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 **9 - Cache** [2nd level and query cache](caches/Readme.md) 
 
+**10 - Bulk Operations** [Bulk Operation examples](bulk-operations/Readme.md)
+
+
 ## Extra-tunnings
     
 > A - query-pagination-using-window-functions, How to resolve the HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!     

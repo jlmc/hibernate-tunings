@@ -1,7 +1,7 @@
 package io.costax.hibernatetunning.distincts;
 
-import io.costa.hibernatetunings.entities.project.Issue;
-import io.costa.hibernatetunings.entities.project.Project;
+import io.costax.hibernatetunings.entities.project.Issue;
+import io.costax.hibernatetunings.entities.project.Project;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.hibernate.jpa.QueryHints;

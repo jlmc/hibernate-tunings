@@ -20,6 +20,7 @@
         <module>advanced-topics</module>
         <module>bytecode-enhancement-dirty-checking</module>
         <module>caches</module>
+        <module>bulk-operations</module>
     </modules>
     <packaging>pom</packaging>
 
