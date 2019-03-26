@@ -21,6 +21,7 @@
         <module>bytecode-enhancement-dirty-checking</module>
         <module>caches</module>
         <module>bulk-operations</module>
+        <module>batching-of-write-operations</module>
     </modules>
     <packaging>pom</packaging>
 

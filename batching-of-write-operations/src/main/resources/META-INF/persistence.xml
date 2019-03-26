@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <description>Hibernate Performance Tuning</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+        <properties>
+
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres"/>
+
+            <!--
+            <property name="hibernate.connection.url" value=""/>
+            <property name="hibernate.connection.driver_class" value=""/>
+            <property name="hibernate.connection.username" value=""/>
+            <property name="hibernate.connection.password" value=""/>
+            <property name="hibernate.archive.autodetection" value="class"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hbm2ddl.auto" value="update"/>
+            -->
+
+            <property name="hibernate.jdbc.batch_size" value="5"/>
+            <property name="hibernate.order_inserts" value="true"/>
+            <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
+
+
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/><!--create-->
+            <property name="javax.persistence.schema-generation.create-source" value="metadata"/><!--script-->
+
+            <!--
+            <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
+            <property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/>
+            -->
+            <property name="javax.persistence.sql-load-script-source" value="META-INF/data.sql"/>
+
+            <!--
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
+            -->
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <!--property name="hibernate.show_sql" value="true"/-->
+            <property name="hibernate.format_sql" value="true"/>
+            <!--property name="hibernate.use_sql_comments" value="true"/-->
+            <property name="hibernate.generate_statistics" value="true"/>
+
+
+            <!-- Hibernate 5.2.10, introduced the hibernate.connection.provider_disables_autocommit configuration property which tells
+                Hibernate that the underlying JDBC Connection(s) already disabled the auto-commit mode.
+             -->
+            <property name="hibernate.connection.provider_disables_autocommit" value="false"/>
+
+
+        </properties>
+    </persistence-unit>
+</persistence>

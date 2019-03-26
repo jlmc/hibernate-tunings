@@ -9,6 +9,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
+        <!-- Enable 2 level cache -->
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
 
         <properties>
