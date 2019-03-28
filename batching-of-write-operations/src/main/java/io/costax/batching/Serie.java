@@ -1,6 +1,4 @@
-package io.costax.batching.modek;
-
-import io.costax.batching.Actor;
+package io.costax.batching;
 
 import javax.persistence.*;
 import java.util.HashSet;

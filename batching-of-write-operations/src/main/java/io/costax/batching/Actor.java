@@ -1,8 +1,5 @@
 package io.costax.batching;
 
-
-import io.costax.batching.modek.Serie;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,7 +31,7 @@ public class Actor {
     private String lastName;
 
     @ManyToMany(mappedBy = "actors", cascade = CascadeType.ALL)
-    private Set<io.costax.batching.modek.Serie> series = new HashSet<>();
+    private Set<io.costax.batching.Serie> series = new HashSet<>();
 
     protected Actor() {
     }

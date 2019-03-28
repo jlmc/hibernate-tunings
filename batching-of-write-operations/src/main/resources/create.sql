@@ -1,13 +1,9 @@
 create schema multimedia;
 
 drop table if exists multimedia.actor cascade;
-
 drop table if exists multimedia.serie cascade;
-
 drop sequence if exists multimedia.actor_many_seq;
-drop sequence if exists multimedia.serie_many_seq
-
-
+drop sequence if exists multimedia.serie_many_seq;
 
 create table multimedia.serie
 (
@@ -16,25 +12,18 @@ create table multimedia.serie
   title       varchar(255),
   version     int4,
   primary key (id)
-)
+);
 
--- auto-generated definition
-create sequence multimedia.serie_many_seq
-  increment by 5;
-
+create sequence multimedia.serie_many_seq increment by 5;
 
 
 create table actor
 (
-  id        bigint not null
-    constraint actor_pkey
-      primary key,
+  id        bigint not null primary key,
   firstname varchar(255),
   lastname  varchar(255),
   version   integer
 );
-
-
 
 create table multimedia.serie_actor
 (
@@ -43,5 +32,12 @@ create table multimedia.serie_actor
   primary key (serie_id, actor_id)
 );
 
-create sequence actor_many_seq
-  increment by 10;
+create sequence actor_many_seq increment by 10;
+
+
+create table report
+(
+  id     integer not null  primary key,
+  estado integer,
+  name   varchar(255)
+);

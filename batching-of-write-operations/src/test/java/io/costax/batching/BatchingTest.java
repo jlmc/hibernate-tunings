@@ -1,6 +1,5 @@
 package io.costax.batching;
 
-import io.costax.batching.modek.Serie;
 import io.costax.rules.EntityManagerProvider;
 import io.costax.rules.Watcher;
 import org.junit.Rule;
@@ -51,7 +50,7 @@ public class BatchingTest {
 
             em.persist(actor);
 
-            io.costax.batching.modek.Serie b = Serie.of("Title-" + i, "Description-" + 1);
+            io.costax.batching.Serie b = Serie.of("Title-" + i, "Description-" + 1);
             b.addActor(actor);
 
             em.persist(b);
