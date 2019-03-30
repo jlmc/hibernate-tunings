@@ -130,12 +130,13 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 **8 - Batching**
 
-8.1 - bash-updates: [BatchProcessingTest](advanced-topics/src/test/java/io/costax/hibernatetunning/persistencecontext/BatchProcessingTest.java)
+**8.1 - bash-updates** [BatchProcessingTest](advanced-topics/src/test/java/io/costax/hibernatetunning/persistencecontext/BatchProcessingTest.java)
 
 **9 - Cache** [2nd level and query cache](caches/Readme.md) 
 
 **10 - Bulk Operations** [Bulk Operation examples](bulk-operations/Readme.md)
 
+**11 - Batching-of-write-operations** [atching-of-write-operations](batching-of-write-operations/Readme.md)
 
 ## Extra-tunnings
     

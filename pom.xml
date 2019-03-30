@@ -21,6 +21,7 @@
         <module>bytecode-enhancement-dirty-checking</module>
         <module>caches</module>
         <module>bulk-operations</module>
+        <module>batching-of-write-operations</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -37,7 +38,8 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- dependencies versions-->
-        <hibernate.version>5.4.0.Final</hibernate.version>
+        <hibernate.version>5.4.2.Final</hibernate.version>
+        <!--<hibernate.version>5.4.0.Final</hibernate.version>-->
         <!--<hibernate.version>5.3.6.Final</hibernate.version>-->
         <!--hibernate.version>5.2.17.Final</hibernate.version-->
         <postgresql.version>42.2.1</postgresql.version>
