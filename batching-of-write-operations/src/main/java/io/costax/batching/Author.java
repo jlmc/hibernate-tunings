@@ -6,14 +6,14 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "actor", schema = "multimedia")
-public class Actor {
+@Table(name = "author", schema = "multimedia")
+public class Author {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "actor_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "actorGenerator")
     @SequenceGenerator(
-            name = "actor_generator",
-            sequenceName = "actor_many_seq",
+            name = "actorGenerator",
+            sequenceName = "author_10_seq",
             schema = "multimedia",
             initialValue = 100,
             allocationSize = 10)
@@ -30,26 +30,26 @@ public class Actor {
     @Column
     private String lastName;
 
-    @ManyToMany(mappedBy = "actors", cascade = CascadeType.ALL)
-    private Set<io.costax.batching.Serie> series = new HashSet<>();
+    @ManyToMany(mappedBy = "authors", cascade = CascadeType.ALL)
+    private Set<Book> books = new HashSet<>();
 
-    protected Actor() {
+    protected Author() {
     }
 
-    private Actor(final String firstName, final String lastName) {
+    private Author(final String firstName, final String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public static Actor of(final String firstName, final String lastName) {
-        return new Actor(firstName, lastName);
+    public static Author of(final String firstName, final String lastName) {
+        return new Author(firstName, lastName);
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof Actor)) return false;
-        final Actor actor = (Actor) o;
+        if (!(o instanceof Author)) return false;
+        final Author actor = (Author) o;
         return this.id != null && Objects.equals(id, actor.id);
     }
 
@@ -67,7 +67,7 @@ public class Actor {
         this.firstName = firstName;
     }
 
-    public Set<Serie> getSeries() {
-        return series;
+    public Set<Book> getBooks() {
+        return books;
     }
 }

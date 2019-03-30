@@ -6,15 +6,15 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "ssx", schema = "multimedia")
-public class Serie {
+@Table(name = "book", schema = "multimedia")
+public class Book {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "serie_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bookGenerator")
     @SequenceGenerator(
-            name = "serie_generator",
+            name = "bookGenerator",
             schema = "multimedia",
-            sequenceName = "serie_many_seq",
+            sequenceName = "book_5_seq",
             allocationSize = 5,
             initialValue = 100)
     @Column(name = "id", updatable = false, nullable = false)
@@ -32,29 +32,32 @@ public class Serie {
 
     @ManyToMany
     @JoinTable(
-            name = "serie_actor",
+            name = "book_author",
             schema = "multimedia",
-            joinColumns = {@JoinColumn(name = "serie_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "actor_id", referencedColumnName = "id")})
-    private Set<Actor> actors = new HashSet<>();
+            joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")})
+    private Set<Author> authors = new HashSet<>();
 
-    public Serie() {
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private Set<Review> review = new HashSet<>();
+
+    public Book() {
     }
 
-    private Serie(final String title, final String description) {
+    private Book(final String title, final String description) {
         this.title = title;
         this.description = description;
     }
 
-    public static Serie of(final String title, final String description) {
-        return new Serie(title, description);
+    public static Book of(final String title, final String description) {
+        return new Book(title, description);
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof Serie)) return false;
-        final Serie serie = (Serie) o;
+        if (!(o instanceof Book)) return false;
+        final Book serie = (Book) o;
         return this.id != null && Objects.equals(id, serie.id);
     }
 
@@ -63,8 +66,8 @@ public class Serie {
         return 31;
     }
 
-    public void addActor(final Actor actor) {
-        this.actors.add(actor);
+    public void addActor(final Author actor) {
+        this.authors.add(actor);
     }
 
     public String getTitle() {

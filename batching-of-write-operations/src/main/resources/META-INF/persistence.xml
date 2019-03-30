@@ -32,6 +32,7 @@
             <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
 
             <property name="javax.persistence.schema-generation.create-database-schemas" value="false"/>
+
             <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="javax.persistence.schema-generation.create-source" value="script"/>
             <property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/>

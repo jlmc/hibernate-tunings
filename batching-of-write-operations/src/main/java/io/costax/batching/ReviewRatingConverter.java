@@ -7,20 +7,20 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class ReportStatusConverter implements AttributeConverter<Report.Status, Integer> {
+public class ReviewRatingConverter implements AttributeConverter<Review.Rating, Integer> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportStatusConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReviewRatingConverter.class);
 
     @Override
-    public Integer convertToDatabaseColumn(final Report.Status attribute) {
+    public Integer convertToDatabaseColumn(final Review.Rating attribute) {
         LOGGER.info("=== convertToDatabaseColumn {}", attribute);
 
         return attribute.getCode();
     }
 
     @Override
-    public Report.Status convertToEntityAttribute(final Integer dbData) {
+    public Review.Rating convertToEntityAttribute(final Integer dbData) {
         LOGGER.info("=== convertToEntityAttribute {}", dbData);
-        return Report.Status.statusOf(dbData);
+        return Review.Rating.statusOf(dbData);
     }
 }

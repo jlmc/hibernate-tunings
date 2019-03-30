@@ -89,12 +89,14 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-hikaricp</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-
+        -->
         <!--
         <dependency>
             <groupId>com.zaxxer</groupId>
