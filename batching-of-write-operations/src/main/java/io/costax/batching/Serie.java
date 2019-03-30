@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "serie", schema = "multimedia")
+@Table(name = "ssx", schema = "multimedia")
 public class Serie {
 
     @Id
