@@ -195,6 +195,93 @@ and with Query
 ```
 
 
+---
 
+## Pessimistic lock
+
+Hibernate and JPA also support pessimistic locking, but you should only use it if you really need it. The version-based optimistic locking provides much better scalability.
+
+- Has to be explicitly activated pessimistic lock for a particular query
+    - Hibernate will acquire a row locking database until the end of the current transaction.
+- Locks data for the duration of the current transaction.
+
+    - This has the advantage of we can execute our business operation without any type of conflicts at commit or flush time.
+    
+    - But also provides more waiting time than an optimistic lock 
+
+- Uses row locks on the database
+    - Lock implementations are database specific
+    - Supported lock modes might differ between databases
+- Can be used together with optimistic locking
+
+
+### LockModeType
+
+2 different LockModeType
+
+- PESSIMISTIC_READ
+    - Other transactions can read but not write
+    - Guarantees repeatable reads
+
+- PESSIMISTIC_WRITE
+    - Other transaction can’t read or write
+    - Serializes data access
+    - serialize all transactions that need to access to the current row
+    - should only be used if we update the record
+
+
+#### Specify LockModeType
+
+- Query interface
+
+```java
+Query q = em.createQuery("SELECT a FROM Author a WHERE id = 1");
+q.setLockMode(LockModeType.PESSIMISTIC_READ);
+```
+
+
+- EntityManager.find
+
+```java
+em.find(Author.class, 1L, LockModeType.PESSIMISTIC_READ);
+```
+
+#### Timeout
+
+- Time the database waits to acquire the lock
+
+- Defined in milliseconds with a query hint
+
+```java
+Map<String, Object> hints = new HashMap<String, Object>();
+hints.put("javax.persistence.lock.timeout", 3000);
+```
+
+- Needs to be supported by database and Hibernate dialect
+- Some dialects transform 0 into a NOWAIT clause
+
+PostgresSQl unfortunately does not support queries specific locking timeout
+But it transform 0 into a NOWAIT
+
+
+#### Deadlocks
+
+- Exclusive locks can create deadlocks
+- Handled by the database
+    - Transaction gets terminated after timeout
+    - Deadlock detection finds deadlock and aborts on transaction
+- Ordering of update statements reduces probability
+```xml
+<property name="hibernate.order_updates" value="true"/>
+```
+
+
+#### Summary
+
+* Pessimistic locks use row locks on the database
+    * Depends on database support
+    * **PESSIMISTIC_READ** blocks updates
+    * **PESSIMISTIC_WRITE** block all access
+* Lock timeout defines how long the database tries to acquire the log
 
 
