@@ -22,6 +22,7 @@
         <module>caches</module>
         <module>bulk-operations</module>
         <module>batching-of-write-operations</module>
+        <module>concurrency</module>
     </modules>
     <packaging>pom</packaging>
 

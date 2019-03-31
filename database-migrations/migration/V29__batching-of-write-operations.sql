@@ -15,7 +15,8 @@ create table multimedia.author
     id        bigint not null primary key,
     firstname varchar,
     lastname  varchar,
-    version   integer
+    version   integer,
+    mod_date timestamp with time zone
 );
 
 create table multimedia.book
@@ -42,4 +43,13 @@ create table multimedia.review
     comment varchar(100),
     version integer
 );
+
+
+create table multimedia.publisher
+(
+    id int constraint publisher_pk primary key,
+    mod_date timestamp with time zone,
+    name varchar(150)
+);
+
 
