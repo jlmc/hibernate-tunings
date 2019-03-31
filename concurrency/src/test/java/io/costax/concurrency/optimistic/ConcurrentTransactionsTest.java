@@ -1,4 +1,4 @@
-package io.costax.concurrency;
+package io.costax.concurrency.optimistic;
 
 import batching.Author;
 import io.costax.rules.EntityManagerProvider;
