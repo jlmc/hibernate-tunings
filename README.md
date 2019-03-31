@@ -136,7 +136,12 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 **10 - Bulk Operations** [Bulk Operation examples](bulk-operations/Readme.md)
 
-**11 - Batching-of-write-operations** [atching-of-write-operations](batching-of-write-operations/Readme.md)
+**11 - Batching-of-write-operations** [batching-of-write-operations](batching-of-write-operations/Readme.md)
+
+**12 - Concurrency** [Concurrency](concurrency/Readme.md)
+
+
+----
 
 ## Extra-tunnings
     
