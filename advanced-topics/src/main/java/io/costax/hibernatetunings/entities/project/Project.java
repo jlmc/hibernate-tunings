@@ -48,7 +48,7 @@ public class Project extends BaseEntity {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Project)) return false;
         final Project project = (Project) o;
         return getId() != null && Objects.equals(getTitle(), project.getTitle());
     }

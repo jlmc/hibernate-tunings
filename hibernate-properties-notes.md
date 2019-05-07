@@ -156,3 +156,22 @@ This way, Hibernate is going to escape all database identifiers even those prope
 ```xml
 <property name="hibernate.globally_quoted_identifiers" value="true"/>
 ```
+
+## Query plan cache
+
+The query plan cache is shared by entity and native queries, and its size is controlled by the
+following configuration property:
+
+`<property name="hibernate.query.plan_cache_max_size" value="2048"/>`
+
+By default, the QueryPlanCache stores 2048 plans which is sufficient for many small and
+medium-sized enterprise applications.
+
+For native queries, the QueryPlanCache stores also the ParameterMetadata which holds info about
+parameter name, position, and associated Hibernate type.
+The ParameterMetadata cache is controlled via the following configuration property:
+
+`<property name="hibernate.query.plan_parameter_metadata_max_size" value="128"/>`
+
+If the application executes more queries than the QueryPlanCache can hold, there is going to be
+a performance penalty due to query compilation.

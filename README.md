@@ -32,7 +32,7 @@ docker run --name postgresdemos \
     -e POSTGRES_USER=postgres \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_DB=postgresdemos \
-    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:10
+    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:11
 ```
 
 ###### 2. Run the migrations:
@@ -86,23 +86,30 @@ And then you can simple execute the maven command:
 
 **1 - Get-Started**
 
-    1.3 - logging-sql-statements
-    1.4 - schema-management
+ - 1.1. [logging-sql-statements]
+   - [Typical causes of performance problems](docs/1-Get-Started/1 and 2--loggers-notas.md)
+   - [Why We Need Logging](docs/1-Get-Started/README.md)
+   - [logging-sql-statements-examples](logging-sql-statements/README.md)
     
+ - 1.2. [schema-management](docs/1-Get-Started/1.4-schema-manager.md)
+
 **2 - Connections**    
 
-    2.1 - connection-manager (only documentation)
-    2.2 - connection-lifecycle
+ - 2.1. [connection-manager](docs/2-Connections/Readme.md)
+ - 2.2. connection-lifecycle
     
 **3 - Types**
     
-    3.1 - jpa-and-hibernate-types
-    3.2 - custom-hibernate-types
-    3.3 - open source hibernate types
+ - 3.1 - [jpa-and-hibernate-types](types/jpa-and-hibernate-types.md)
+ - 3.2 - [custom-hibernate-types](types/custom-hibernate-types/custom-hibernate-type.md)
+ - 3.3 - [open source hibernate types](types/hibernate-open-source-custom-types-project/README.md)
 
-**4 - Identifiers**
 
-    4.1 - Identifier 
+4 - [Identifiers](docs/4-Identifiers/GeneratingPrimaryKeys.md)
+
+ - 4.1 - [Identifier](docs/4-Identifiers/4.1%20-%20Identifier.md)
+ - 4.2 - [Hibernate Sequence Optimizers](docs/4-Identifiers/4.2%20-%20hibernate-sequence-optimizers.md)
+
 
 **5 - Relationships**    
     
@@ -140,6 +147,10 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 **12 - Concurrency** [Concurrency](concurrency/Readme.md)
 
+
+**13 - Fetching**
+
+ - 13.1 - [Query Hint Fetch Size](fetching/src/test/java/io/costax/queryhintfetchsize/QueryHintFetchSizeTest.java)
 
 ----
 
