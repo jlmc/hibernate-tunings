@@ -1,5 +1,8 @@
 package io.costax.rules;
 
+import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -18,9 +21,25 @@ public class EntityManagerProvider implements TestRule {
     private EntityManagerProvider(String persistenceUnitName) {
         this.emf = Persistence.createEntityManagerFactory(persistenceUnitName);
 
+
+        /*
+        cast the EntityManager to EntityManagerImpl (the Hibernate implementation)
+        call getFactory()
+        cast the EntityManagerFactory to HibernateEntityManagerFactory
+        call getSessionFactory() and cast it to SessionFactoryImpl
+        call getConnectionProvider() and cast it to the correct implementation. You can see the implementations here. I'll assume that it's a DatasourceConnectionProvider
+        call getDataSource() and you're done.
+        */
+
         this.em = emf.createEntityManager();
         this.tx = this.em.getTransaction();
     }
+
+//    void ds() {
+//        HibernateEntityManagerFactory hibernateEntityManagerFactory = (HibernateEntityManagerFactory) emf;
+//        SessionFactoryImpl sessionFactory = (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();
+//        sessionFactory.get();
+//    }
 
     public static EntityManagerProvider withPersistenceUnit(String persistenceUnitName) {
         return new EntityManagerProvider(persistenceUnitName);
