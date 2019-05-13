@@ -5,6 +5,7 @@ import io.costax.model.ProjectSummary;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;
+import org.hibernate.jpa.QueryHints;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -27,14 +28,18 @@ import java.util.List;
  */
 public class DTOProjectionPaginationTest {
 
+    private static final int PAGE_START = 5;
+    private static final int PAGE_SIZE = 5;
+
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
     public void projection_with_jpql() {
         List<ProjectSummary> pageOfSecondFive = provider.em().createQuery("select new io.costax.model.ProjectSummary(p.id, p.title) from Project p order by p.id desc ", ProjectSummary.class)
-                .setMaxResults(5)
-                .setFirstResult(5)
+                .setMaxResults(PAGE_SIZE)
+                .setFirstResult(PAGE_START)
+                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
         Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
@@ -54,8 +59,9 @@ public class DTOProjectionPaginationTest {
                 .orderBy(cb.desc(p.get("id")));
 
         final List<ProjectSummary> pageOfSecondFive = em.createQuery(projectSummaryCriteriaQuery)
-                .setMaxResults(5)
-                .setFirstResult(5)
+                .setMaxResults(PAGE_SIZE)
+                .setFirstResult(PAGE_START)
+                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
         Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
@@ -67,8 +73,9 @@ public class DTOProjectionPaginationTest {
     public void projection_with_native() {
         final EntityManager em = provider.em();
         List<ProjectSummary> pageOfSecondsFive = em.createNativeQuery("select p.id as id, p.title as title from project p order by p.id desc", "ProjectSummaryMapper")
-                .setMaxResults(5)
-                .setFirstResult(5)
+                .setMaxResults(PAGE_SIZE)
+                .setFirstResult(PAGE_START)
+                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
         Assert.assertThat(pageOfSecondsFive, Matchers.hasSize(5));
@@ -80,8 +87,9 @@ public class DTOProjectionPaginationTest {
     public void projection_with_named_native() {
         final EntityManager em = provider.em();
         List<ProjectSummary> pageOfSecondFive = em.createNamedQuery("ProjectSummaryQuery", ProjectSummary.class)
-                .setMaxResults(5)
-                .setFirstResult(5)
+                .setMaxResults(PAGE_SIZE)
+                .setFirstResult(PAGE_START)
+                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
         Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
@@ -99,8 +107,9 @@ public class DTOProjectionPaginationTest {
 
         List<ProjectSummary> pageOfSecondFive = session.createSQLQuery(
                 "select p.id as id, p.title as title from project p order by p.id desc")
-                .setFirstResult(5)
-                .setMaxResults(5)
+                .setMaxResults(PAGE_SIZE)
+                .setFirstResult(PAGE_START)
+                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .setResultTransformer(
                         new AliasToBeanResultTransformer(ProjectSummary.class))
                 .list();
