@@ -4,6 +4,20 @@ import javax.persistence.*;
 import java.util.Objects;
 
 
+@NamedNativeQuery(
+        name = "ProjectSummaryQuery",
+        resultSetMapping = "ProjectSummaryMapper",
+        query = "select p.id as id, p.title as title from project p order by p.id desc")
+
+@SqlResultSetMapping(name = "ProjectSummaryMapper", classes = {
+        @ConstructorResult(targetClass =  ProjectSummary.class,
+                columns = {
+                    @ColumnResult(name = "id", type = Long.class),
+                    @ColumnResult(name = "title", type = String.class)
+                }
+        )
+})
+
 @Entity
 @Table(name = "project")
 public class Project extends BaseEntity {
