@@ -321,6 +321,13 @@ The Query cache only stores the references to the entities, this means that hibe
 We can find examples of Use in the test case: `TestQueryCache`
 
 
+
+## Caching NaturalId
+
+If the second-level cache is enabled, Hibernate can avoid executing the second query by loading the entity directly from the cache. 
+Hibernate can also cache the natural identifier (e.g. **@NaturalIdCache**) associated with a given entity identifier, therefore preventing the first query as well.
+
+
 ## Summary
 
 - Stores query results for a query and its parameters,
