@@ -22,13 +22,8 @@ public class IssueTreeResultTransformer implements ResultTransformer {
         Issue issue = (Issue) tuple[0];
         Long parentId  = getParentId(tuple[1]);
 
-        if (issue != null) {
-            em.detach(issue);
-        }
-
-        if (issue != null && issuesMap.containsKey(issue.getId())) {
-            issue.setSubIssues(new LinkedList<>());
-        }
+        em.detach(issue);
+        issue.setSubIssues(new LinkedList<>());
 
         if (parentId == null) {
             roots.add(issue);

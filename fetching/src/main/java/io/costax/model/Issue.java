@@ -21,7 +21,7 @@ import java.util.Objects;
                         @FieldResult(name = "description", column = "description"),
                         @FieldResult(name = "createAt", column = "create_At")
                 }),
-        columns = @ColumnResult(name = "bookCount", type = Long.class)
+        columns = @ColumnResult(name = "parentId", type = Long.class)
 )
 @SqlResultSetMapping(
         name = "IssueNodeTreeMapper",

@@ -218,7 +218,7 @@ public class FetchAssociationsTest {
                                 "   project_id, " +
                                 "   title, description, " +
                                 "   create_at, " +
-                                "   COALESCE( parent_id, 0) as bookCount from issues_tree "
+                                "   COALESCE( parent_id, 0) as parentId from issues_tree "
                         , "IssueTreeMapping")
                         .unwrap(NativeQuery.class)
                         .setHint(QueryHints.HINT_READONLY, true)
