@@ -5,7 +5,6 @@ import io.costax.model.SerieDocument;
 import io.costax.rules.EntityManagerProvider;
 import io.costax.rules.Watcher;
 import org.hamcrest.Matchers;
-import org.hibernate.FlushMode;
 import org.hibernate.query.NativeQuery;
 import org.junit.Assert;
 import org.junit.Rule;

@@ -1,4 +1,7 @@
 delete from issue where id > 0;
+
+delete from client where id > 0;
+delete from issue where id > 0;
 delete from project where id > 0;
 
 insert into project (id, version, title) values (1, 1, 'effective-java-3');
@@ -56,4 +59,8 @@ insert into project (id, version, title) values (52, 1, 'Enterprise_JavaBeans_3d
 insert into project (id, version, title) values (53, 1, 'Enterprise_JavaBeans_3dot1_Sixth_Edition');
 insert into project (id, version, title) values (54, 1, 'Enterprise_JavaBeans_3dot1_Sixth_Edition');
 insert into project (id, version, title) values (55, 1, 'Enterprise_JavaBeans_3dot1_Sixth_Edition');
+
+
+insert into client (id, name, slug) values (1, 'P.tech', 'ptech');
+insert into client (id, name, slug) values (2, 'FeedIt', 'feedit');
 
