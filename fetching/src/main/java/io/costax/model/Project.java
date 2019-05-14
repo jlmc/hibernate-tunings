@@ -1,7 +1,9 @@
 package io.costax.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 
 @NamedNativeQuery(
@@ -23,6 +25,19 @@ import java.util.Objects;
 public class Project extends BaseEntity {
 
     private String title;
+
+    @OneToMany(
+            mappedBy = "project",
+            // when the orphanRemoval is set with true the CascadeType.REMOVE is redundant
+            orphanRemoval = true,
+            //cascade = CascadeType.ALL
+            cascade = {
+                    CascadeType.PERSIST,
+                    //CascadeType.REMOVE,
+                    //CascadeType.DETACH,
+                    CascadeType.MERGE
+            })
+    private Set<Issue> issues = new HashSet<>();
 
     protected Project() {
     }
@@ -61,5 +76,21 @@ public class Project extends BaseEntity {
         return "Project{" +
                 "title='" + title + '\'' +
                 '}';
+    }
+
+    public Set<Issue> getIssues() {
+        return Set.copyOf(this.issues);
+    }
+
+    public void add(Issue issue) {
+        issue.setProject(this);
+        this.issues.add(issue);
+    }
+
+    public void remove(Issue issue) {
+        if (this.issues.contains(issue)) {
+           issue.setProject(null);
+           this.issues.remove(issue);
+        }
     }
 }

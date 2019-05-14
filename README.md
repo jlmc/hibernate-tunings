@@ -151,8 +151,14 @@ all the examples can be found in the module advanced-topics in the package: io.c
 **13 - Fetching**
 
  - 13.1 - [Query Hint Fetch Size](fetching/src/test/java/io/costax/queryhintfetchsize/QueryHintFetchSizeTest.java)
+ - 13.2 - [DTO Pagination](fetching/src/test/java/io/costax/queryhintfetchsize/DTOProjectionPaginationTest.java)
+ - 13.3 - [NativeSQL Synchronized Entity Class](fetching/src/test/java/io/costax/queryhintfetchsize/NativeSQLSynchronizedEntityClassTest.java)
+ 
+ - 13.4 - [Direct Fetching Entities](fetching/src/test/java/io/costax/fetchingentities/DirectFetchingTest.java)
+ - 13.5 - [Fetch Associations](fetching/src/test/java/io/costax/fetchingassociations/FetchAssociationsTest.java)
+ 
 
-----
+
 
 ## Extra-tunnings
     

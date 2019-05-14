@@ -8,7 +8,8 @@ import java.util.Objects;
         name = "get_rec_nr_serie_document",
         resultSetMapping = "SerieDocNumMapping",
         query = "select id as serieDocumentoId, name as title, indicator as numDoc " +
-                "from get_rec_nr_serie_document( :id ) as datos(id int, indicator int, name varchar)")
+                "from get_rec_nr_serie_document( :id ) as datos(id int, indicator int, name varchar)"
+)
 @SqlResultSetMapping(name = "SerieDocNumMapping",
         classes = @ConstructorResult(
                 targetClass = SerieDocNum.class,
