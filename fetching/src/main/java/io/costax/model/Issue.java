@@ -4,16 +4,42 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+@SqlResultSetMapping(
+        name = "IssueTreeMapping",
+        entities = @EntityResult(
+                entityClass = Issue.class,
+                fields = {
+
+                        @FieldResult(name = "id", column = "id"),
+                        @FieldResult(name = "version", column = "version"),
+                        @FieldResult(name = "project", column = "project_id"),
+                        @FieldResult(name = "title", column = "title"),
+                        @FieldResult(name = "description", column = "description"),
+                        @FieldResult(name = "createAt", column = "create_At")
+                }),
+        columns = @ColumnResult(name = "bookCount", type = Long.class)
+)
+@SqlResultSetMapping(
+        name = "IssueNodeTreeMapper",
+        classes = @ConstructorResult(
+                targetClass = IssueNodeTree.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "title", type = String.class),
+                        @ColumnResult(name = "parent_id", type = Long.class)
+                }
+        ))
 @Entity
 @Table(name = "issue")
 public class Issue extends BaseEntity {
 
-    @ManyToOne //(cascade = {PERSIST, MERGE, REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
-
 
     private String title;
     private String description;
@@ -21,6 +47,10 @@ public class Issue extends BaseEntity {
     @CreationTimestamp
     @Column(name = "create_at")
     private OffsetDateTime createAt;
+
+    @OneToMany
+    @JoinColumn(name = "parent_id", updatable = false)
+    private List<Issue> subIssues = new ArrayList<>();
 
     protected Issue() {
     }
@@ -58,6 +88,14 @@ public class Issue extends BaseEntity {
 
     }
 
+    public Project getProject() {
+        return project;
+    }
+
+    protected void setProject(final Project project) {
+        this.project = project;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -70,7 +108,19 @@ public class Issue extends BaseEntity {
         return createAt;
     }
 
-    protected void setProject(final Project project) {
-        this.project = project;
+    @Override
+    public String toString() {
+        return "Issue{" +
+                "title='" + title + '\'' +
+                '}';
+    }
+
+
+    public void addChild(final Issue issue) {
+        this.subIssues.add(issue);
+    }
+
+    protected void setSubIssues(List<Issue> subIssues) {
+        this.subIssues = subIssues;
     }
 }

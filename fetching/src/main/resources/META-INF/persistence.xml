@@ -135,6 +135,11 @@
             <property name="hibernate.id.optimizer.pooled.prefer_lo" value="false"/>
 
 
+            <property name="hibernate.query.plan_cache_max_size" value="2048"/>
+            <property name="hibernate.query.plan_parameter_metadata_max_size" value="128"/>
+
+
+
         </properties>
     </persistence-unit>
 </persistence>

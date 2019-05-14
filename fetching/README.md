@@ -142,4 +142,32 @@ Hibernate will generate the following sql:
 ```
 
 
-##
+# Fetching Associations
+
+
+In the database, relationships are represented using foreign keys. To fetch a child association, the database could either join the parent and the child table in the same query, or the parent and the child can be extracted with distinct select statements.
+
+In the object-oriented Domain Model, associations are either object references (e.g. **@ManyToOne**, **@OneToOne**) or collections (e.g. **@OneToMany**, **@ManyToMany**). From a fetching perspective, an association can either be loaded eagerly or lazily.
+
+An eager association is bound to its declaring entity so, when the entity is fetched, the association must be fetched prior to returning the result back to the data access layer.
+
+The association can be loaded either through table joining or by issuing a secondary select statement.
+A lazy relationship is fetched only when being accessed for the first time, so the association is initialized using a secondary select statement.
+
+By default, **`@ManyToOne` and `@OneToOne` associations are fetched eagerly**, while the **`@OneToMany` and `@ManyToMany` relationships are loaded lazily**. During entity mapping, it is possible to overrule the implicit fetching strategies through the fetch association attribute, and, combining the implicit fetching strategies with the explicitly declared ones, the default entity graph is formed.
+
+
+
+
+While executing a direct fetching call or an entity query, Hibernate inspects the default entity graph to know what other entity associations must be fetched additionally.
+
+JPA 2.1 added support for custom entity graphs which, according to the specification, can be used to override the default entity graph on a per-query basis. 
+However, lazy fetching is only a hint, and the underlying persistence provider might choose to simply ignore it.
+
+##### Entity graphs
+These default fetching strategies are a consequence of conforming to the Java Persistence specification. 
+Prior to JPA, Hibernate would fetch every association lazily (@ManyToOne and the @OneToOne relationships used to be loaded lazily too).
+
+**Just because the JPA 1.0 specification says that @ManyToOne and the @OneToOne must be fetched eagerly, it does not mean that this is the right thing to do**, especially in a high-performance data access layer. Even if JPA 2.1 defines the `javax.persistence.fetchgraph` hint which can override a `FetchType.EAGER` strategy at the query level, in reality, Hibernate ignores it and fetches the eager association anyway.
+
+While a lazy association can be fetched eagerly during a query execution, eager associations cannot be overruled on a query basis. For this reason, `FetchType.LAZY` associations are much more flexible to deal with than `FetchType.EAGER` ones.

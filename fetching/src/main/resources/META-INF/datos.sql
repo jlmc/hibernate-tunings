@@ -60,6 +60,18 @@ insert into project (id, version, title) values (53, 1, 'Enterprise_JavaBeans_3d
 insert into project (id, version, title) values (54, 1, 'Enterprise_JavaBeans_3dot1_Sixth_Edition');
 insert into project (id, version, title) values (55, 1, 'Enterprise_JavaBeans_3dot1_Sixth_Edition');
 
+insert into issue (id, version, project_id, title, description, create_at) VALUES (1, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+insert into issue (id, version, project_id, title, description, create_at) VALUES (2, 1, 1, 'effective-issue-2', 'effective-issue-1', '2018-01-01');
+insert into issue (id, version, project_id, title, description, create_at) VALUES (3, 1, 1, 'effective-issue-3', 'effective-issue-1', '2018-01-01');
+insert into issue (id, version, project_id, title, description, create_at) VALUES (4, 1, 1, 'effective-issue-4', 'effective-issue-1', '2018-01-01');
+insert into issue (id, version, project_id, title, description, create_at) VALUES (5, 1, 1, 'effective-issue-5', 'effective-issue-1', '2018-01-01');
+
+insert into issue (id, parent_id, version, project_id, title, description, create_at) VALUES (6, 1, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+insert into issue (id, parent_id, version, project_id, title, description, create_at) VALUES (7, 6, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+insert into issue (id, parent_id, version, project_id, title, description, create_at) VALUES (8, 6, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+insert into issue (id, parent_id, version, project_id, title, description, create_at) VALUES (9, 7, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+insert into issue (id, parent_id, version, project_id, title, description, create_at) VALUES (10, 7, 1, 1, 'effective-issue-1', 'effective-issue-1', '2018-01-01');
+
 
 insert into client (id, name, slug) values (1, 'P.tech', 'ptech');
 insert into client (id, name, slug) values (2, 'FeedIt', 'feedit');
