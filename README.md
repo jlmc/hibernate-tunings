@@ -164,6 +164,8 @@ all the examples can be found in the module advanced-topics in the package: io.c
     
 > A - query-pagination-using-window-functions, How to resolve the HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!     
 
+> A - How to detect HHH000104 issues with hibernate.query.fail_on_pagination_over_collection_fetch
+
 > B - Fix N + 1 probleam with  hibernate-enhance-plugin  
 
 > C - override-generator-strategy: override the identity and sequence generation strategy

@@ -175,3 +175,45 @@ The ParameterMetadata cache is controlled via the following configuration proper
 
 If the application executes more queries than the QueryPlanCache can hold, there is going to be
 a performance penalty due to query compilation.
+
+
+## Enabling the hibernate.query.fail_on_pagination_over_collection_fetch configuration
+
+Since Hibernate ORM 5.2.13, you can now enable the hibernate.query.fail_on_pagination_over_collection_fetch configuration property as follows:
+
+
+```
+<property
+    name="hibernate.query.fail_on_pagination_over_collection_fetch"
+    value="true"
+/>
+```
+
+This way, when running the previous JPQL query:
+
+```
+try {
+    entityManager.createQuery(
+        "select p " +
+        "from Project p " +
+        "left join fetch p.issues " +
+        "where p.title like :titlePattern " +
+        "order by p.createdOn", Project.class)
+    .setParameter(
+        "titlePattern",
+        "demos %"
+    )
+    .setMaxResults(5)
+    .getResultList();
+ 
+    fail("Should have thrown Exception");
+} catch (Exception e) {
+    assertTrue(
+        e.getMessage().contains(
+            "In memory pagination was about to be applied"
+        )
+    );
+}
+```
+
+A HibernateException is thrown instead of just logging a warning message. This way, you are going to get instant feedback of these in-memory pagination issues and address them long before they hit production systems.
