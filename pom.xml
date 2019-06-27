@@ -24,6 +24,7 @@
         <module>batching-of-write-operations</module>
         <module>concurrency</module>
         <module>fetching</module>
+        <module>relationships</module>
     </modules>
     <packaging>pom</packaging>
 
