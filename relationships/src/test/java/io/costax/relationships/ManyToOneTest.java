@@ -16,7 +16,6 @@ public class ManyToOneTest {
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
-
     @Test
     public void persistMovieWithAExistingDirector() {
         provider.doInTx(em -> {

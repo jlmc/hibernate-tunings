@@ -1,7 +1,9 @@
 package io.costax.relationships;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Movie {
@@ -16,6 +18,13 @@ public class Movie {
     @JoinColumn(name = "director_id", referencedColumnName = "id", nullable = false)
     private Director director;
 
+    @OneToMany(
+            mappedBy = "movie",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    Set<Review> reviews = new HashSet<>();
+
     public Movie() {
     }
 
@@ -27,6 +36,21 @@ public class Movie {
 
     public static Movie of(final Integer id, final String title, final Director director) {
         return new Movie(id, title, director);
+    }
+
+    public void addReview(Review review) {
+        this.reviews.add(review);
+        review.setMovie(this);
+    }
+
+    public void removeReview(Review review) {
+        reviews.remove(review);
+        review.setMovie(null);
+    }
+
+
+    public void addReview(String comment) {
+        addReview(Review.of(comment));
     }
 
     @Override
