@@ -1,9 +1,7 @@
 package io.costax.relationships;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Actor {
@@ -32,6 +30,9 @@ public class Actor {
             @AttributeOverride(name = "value", column = @Column(name = "prize_value", nullable = false, updatable = false))
     })
     private Set<Prize> prizes = new HashSet<>();
+
+    @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MovieActorPersonage> movies = new ArrayList<>();
 
     protected Actor() {
     }
@@ -76,5 +77,14 @@ public class Actor {
 
     public void removePrize(Prize prize) {
         this.prizes.remove(prize);
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    protected List<MovieActorPersonage> getMovies() {
+        return movies;
     }
 }

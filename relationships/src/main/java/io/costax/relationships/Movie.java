@@ -28,6 +28,10 @@ public class Movie {
     @OrderBy("li asc ")
     List<Scene> scenes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "entry")
+    private List<MovieActorPersonage> actors = new ArrayList<>();
+
     public Movie() {
     }
 
@@ -83,5 +87,32 @@ public class Movie {
 
     public Set<Scene> getScenes() {
         return Set.copyOf(this.scenes);
+    }
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void addPersonage(Actor actor, String personageName) {
+        final MovieActorPersonage movieActorPersonage = new MovieActorPersonage(this, actor, personageName);
+
+        this.actors.add(movieActorPersonage);
+    }
+
+    public void removePersonage(Actor actor) {
+        for (Iterator<MovieActorPersonage> iterator = actors.iterator(); iterator.hasNext(); ) {
+            MovieActorPersonage movieActorPersonage = iterator.next();
+
+            if (movieActorPersonage.getMovie().equals(this) && movieActorPersonage.getActor().equals(actor)) {
+
+                iterator.remove();
+
+                movieActorPersonage.getActor().getMovies().remove(movieActorPersonage);
+                movieActorPersonage.setMovie(null);
+                movieActorPersonage.setActor(null);
+                //break;
+            }
+        }
     }
 }
