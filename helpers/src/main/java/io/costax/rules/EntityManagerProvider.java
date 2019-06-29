@@ -1,8 +1,5 @@
 package io.costax.rules;
 
-import org.hibernate.ejb.HibernateEntityManagerFactory;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.internal.SessionFactoryImpl;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;

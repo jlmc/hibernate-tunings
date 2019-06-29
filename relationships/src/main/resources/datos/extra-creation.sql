@@ -1,0 +1,1 @@
+alter table TVCHANNEL_TVPROGRAM  add entry int default 0 not null;
