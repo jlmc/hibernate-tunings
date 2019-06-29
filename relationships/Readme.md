@@ -33,7 +33,7 @@ public class Movie {
 ## One to Many 
 
 
-#### Bidirectional
+### Bidirectional
 
 In a bidirectional association, only one side can control the underlying table relationship. For
 the bidirectional `@OneToMany` mapping, it is the child-side `@ManyToOne` association in charge of
@@ -44,10 +44,6 @@ indicating that it only mirrors the @ManyToOne child-side mapping.
 One of the major advantages of using a bidirectional association is that entity state transitions
 can be cascaded from the parent entity to its children. In the following example, when
 persisting the parent Post entity, all the PostComment child entities are persisted as well.
-
-
-
-
 
 
 
@@ -98,5 +94,116 @@ public class Review {
 }
 ```
 
+### Unidirectional 
 
-#### Unidirectional
+
+The unidirectional `@OneToMany` association is very tempting because the mapping is simpler than its bidirectional counterpart. 
+Because there is only one side to take into consideration, there is no need for helper methods and the mapping does not feature a mappedBy attribute either
+
+####  Unidirectional with 3 tables
+
+It is less efficient than the unidirectional `@ManyToOne` mapping or the bidirectional `@OneToMany` association. 
+This **Unidirectional @OneToMany association does not map to a `one-to-many` table relationship**. 
+Because there is no `@ManyToOne` side to control this relationship, Hibernate uses a separate junction table to manage the association between a parent row and its child records.
+
+```java
+@Entity
+public class TvChannel {
+
+    @Id
+    private String id;
+    private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TvProgram> programs = new HashSet<>();
+
+    public void addProgram(TvProgram tvProgram) {
+        this.programs.add(tvProgram);
+    }
+
+    public void removeProgram(TvProgram tvProgram) {
+        this.programs.remove(tvProgram);
+    }
+}
+
+@Entity
+public class TvProgram {
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE, 
+            generator = "tv_program_seq") // this will with JPA 2.2 will generate a sequence named 'tv_program_seq' with with default value defined in the @SequenceGenerator annotation
+    private Integer id;
+    
+    private LocalTime start;
+
+    private LocalTime end;
+
+    private String content;
+}
+```
+
+The previous Entities configuration will generate 3 tables:
+
+![OneToMany-3-Table-db-diagram](docs/OneToMany-3-Table-db-diagram.png)
+
+
+
+#### Unidirectional with @JoinColumn
+
+The next Entities configuration will generate 2 tables, it is the best option in terms of complexity.
+
+
+```java
+@Entity 
+public class Movie {
+    
+        @OneToMany(
+                fetch = FetchType.LAZY, 
+                cascade = CascadeType.ALL, 
+                orphanRemoval = true)
+        @JoinColumn(name = "movie_id", 
+                    updatable = false, 
+                    nullable = false)
+        //@OrderColumn()
+        @OrderBy("li asc ")
+        List<Scene> scenes = new ArrayList<>();
+}
+  
+@Entity
+public class Scene {
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE, 
+            generator = "scene_id_generator")
+    @SequenceGenerator(
+            name="scene_id_generator", 
+            sequenceName = "scene_seq", 
+            initialValue = 1,
+            allocationSize = 10)
+    private Integer id;
+
+    private int li = 0;
+}
+```
+
+![OneToMany-2-Table-db-diagram](docs/OneToMany-2-Table-db-diagram.png)
+
+
+IMPORTANT NOTE:
+
+**Bidirectional `@OneToMany` with `@JoinColumn` relationship**
+
+The @OneToMany with @JoinColumn association can also be turned into a bidirectional relationship, but it requires instructing the child-side to avoid any insert and update synchronization:
+
+```java
+
+class Scene {
+    ...   
+
+    @ManyToOne
+    @JoinColumn(name = "movie_id", insertable = false, updatable = false)
+    private Movie movie;
+}
+```
+
+The redundant update statements are generated for both the unidirectional and the bidirectional association, so the most efficient foreign key mapping is the @ManyToOne association.

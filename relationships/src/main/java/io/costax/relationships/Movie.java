@@ -1,9 +1,7 @@
 package io.costax.relationships;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Movie {
@@ -14,7 +12,7 @@ public class Movie {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id", referencedColumnName = "id", nullable = false)
     private Director director;
 
@@ -24,6 +22,11 @@ public class Movie {
             orphanRemoval = true
     )
     Set<Review> reviews = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "movie_id", updatable = false, nullable = false)
+    @OrderBy("li asc ")
+    List<Scene> scenes = new ArrayList<>();
 
     public Movie() {
     }
@@ -48,6 +51,9 @@ public class Movie {
         review.setMovie(null);
     }
 
+    public void addScene(Scene scene) {
+        scenes.add(scene);
+    }
 
     public void addReview(String comment) {
         addReview(Review.of(comment));
@@ -69,5 +75,13 @@ public class Movie {
 
     public Director getDirector() {
         return director;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Set<Scene> getScenes() {
+        return Set.copyOf(this.scenes);
     }
 }
