@@ -207,3 +207,43 @@ class Scene {
 ```
 
 The redundant update statements are generated for both the unidirectional and the bidirectional association, so the most efficient foreign key mapping is the @ManyToOne association.
+
+
+
+## Element Collection
+
+```java
+@Entity
+public class Actor {
+
+    @Id
+    private Integer id;
+
+    @ElementCollection(
+            fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "actor_language",
+            joinColumns = { @JoinColumn(name = "actor_id", nullable = false) })
+    @Enumerated(EnumType.STRING)
+    @Column(name = "language", nullable = false)
+    private Set<Language> languages = new HashSet<>();
+    
+    
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+                name = "actor_prize",
+                joinColumns = @JoinColumn(name = "actor_id", nullable = false, updatable = false))
+    @AttributeOverrides({
+                @AttributeOverride(name = "at", column = @Column(name = "recived_at", nullable = false, updatable = false)),
+                @AttributeOverride(name = "value", column = @Column(name = "prize_value", nullable = false, updatable = false))
+    })
+    private Set<Prize> prizes = new HashSet<>();
+}
+
+@Embeddable
+public class Prize implements Serializable {
+
+    private OffsetDateTime at;
+    private BigDecimal value;
+}
+```
