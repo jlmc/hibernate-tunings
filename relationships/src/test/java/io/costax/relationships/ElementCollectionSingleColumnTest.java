@@ -65,4 +65,34 @@ public class ElementCollectionSingleColumnTest {
             em.flush();
         });
     }
+
+    @Test
+    public void t02_create_tv_serie() {
+        provider.doInTx(em -> {
+
+            final TvSerie tvSerie = new TvSerie(1);
+            tvSerie.putEpisode("A", "Alma");
+            tvSerie.putEpisode("B", "Boa");
+
+            em.persist(tvSerie);
+        });
+    }
+
+    @Test
+    public void t03_create_tv_serie_prize() {
+        provider.doInTx(em -> {
+
+            final ZoneOffset currentOffSet = OffsetDateTime.now().getOffset();
+            final Prize prize1 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2018, 1, 1, 15, 0), currentOffSet), new BigDecimal("9999.98"));
+            final Prize prize2 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2018, 3, 31, 15, 0), currentOffSet), new BigDecimal("1567.98"));
+            final Prize prize3 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2019, 3, 31, 15, 0), currentOffSet), new BigDecimal("9981182.98"));
+
+
+            final TvSerie tvSerie = new TvSerie(2);
+            tvSerie.putPrize("A", prize1);
+            tvSerie.putPrize("B", prize2);
+
+            em.persist(tvSerie);
+        });
+    }
 }
