@@ -10,6 +10,8 @@
 
 - One To One
 
+- SecondaryTable
+
 
 ##  Many to One 
 
@@ -717,4 +719,71 @@ For every managed entity, the Persistence Context requires both the entity type 
 Bytecode enhancement is the only viable workaround. However, it only works if the parent side is annotated with `@LazyToOne(LazyToOneOption.NO_PROXY)` and the child side is not using `@MapsId`. 
 Because it’s simpler and more predictable, the unidirectional @OneToOne relationship is often preferred.
 
+
+
+## Secundary Table 
+
+```java
+@Entity
+@Table(name = "zone")
+@SecondaryTable(
+        name = "zone_details",
+        // define pkJoinColumns is not mandatory if the pk in the both table have the same name
+        pkJoinColumns = @PrimaryKeyJoinColumn(name = "zone_id", referencedColumnName = "id")
+)
+public class Zone {
+
+    @Id
+    private Integer id;
+    private String name;
+
+    @Version
+    private int version;
+
+    @Column(table = "zone_details")
+    private String pseudonym;
+}
+```
+
+- when we find a Zone instance one select statement will be generated using a left join with the both tables.
+
+```java
+/* select
+*   zone0_.id as id1_18_0_,
+*   zone0_.name as name2_18_0_,
+*   zone0_.version as version3_18_0_,
+*   zone0_1_.pseudonym as pseudony1_19_0_
+* from
+* zone zone0_
+*   left outer join zone_details zone0_1_ on zone0_.id=zone0_1_.id
+* where zone0_.id=?
+*/
+final Zone zone = provider.em().find(Zone.class, 1);
+```
+- when we persist a Zone instance two insert statements will be generated one for each table.
+- when we remove a Zone instance two deletes sql statement will be generated one for each table.
+- when we update any field a zone instance the version will be incremented.
+
+
+
+```sql
+create table zone (
+    id integer not null,
+    name varchar(255),
+    version integer not null,
+    primary key (id)
+)
+    
+    
+create table zone_details (
+    pseudonym varchar(255),
+    id integer not null,
+    primary key (id)
+)
+
+alter table zone_details 
+       add constraint FKf24bmxvmtexgb2w3jumsuvu8v 
+       foreign key (id) 
+       references zone
+```
 
