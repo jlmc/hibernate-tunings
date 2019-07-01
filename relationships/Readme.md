@@ -8,6 +8,8 @@
 
 - Element Collection
 
+- One To One
+
 
 ##  Many to One 
 
@@ -499,3 +501,135 @@ private List<PostTag> movies = new ArrayList<>();
 This way, the bidirectional @ManyToMany relationship is transformed in two bidirectional @OneToMany associations.
 
 The removeTag helper method 'removePersonage' is much more complex because it needs to locate the MovieActorPersonage associated with the current Movie entity and the Actor that is being disassociated.
+
+
+---
+
+## @OneToOne
+
+From a database perspective, the one-to-one association is based on a foreign key that is constrained to be unique. 
+This way, a parent row can be referenced by at most one child record only.
+In JPA, the @OneToOne relationship can be either unidirectional or bidirectional
+
+### Bidirectional
+
+This is the most common case found the pre-existing projects.
+
+![OneToOneBidirectionalTraditionanl.png](docs/OneToOneBidirectionalTraditionanl.png)
+
+
+Note that: the fk festival_id in the Festivaldetails table is a unique constrain.
+
+The Examples of the Best use of this is demonstrated in the test class: io.costax.relationships.OneToOneTradicionalBidimentionalTest
+
+The JPA Class was the following:
+
+
+```java
+
+@Entity
+public class Festival {
+    @Id private Integer id;
+    private String name;
+
+    @OneToOne(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true, optional = false, fetch = FetchType.LAZY)
+    @LazyToOne(LazyToOneOption.NO_PROXY)
+    private FestivalDetails details;
+
+    public void setDetails(final FestivalDetails details) {
+        if (details == null) {
+            if (this.details != null) {
+                this.details.setFestival(null);
+            }
+        } else {
+            details.setFestival(this);
+        }
+        this.details = details;
+    }
+}
+
+@Entity
+public class FestivalDetails {
+    @Id private Integer id;
+
+    @OneToOne
+    @JoinColumn(name = "festival_id", referencedColumnName = "id", unique = true)
+    private Festival festival;
+
+    private String country;
+    private String locality;
+    private OffsetDateTime happensAt;
+
+    public void setFestival(final Festival festival) {
+        this.festival = festival;
+    }
+}
+
+```
+
+The parent-side defines a mappedBy attribute because the child-side (which can is still in charge of this JPA relationship:
+
+```
+@OneToOne(mappedBy = "festival", cascade = CascadeType.ALL, orphanRemoval = true, optional = false, fetch = FetchType.LAZY)
+@LazyToOne(LazyToOneOption.NO_PROXY)
+private FestivalDetails details;
+```
+
+Because this is a bidirectional relationship, the Festival entity must ensure that both sides of this relationship are set upon associating a FestivalDetails entity:
+
+```
+    public void setDetails(final FestivalDetails details) {
+        if (details == null) {
+            if (this.details != null) {
+                this.details.setFestival(null);
+            }
+        } else {
+            details.setFestival(this);
+        }
+        this.details = details;
+    }
+```
+
+Unlike the parent-side `@OneToMany`relationship where Hibernate can simply assign a proxy even if the child collection is empty, 
+The `@OneToOne` relationship must decide if to assign the child reference to null or to an Object, be it the actual entity object type or a runtime Proxy.
+
+This is an issue that affects the parent-side @OneToOne association, while the child-side, which has an associated foreign key column, knows whether the parent reference should be null or not. For this reason, the parent-side must execute a secondary query to know if there is a mirroring foreign key reference on the child-side.
+
+`em.find(Festival.class, 5);`
+
+```
+select * from Festival festival0_ where festival0_.id=?
+
+select
+        festivalde0_.id as id1_5_1_,
+        festivalde0_.country as country2_5_1_,
+        festivalde0_.festival_id as festival5_5_1_,
+        festivalde0_.happensAt as happensA3_5_1_,
+        festivalde0_.locality as locality4_5_1_,
+        festival1_.id as id1_4_0_,
+        festival1_.name as name2_4_0_ 
+    from
+        FestivalDetails festivalde0_ 
+    left outer join
+        Festival festival1_ 
+            on festivalde0_.festival_id=festival1_.id 
+    where
+        festivalde0_.festival_id=?
+```
+
+If the application developer only needs parent entities, the additional child-side secondary queries will be executed unnecessarily, and this might affect application performance. 
+The more parent entities are needed to be retrieved, the more obvious the secondary queries performance impact gets.
+
+**Limitations**
+
+Even if the foreign key is NOT NULL and the parent-side is aware about its non-nullability through the optional attribute 
+(e.g. @OneToOne(mappedBy = "post", fetch = FetchType.LAZY, optional = false)),
+ 
+Hibernate still generates a secondary select statement.
+
+For every managed entity, the Persistence Context requires both the entity type and the identifier, so the child identifier must be known when loading the parent entity, and the only way to find the associated post_details primary key is to execute a secondary query. Because the child identifier is known when using @MapsId, in future, [HHH-10771](https://hibernate.atlassian.net/browse/HHH-10771) a should address the secondary query issue.
+
+Bytecode enhancement is the only viable workaround. However, it only works if the parent side is annotated with `@LazyToOne(LazyToOneOption.NO_PROXY)` and the child side is not using `@MapsId`. 
+Because it’s simpler and more predictable, the unidirectional @OneToOne relationship is often preferred.
+
+
