@@ -115,7 +115,7 @@
                     <execution>
                         <configuration>
                             <failOnError>true</failOnError>
-                            <enableLazyInitialization>false</enableLazyInitialization>
+                            <enableLazyInitialization>true</enableLazyInitialization>
                             <enableDirtyTracking>false</enableDirtyTracking> <!-- -->
                             <enableAssociationManagement>false</enableAssociationManagement> <!---->
                         </configuration>
