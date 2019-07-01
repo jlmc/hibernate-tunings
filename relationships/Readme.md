@@ -509,7 +509,92 @@ The removeTag helper method 'removePersonage' is much more complex because it ne
 
 From a database perspective, the one-to-one association is based on a foreign key that is constrained to be unique. 
 This way, a parent row can be referenced by at most one child record only.
-In JPA, the @OneToOne relationship can be either unidirectional or bidirectional
+In JPA, the @OneToOne relationship can be either unidirectional or bidirectional.
+
+
+### Unidirectional
+
+The mapping is done through the @OneToOne annotation, which, just like the @ManyToOne mapping, might also take a @JoinColumn as well.
+
+```java
+@Entity
+public class Person {
+    @Id
+    private Integer id;
+    private String name;
+}
+
+@Entity
+public class PersonDetail {
+    @Id
+    private Integer id;
+    private String local;
+    private LocalDate bornAt;
+
+    @OneToOne
+    @JoinColumn(name = "post_id")
+    private Person person;
+}
+```
+
+The unidirectional @OneToOne association controls the associated foreign key, so, when the person attribute is set:
+
+
+```java
+final Person jc = new Person(11, "JC");
+em.persist(jc);
+
+final PersonDetail details = new PersonDetail(12, jc, "Coimbra", LocalDate.of(1999, Month.JUNE, 1));
+em.persist(details);
+```
+
+Even if this is a unidirectional association, the Person entity is still the parent-side of this relationship. To fetch the associated PersonDetail, a JPQL query is needed:
+
+```java
+final PersonDetail result = provider.em()
+                                    .createQuery(
+                                        "select pd from PersonDetail pd where pd.person.id = :_id", PersonDetail.class)
+                                    .setParameter("_id", 11)
+                                    .getSingleResult();
+```
+
+If the Person entity always needs its PersonDetail, a separate query might not be desirable. 
+To overcome this limitation, it is important to know the PersonDetail identifier prior to loading the entity.
+
+One workaround would be to use a @NaturalId, which might not require a database access if the entity is stored in the second-level cache. 
+
+Fortunately, there is even a simpler approach which is also portable across JPA providers as well. 
+The JPA 2.0 specification added support for derived identifiers, making possible to link the PersonDetail identifier to the person table primary key. 
+This way, the PersonDetail table primary key can also be a foreign key referencing the person table identifier.
+
+
+The PersonDetail @OneToOne mapping is changed as follows:
+
+```
+@Entity
+public class PersonDetail {
+    @Id
+    private Integer id;
+
+    private String local;
+    private LocalDate bornAt;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "person_id", nullable = false, updatable = false)
+    private Person person;
+}
+
+```
+
+Because PersonDetails has the same identifier as the parent Person entity, it can be fetched without having to write a JPQL query:
+```
+final PersonDetail personDetail = provider.em().find(PersonDetail.class, 11);
+```
+
+If we execute the previous code we can see that only one query will be executed
+
+---
 
 ### Bidirectional
 
