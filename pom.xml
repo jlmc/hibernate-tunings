@@ -25,6 +25,7 @@
         <module>concurrency</module>
         <module>fetching</module>
         <module>relationships</module>
+        <module>bean-validation</module>
     </modules>
     <packaging>pom</packaging>
 

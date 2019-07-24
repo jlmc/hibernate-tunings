@@ -16,6 +16,7 @@ import javax.persistence.PersistenceException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// TODO: refactor this test
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FlushActionOrderTest {
 
@@ -25,6 +26,10 @@ public class FlushActionOrderTest {
     @Test
     public void t00_should_create_some_clients_records() {
         provider.beginTransaction();
+
+        provider.em().createNativeQuery("delete from client c").executeUpdate();
+        provider.em().flush();
+
 
         final EntityManager em = provider.em();
 

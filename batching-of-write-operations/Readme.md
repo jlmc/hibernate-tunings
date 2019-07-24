@@ -29,7 +29,7 @@ So GenerationType.IDENTITY is not supported.
 
 The creation of different entities it also an advantage. The JDBC batching requires the execution of multiple similar statements. And the execution of different statements close the batch.
 
-Crieting different entities requires that hibernate create different PrepareStatements. and close the batch prematurely. Hibernate can avoid this by using the next configuration:
+Creating different entities requires that hibernate create different PrepareStatements. and close the batch prematurely. Hibernate can avoid this by using the next configuration:
 
 ```xml
 <property name="hibernate.order_inserts" value="true"/>
