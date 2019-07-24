@@ -17,9 +17,26 @@ public class RefreshTest {
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
+
+//    @Before
+//    public void setUp() throws Exception {
+//            final Session session = provider.em().unwrap(Session.class);
+//            session.doWork(connection -> {
+//                try (Statement statement = connection.createStatement()) {
+//                    statement.executeUpdate("delete from public.client");
+//                    //statement.executeUpdate("delete from public.article");
+//                } catch (Exception ignore) {
+//                }
+//            });
+//    }
+
     @Test
     public void a_createClient() {
         provider.beginTransaction();
+
+        provider.em().createNativeQuery("delete from client c").executeUpdate();
+        provider.em().flush();
+
         final EntityManager em = provider.em();
 
         final Client client = new Client(1, "AJX", "Aura-juno-xax");

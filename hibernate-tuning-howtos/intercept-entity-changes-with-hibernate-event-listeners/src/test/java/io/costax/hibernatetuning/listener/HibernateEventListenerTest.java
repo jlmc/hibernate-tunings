@@ -23,6 +23,9 @@ public class HibernateEventListenerTest {
 
         provider.beginTransaction();
 
+        provider.em().createNativeQuery("delete from client c").executeUpdate();
+        provider.em().flush();
+
         final Client ptech = new Client(1, "Ptech", "Present-Technologies");
         provider.em().persist(ptech);
 
