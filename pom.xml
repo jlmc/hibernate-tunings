@@ -7,6 +7,26 @@
     <groupId>io.costax</groupId>
     <artifactId>hibernate-tunings</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <name>JPA and Hibernate turning</name>
+    <description>JPA and Hibernate Turning and Tips.</description>
+
+    <developers>
+        <developer>
+            <id>costajlmpp</id>
+            <name>Joao Costa</name>
+            <email>costajlmpp@gmail.com</email>
+            <url>https://costajlmpp.wordpress.com/</url>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/jlmc/hibernate-tunings</url>
+        <connection>scm:git:git://github.com/jlmc/hibernate-tunings.git</connection>
+        <developerConnection>scm:git:git@github.com:jlmc/hibernate-tunings.git</developerConnection>
+    </scm>
+
     <modules>
         <module>database-migrations</module>
         <module>helpers</module>
