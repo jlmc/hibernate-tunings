@@ -6,7 +6,7 @@
 
     <groupId>io.costax</groupId>
     <artifactId>hibernate-tunings</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>JPA and Hibernate turning</name>
     <description>JPA and Hibernate Turning and Tips.</description>
