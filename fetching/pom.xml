@@ -83,12 +83,13 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-hikaricp</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-
+        -->
         <!--Generates the jpa Metadata Model, very useful in building and maintaining and JPA Criteria Queries-->
         <dependency>
             <groupId>org.hibernate</groupId>

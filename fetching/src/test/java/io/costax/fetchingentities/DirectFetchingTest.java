@@ -5,6 +5,7 @@ import io.costax.model.Issue;
 import io.costax.model.Project;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
 import org.junit.Assert;
@@ -26,13 +27,13 @@ public class DirectFetchingTest {
     public void direct_fetching() {
         final EntityManager em = provider.em();
 
-        /**
+        /*
          * The easiest way to load an entity is to call the find method of the Java Persistence EntityManager
          * interface.
          */
         final Project project1 = em.find(Project.class, 1L);
 
-        /**
+        /*
          * The same can be achieved with the Hibernate native API:
          */
         final Project project2 = em.unwrap(Session.class).get(Project.class, 2L);
@@ -42,7 +43,7 @@ public class DirectFetchingTest {
     public void fetching_a_proxy_reference() {
         final EntityManager em = provider.em();
 
-        /**
+        /*
          * Alternatively, direct fetching can also be done lazily. For this purpose, the EntityManager must
          * return a Proxy which delays the SQL query execution until the entity is accessed for the first
          * time.
@@ -52,7 +53,7 @@ public class DirectFetchingTest {
         LOGGER.info("Loaded Project entity");
         LOGGER.info("The project title is '{}'", reference.getTitle());
 
-        /**
+        /*
          * The getReference method call does not execute the SQL statement right away, so the Loaded
          * post entity message is the first to be logged. When the Post entity is accessed by calling the
          * getTitle method, Hibernate executes the select query and, therefore, loads the entity prior to
@@ -63,7 +64,8 @@ public class DirectFetchingTest {
     @Test
     public void fetching_a_proxy_reference_with_hibernate_api() {
         final EntityManager em = provider.em();
-        /**
+
+        /*
          * The same effect can be achieved with the Hibernate native API which offers two alternatives
          * for fetching an entity Proxy:
          */
@@ -73,7 +75,6 @@ public class DirectFetchingTest {
 
         LOGGER.info("Loaded Project entity");
         LOGGER.info("The project title is '{}'", project2.getTitle());
-
 
         Project project3 = session.load(Project.class, 3L);
 
@@ -110,9 +111,13 @@ public class DirectFetchingTest {
     public void natural_identifier_proxy_fetching() {
         final EntityManager em = provider.em();
         Session session = em.unwrap(Session.class);
-        Client client = session.bySimpleNaturalId(Client.class).getReference("feedit");
+        var persistentInstanceOrProxy = session.bySimpleNaturalId(Client.class).getReference("feedit");
 
-        final boolean isAProxy = HibernateProxy.class.isAssignableFrom(client.getClass());
-        Assert.assertTrue(isAProxy);
+        Assert.assertNotNull(persistentInstanceOrProxy);
+        final boolean initialized = Hibernate.isInitialized(persistentInstanceOrProxy);
+        final boolean isAProxy = HibernateProxy.class.isAssignableFrom(persistentInstanceOrProxy.getClass());
+
+        LOGGER.info("is initialized [{}]", initialized);
+        LOGGER.info("is a proxy [{}]", isAProxy);
     }
 }
