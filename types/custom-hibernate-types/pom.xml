@@ -5,7 +5,7 @@
     <parent>
         <artifactId>types</artifactId>
         <groupId>io.costax</groupId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>custom-hibernate-types</artifactId>
