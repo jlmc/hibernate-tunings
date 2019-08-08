@@ -64,8 +64,10 @@ public class OneToManyAndManyToOneTest {
                 .getSingleResult();
 
         soteria.addIssue(Issue.of(soteria, "abcde"));
+        em.flush();
 
         em.remove(soteria);
+        em.flush();
 
         provider.commitTransaction();
     }
@@ -121,7 +123,9 @@ public class OneToManyAndManyToOneTest {
 
         provider.beginTransaction();
 
-        final Issue issue = provider.em().createQuery("from Issue i where i.title = :t", Issue.class).setParameter("t", "jcache:: todo1").getSingleResult();
+        final Issue issue = provider.em().createQuery("from Issue i where i.title = :t", Issue.class)
+                .setParameter("t", "jcache:: todo1")
+                .getSingleResult();
 
         issue.changeProject(jcache, "jcahes updated");
 
