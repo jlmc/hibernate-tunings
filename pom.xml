@@ -69,7 +69,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- dependencies versions-->
-        <hibernate.version>5.4.2.Final</hibernate.version>
+        <hibernate.version>5.4.4.Final</hibernate.version>
         <!--<hibernate.version>5.4.0.Final</hibernate.version>-->
         <!--<hibernate.version>5.3.6.Final</hibernate.version>-->
         <!--hibernate.version>5.2.17.Final</hibernate.version-->
