@@ -75,6 +75,7 @@
         <!--<hibernate.version>5.3.6.Final</hibernate.version>-->
         <!--hibernate.version>5.2.17.Final</hibernate.version-->
         <postgresql.version>42.2.1</postgresql.version>
+        <!--postgresql.version>9.4.1208</postgresql.version-->
         <oracle.version>12.2.0.1</oracle.version>
         <!--<oracle.version>11.2.0.4</oracle.version>-->
         <mysql.version>6.0.6</mysql.version>
@@ -86,7 +87,8 @@
         <spring.version>4.3.3.RELEASE</spring.version>
         <!--jackson.version>2.7.4</jackson.version-->
         <jackson.version>2.9.7</jackson.version>
-        <flyway.version>3.2.1</flyway.version>
+        <flyway.version>5.2.4</flyway.version>
+        <!-- <flyway.version>3.2.1</flyway.version>-->
         <aspectj.version>1.8.7</aspectj.version>
     </properties>
 
@@ -119,6 +121,17 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>1.7.16</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
             </dependency>
 
             <dependency>

@@ -32,7 +32,7 @@ docker run --name postgresdemos \
     -e POSTGRES_USER=postgres \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_DB=postgresdemos \
-    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:11
+    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:11.4
 ```
 
 ###### 2. Run the migrations:
