@@ -64,8 +64,10 @@ public class OneToManyAndManyToOneTest {
                 .getSingleResult();
 
         soteria.addIssue(Issue.of(soteria, "abcde"));
+        em.flush();
 
         em.remove(soteria);
+        em.flush();
 
         provider.commitTransaction();
     }
