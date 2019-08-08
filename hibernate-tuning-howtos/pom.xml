@@ -26,6 +26,7 @@
         <module>how-to-map-an-entity-to-multiple-tables-with-secondarytable</module>
         <module>how-to-join-unrelated-entities</module>
         <module>how-to-map-a-jpa-entity-to-a-view-or-sql-query-using-hibernate</module>
+        <module>entity-listener-for-all-entities</module>
     </modules>
 
 </project>
