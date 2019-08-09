@@ -68,7 +68,7 @@ public class BeanValidationGetStartedTest {
 
     @Test
     public void t03_fields_without_beam_validation_always_execute_sql_statement() {
-       provider.beginTransaction();
+        provider.beginTransaction();
 
         try {
 
@@ -93,5 +93,56 @@ public class BeanValidationGetStartedTest {
         }
     }
 
+    @Test
+    public void t04_perform_different_validation_group_in_persist_and_update() {
 
+        // persist the example video
+        provider.doInTx(em -> {
+
+            final Video livVsNor = Video.of(20191, "Liv vs Nor", "First game of primer league 2019/2020");
+            em.persist(livVsNor);
+            em.flush();
+
+        });
+
+        // update the example video
+
+        provider.doInTx(em -> {
+
+            Video livVsNor = em.find(Video.class, 20191);
+            livVsNor.publish(101);
+            em.flush();
+
+        });
+
+    }
+
+    @Test
+    public void t05_perform_different_validation_group_in_persist_and_update_with_constraint_violation() {
+
+        // persist the example video
+        provider.doInTx(em -> {
+
+            final Video barVsNap = Video.of(20192, "Bar vs Nap", "Pre session game2019/2020");
+            em.persist(barVsNap);
+            em.flush();
+
+        });
+
+        // update the example video
+        try {
+            provider.doInTx(em -> {
+
+                Video livVsNor = em.find(Video.class, 20192);
+                livVsNor.publish(99);
+                //em.flush();
+
+            });
+
+            Assert.fail();
+        } catch (javax.validation.ConstraintViolationException e) {
+            //System.out.println(e);
+        }
+
+    }
 }

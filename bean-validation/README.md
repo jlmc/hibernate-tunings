@@ -180,8 +180,81 @@ With this approach, you can mix ddl and callback modes:
 </property>
 ```
 
+---
 
-##### Validation-groups
+##### What about if we need to perform different business validations for `insert`, `update` or `delete` statements ?
+
+The bean validation and the JPA are very well integrated, and it is very simple to set them up to work together to meet our needs.
+For this use case we can create groups of validations interfaces, for example:
+
+1. In the following code snippet, We can find the `@Min` and the `@Max` annotations to ensure that the minutes attribute contains a value between 100 and 1000.
+
+```java
+@Entity
+@Table
+public class Video {
+
+   @Id
+    private Integer id;
+
+   @Column(nullable = false)
+   private String name;
+
+   @NotNull
+   private String description;
+    
+   @Min(value = 100, groups = PublishedVideo.class)
+   @Max(1000)
+   private int minutes;
+
+}
+```
+
+The `@Min` validation references the `PublishedVideo` interface as a ValidationGroup. 
+This validation is now part of the `PublishedVideo` ValidationGroup and no longer part of the default group.
+
+```java
+public interface PublishedVideo { }
+```
+
+2. Configuring Different ValidationGroups for `Persist`, `Update` or `Delete`.
+
+    - The next step is to set which ValidationGroups shall be validated before an entity gets persisted, updated, or removed. 
+    - By default, your JPA implementation uses the default group before persisting and updating an entity and **doesn’t perform any validation before removing it**. We can change that in your persistence.xml file using the following parameters:
+    
+      - javax.persistence.validation.group.pre-persist
+      - javax.persistence.validation.group.pre-update
+      - javax.persistence.validation.group.pre-remove
+      
+    - In this example, we use the `javax.persistence.validation.group.pre-update` to tell Hibernate to validate the `io.costax.hibernatetunings.entities.PublishedVideo` ValidationGroup before an entity gets updated
+    
+    
+```xml
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <description>Hibernate Performance Tuning</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <!-- Validation modes: AUTO, CALLBACK, NONE -->
+        <validation-mode>AUTO</validation-mode>
+
+        <properties>
+
+            <property name="javax.persistence.validation.group.pre-update"
+                      value="io.costax.hibernatetunings.entities.PublishedVideo"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>
+```    
+
+
+###### More about Validation-groups
 
  
 - `javax.persistence.validation.group.pre-persist`
@@ -195,8 +268,9 @@ javax.persistence.validation.group.pre-update defines the group or list of group
 - `javax.persistence.validation.group.pre-remove`
 javax.persistence.validation.group.pre-remove defines the group or list of groups to validate before persisting an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, javax.validation.groups.Default). Defaults to no group.
 
----
 
+
+---
 ## References
 
 - [The Bean Validation reference implementation](https://hibernate.org/validator/)

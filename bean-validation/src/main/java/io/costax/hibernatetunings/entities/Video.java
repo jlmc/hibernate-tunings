@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
@@ -19,6 +21,10 @@ public class Video {
 
    @NotNull
    private String description;
+
+   @Min(value = 100, groups = PublishedVideo.class)
+   @Max(1000)
+   private int minutes;
 
    protected Video() {
    }
@@ -65,5 +71,9 @@ public class Video {
 
    public String getDescription() {
       return description;
+   }
+
+   public void publish(final int minutes) {
+      this.minutes = minutes;
    }
 }

@@ -10,9 +10,12 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <!-- Validation modes: AUTO, CALLBACK, NONE -->
-         <validation-mode>AUTO</validation-mode>
+        <validation-mode>AUTO</validation-mode>
 
         <properties>
+
+            <property name="javax.persistence.validation.group.pre-update"
+                      value="io.costax.hibernatetunings.entities.PublishedVideo"/>
 
 
             <!--
@@ -29,20 +32,18 @@
 
                 jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db
             -->
-<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>-->
-<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
-<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
-<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
+            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>-->
+            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
+            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
+            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:./data/relationships"/>
-
 
 
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
 
 
-
             <property name="javax.persistence.jdbc.user" value="sa"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.password" value="sa"/>
 
 
             <!--
@@ -112,14 +113,14 @@
             <!-- https://www.boraji.com/hibernate-5-hikaricp-configuration-example -->
 
 
-<!--            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>-->
-<!--            <property name="hibernate.hikari.minimumPoolSize" value="1"/>-->
-<!--            <property name="hibernate.hikari.maximumPoolSize" value="2"/>-->
-<!--            <property name="hibernate.hikari.minimumIdle" value="1"/>-->
-<!--            <property name="hibernate.hikari.connectionTimeout" value="30000"/>-->
-<!--            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>-->
-<!--            <property name="hibernate.hikari.dataSource.user" value="postgres"/>-->
-<!--            <property name="hibernate.hikari.dataSource.password" value="postgres"/>-->
+            <!--            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>-->
+            <!--            <property name="hibernate.hikari.minimumPoolSize" value="1"/>-->
+            <!--            <property name="hibernate.hikari.maximumPoolSize" value="2"/>-->
+            <!--            <property name="hibernate.hikari.minimumIdle" value="1"/>-->
+            <!--            <property name="hibernate.hikari.connectionTimeout" value="30000"/>-->
+            <!--            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>-->
+            <!--            <property name="hibernate.hikari.dataSource.user" value="postgres"/>-->
+            <!--            <property name="hibernate.hikari.dataSource.password" value="postgres"/>-->
             <!-- ************** -->
 
             <!-- Custom statistics implementation, add some extra information to the statistics -->
