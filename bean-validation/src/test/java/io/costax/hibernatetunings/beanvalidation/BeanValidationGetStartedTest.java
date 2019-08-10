@@ -33,7 +33,7 @@ public class BeanValidationGetStartedTest {
 
 
     @Test(expected = javax.validation.ConstraintViolationException.class)
-    public void t01_beanvalidation_validate_before_any_sql_statement() {
+    public void t01__beanvalidation_validate_before_any_sql_statement() {
         provider.beginTransaction();
 
         final Video bv = Video.of(1, "how to start-up bean validation with hibernate", null);
@@ -45,7 +45,7 @@ public class BeanValidationGetStartedTest {
     }
 
     @Test
-    public void t02_beanvalidation_validate_before_any_sql_statement() {
+    public void t02__beanvalidation_validate_before_any_sql_statement() {
         provider.beginTransaction();
 
         try {
@@ -67,7 +67,7 @@ public class BeanValidationGetStartedTest {
     }
 
     @Test
-    public void t03_fields_without_beam_validation_always_execute_sql_statement() {
+    public void t03__fields_without_beam_validation_always_execute_sql_statement() {
         provider.beginTransaction();
 
         try {
@@ -94,7 +94,7 @@ public class BeanValidationGetStartedTest {
     }
 
     @Test
-    public void t04_perform_different_validation_group_in_persist_and_update() {
+    public void t04__perform_different_validation_group_in_persist_and_update() {
 
         // persist the example video
         provider.doInTx(em -> {
@@ -118,7 +118,7 @@ public class BeanValidationGetStartedTest {
     }
 
     @Test
-    public void t05_perform_different_validation_group_in_persist_and_update_with_constraint_violation() {
+    public void t05__perform_different_validation_group_in_persist_and_update_with_constraint_violation() {
 
         // persist the example video
         provider.doInTx(em -> {
