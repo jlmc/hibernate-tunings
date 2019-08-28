@@ -8,6 +8,8 @@ import java.util.Objects;
 
 public class IPv4 implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private final String address;
 
     public IPv4(final String address) {
