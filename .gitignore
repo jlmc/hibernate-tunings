@@ -19,3 +19,7 @@ core/btm2.tlog
 *.tlog
 *.db
 
+.project
+.classpath
+.settings
+.factorypath
