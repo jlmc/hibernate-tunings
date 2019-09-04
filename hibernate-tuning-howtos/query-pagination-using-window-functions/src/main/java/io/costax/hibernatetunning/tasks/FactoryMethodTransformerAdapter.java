@@ -2,10 +2,10 @@ package io.costax.hibernatetunning.tasks;
 
 import org.hibernate.transform.BasicTransformerAdapter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
 
@@ -16,6 +16,9 @@ public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
     }
 
     public static FactoryMethodTransformerAdapter of(final Class<?> factoryMethodClassEnclose, final String factoryMethodName) {
+        Objects.requireNonNull(factoryMethodClassEnclose);
+        Objects.requireNonNull(factoryMethodName);
+
         Method factoryMethod = Arrays.stream(factoryMethodClassEnclose.getDeclaredMethods())
                 .filter(method -> factoryMethodName.equals(method.getName()))
                 .filter(method -> Modifier.isStatic(method.getModifiers()))
@@ -26,9 +29,10 @@ public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
                     }
                     return method;
                 })
-                .orElseThrow(() -> new IllegalArgumentException("No static factory method with the name ["
-                        + factoryMethodName +
-                        "] found in the class [" + factoryMethodClassEnclose.getName() + "]"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                                        String.format(
+                                                "No static factory method with the name [%s] found in the class [%s]"
+                                                , factoryMethodName, factoryMethodClassEnclose.getName())));
 
         return new FactoryMethodTransformerAdapter(factoryMethod);
     }
@@ -36,8 +40,8 @@ public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
     @Override
     public Object transformTuple(final Object[] tuple, final String[] aliases) {
         try {
-            return this.factoryMethod.invoke(null, tuple);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            return factoryMethod.invoke(null, tuple);
+        } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("Can't transformTuple: " + e.getMessage(), e);
         }
     }

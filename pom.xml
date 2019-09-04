@@ -46,6 +46,7 @@
         <module>fetching</module>
         <module>relationships</module>
         <module>bean-validation</module>
+        <module>mapping-blobs-and-clobs</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -110,6 +111,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.199</version>
             </dependency>
 
             <dependency>
