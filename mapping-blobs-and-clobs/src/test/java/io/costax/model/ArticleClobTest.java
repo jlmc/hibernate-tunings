@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.EntityManager;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -69,10 +70,13 @@ public class ArticleClobTest {
     }
 
     private byte[] getCover(final ArticleClob articleClob) {
-        try (InputStream binaryStream = articleClob.getCover().getBinaryStream()) {
+        try (InputStream binaryStream = articleClob.getCover().getBinaryStream();
+             final BufferedInputStream bufferedInputStream = new BufferedInputStream(binaryStream)) {
 
+            return bufferedInputStream.readAllBytes();
+
+            /*
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
             int nRead;
             byte[] data = new byte[1024];
             while ((nRead = binaryStream.read(data, 0, data.length)) != -1) {
@@ -81,6 +85,7 @@ public class ArticleClobTest {
 
             buffer.flush();
             return buffer.toByteArray();
+            */
 
         } catch (SQLException | IOException e) {
             throw new IllegalStateException(e);
@@ -92,16 +97,17 @@ public class ArticleClobTest {
         try (final Reader characterStream = articleClob.getContent().getCharacterStream();
              BufferedReader bufferReader = new BufferedReader(characterStream)) {
 
-            StringBuilder stringBuilder = new StringBuilder();
+            return bufferReader.lines().collect(Collectors.joining(System.lineSeparator()));
 
+            /*
+            StringBuilder stringBuilder = new StringBuilder();
             String str;
             while ((str = bufferReader.readLine()) != null) {
                 stringBuilder.append(str).append("\n");
             }
-
             final String s = stringBuilder.toString();
             return s.substring(0, s.length() - 1);
-
+            */
         } catch (SQLException | IOException e) {
             throw new IllegalStateException(e);
         }
