@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.elementcollections;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -11,16 +11,15 @@ public class TvSerie {
     private Integer id;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "tv_serie_episode", joinColumns = @JoinColumn(name =     "tv_serie_id"))
+    @CollectionTable(name = "tv_serie_episode", joinColumns = @JoinColumn(name = "tv_serie_id"))
     @MapKeyColumn(name = "field_key", length = 50)
     @Column(name = "field_value", length = 100)
-   // @BatchSize(size = 20)
+    // @BatchSize(size = 20)
     private Map<String, String> episodes = new HashMap<>();
 
 
-
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "tv_serie_prize", joinColumns = @JoinColumn(name =     "tv_serie_id"))
+    @CollectionTable(name = "tv_serie_prize", joinColumns = @JoinColumn(name = "tv_serie_id"))
     //@MapKeyEnumerated(EnumType.STRING)
     @MapKeyColumn(name = "field_key", length = 50)
     @AttributeOverrides({

@@ -16,12 +16,15 @@ public class FlywayEntities {
         private Long id;
 
         private String title;
+
         @OneToMany(cascade = CascadeType.ALL, mappedBy = "post",
                 orphanRemoval = true)
         private List<PostComment> comments = new ArrayList<>();
+
         @OneToOne(cascade = CascadeType.ALL, mappedBy = "post",
                 orphanRemoval = true, fetch = FetchType.LAZY)
         private PostDetails details;
+
         @ManyToMany
         @JoinTable(name = "post_tag",
                 joinColumns = @JoinColumn(name = "post_id"),

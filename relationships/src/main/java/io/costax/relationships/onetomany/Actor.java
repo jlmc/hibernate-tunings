@@ -1,4 +1,8 @@
-package io.costax.relationships;
+package io.costax.relationships.onetomany;
+
+import io.costax.relationships.elementcollections.Language;
+import io.costax.relationships.elementcollections.Prize;
+import io.costax.relationships.manytomany.MovieActorPersonage;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,7 +19,7 @@ public class Actor {
             fetch = FetchType.LAZY)
     @JoinTable(
             name = "actor_language",
-            joinColumns = { @JoinColumn(name = "actor_id", nullable = false) })
+            joinColumns = {@JoinColumn(name = "actor_id", nullable = false)})
     @Enumerated(EnumType.STRING)
     @Column(name = "language", nullable = false)
     private Set<Language> languages = new HashSet<>();
@@ -31,7 +35,12 @@ public class Actor {
     })
     private Set<Prize> prizes = new HashSet<>();
 
-    @OneToMany(mappedBy = "actor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "actor",
+            // when the orphanRemoval is set with true the CascadeType.REMOVE is redundant,
+            // in this case we still use it just because we want all the others CascadeTypes.
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<MovieActorPersonage> movies = new ArrayList<>();
 
     protected Actor() {
@@ -84,7 +93,7 @@ public class Actor {
         return id;
     }
 
-    protected List<MovieActorPersonage> getMovies() {
+    public List<MovieActorPersonage> getMovies() {
         return movies;
     }
 }

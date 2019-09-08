@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetoone;
 
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;

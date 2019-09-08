@@ -1,4 +1,7 @@
-package io.costax.relationships;
+package io.costax.relationships.manytomany;
+
+import io.costax.relationships.onetomany.Actor;
+import io.costax.relationships.onetomany.Movie;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -56,11 +59,11 @@ public class MovieActorPersonage {
         return actor;
     }
 
-    protected void setMovie(final Movie movie) {
+    public void setMovie(final Movie movie) {
         this.movie = movie;
     }
 
-    protected void setActor(final Actor actor) {
+    public void setActor(final Actor actor) {
         this.actor = actor;
     }
 }

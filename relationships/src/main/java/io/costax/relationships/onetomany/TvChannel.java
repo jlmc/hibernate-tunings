@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetomany;
 
 import javax.persistence.*;
 import java.util.HashSet;

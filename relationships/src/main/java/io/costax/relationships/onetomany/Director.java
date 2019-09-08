@@ -1,5 +1,4 @@
-package io.costax.relationships;
-
+package io.costax.relationships.onetomany;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,7 +7,8 @@ import java.util.Objects;
 @Entity
 public class Director {
 
-    @Id private Integer id;
+    @Id
+    private Integer id;
     private String name;
 
     //@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
-package io.costax.relationships;
+package io.costax.relationships.elementcollections;
 
+import io.costax.relationships.onetomany.Actor;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;

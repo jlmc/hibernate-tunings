@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetoone;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

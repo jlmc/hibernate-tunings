@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetoone;
 
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
@@ -11,10 +11,10 @@ import java.time.Month;
 
 public class OneToOneUnidirectionalTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OneToOneUnidirectionalTest.class);
+
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void testPeriste() {
@@ -31,32 +31,25 @@ public class OneToOneUnidirectionalTest {
 
         });
 
-        logger.info("*****************");
-        logger.info("*****************");
-        logger.info("*****************");
+        LOGGER.info(" ***************** \n ***************** \n *****************");
 
         final Person person = provider.em().find(Person.class, 11);
 
-        logger.info("*** Person [{}]", person);
+        LOGGER.info("*** Person [{}]", person);
 
-
-        logger.info("*****************");
-        logger.info("*****************");
-        logger.info("*****************");
+        LOGGER.info(" ***************** \n ***************** \n *****************");
 
         final PersonDetail personDetail = provider.em().find(PersonDetail.class, 11);
 
-        logger.info("*** PersonDetail [{}]", personDetail);
+        LOGGER.info("*** PersonDetail [{}]", personDetail);
 
-        logger.info("*****************");
-        logger.info("*****************");
-        logger.info("*****************");
+        LOGGER.info(" ***************** \n ***************** \n *****************");
 
         final PersonDetail result = provider.em()
                 .createQuery("select pd from PersonDetail pd where pd.person.id = :_id", PersonDetail.class)
                 .setParameter("_id", 11)
                 .getSingleResult();
 
-        logger.info("*** PersonDetail [{}]", result);
+        LOGGER.info("*** PersonDetail [{}]", result);
     }
 }

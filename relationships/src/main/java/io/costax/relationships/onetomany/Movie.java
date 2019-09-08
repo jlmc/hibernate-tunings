@@ -1,4 +1,6 @@
-package io.costax.relationships;
+package io.costax.relationships.onetomany;
+
+import io.costax.relationships.manytomany.MovieActorPersonage;
 
 import javax.persistence.*;
 import java.util.*;
@@ -104,7 +106,7 @@ public class Movie {
         for (Iterator<MovieActorPersonage> iterator = actors.iterator(); iterator.hasNext(); ) {
             MovieActorPersonage movieActorPersonage = iterator.next();
 
-            if (movieActorPersonage.getMovie().equals(this) && movieActorPersonage.getActor().equals(actor)) {
+            if ( movieActorPersonage.getMovie().equals(this) && movieActorPersonage.getActor().equals(actor)) {
 
                 iterator.remove();
 

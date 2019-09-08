@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetomany;
 
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;

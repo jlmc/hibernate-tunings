@@ -1,5 +1,7 @@
-package io.costax.relationships;
+package io.costax.relationships.manytoone;
 
+import io.costax.relationships.onetomany.Director;
+import io.costax.relationships.onetomany.Movie;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Assert;
 import org.junit.Rule;

@@ -1,17 +1,13 @@
-package io.costax.relationships;
+package io.costax.relationships.secondarytable;
 
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SecondaryTableTest {
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void test() {

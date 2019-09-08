@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.secondarytable;
 
 import org.hibernate.annotations.DynamicUpdate;
 

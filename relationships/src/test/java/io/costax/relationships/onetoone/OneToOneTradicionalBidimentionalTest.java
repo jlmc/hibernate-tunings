@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetoone;
 
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
@@ -14,10 +14,10 @@ import java.util.List;
 
 public class OneToOneTradicionalBidimentionalTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OneToOneTradicionalBidimentionalTest.class);
+
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void testCreation() {
@@ -69,9 +69,9 @@ public class OneToOneTradicionalBidimentionalTest {
         final EntityManager em = provider.em();
         final Festival festival = em.find(Festival.class, 5);
 
-        logger.info("****** Festival: [{}]", festival);
+        LOGGER.info("****** Festival: [{}]", festival);
 
-        logger.info("****** Festival-Details: [{}]", festival.getDetails());
+        LOGGER.info("****** Festival-Details: [{}]", festival.getDetails());
     }
 
     @Test
@@ -83,6 +83,6 @@ public class OneToOneTradicionalBidimentionalTest {
 
         final List<Festival> festivals = provider.em().createQuery("select f from Festival f", Festival.class).getResultList();
 
-        festivals.forEach(f -> logger.info("**** Festival: [{}]", f));
+        festivals.forEach(f -> LOGGER.info("**** Festival: [{}]", f));
     }
 }

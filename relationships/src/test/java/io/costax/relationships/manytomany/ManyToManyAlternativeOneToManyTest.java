@@ -1,5 +1,8 @@
-package io.costax.relationships;
+package io.costax.relationships.manytomany;
 
+import io.costax.relationships.onetomany.Actor;
+import io.costax.relationships.onetomany.Director;
+import io.costax.relationships.onetomany.Movie;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,7 +16,7 @@ public class ManyToManyAlternativeOneToManyTest {
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManyToManyAlternativeOneToManyTest.class);
 
     @Test
     public void test() {
@@ -51,7 +54,7 @@ public class ManyToManyAlternativeOneToManyTest {
                     .setParameter("_id", johnTravolta.getId())
                     .getSingleResult();
 
-            logger.info("****** Check the JohnTravolta Entry: [{}] ", johnTravoltaEntry);
+            LOGGER.info("****** Check the JohnTravolta Entry: [{}] ", johnTravoltaEntry);
 
             em.getTransaction().begin();
 
@@ -68,7 +71,7 @@ public class ManyToManyAlternativeOneToManyTest {
                     .setParameter("_movie", 2)
                     .getResultList();
 
-            logger.info("Total [{}]", personages.size());
+            LOGGER.info("Total [{}]", personages.size());
         });
 
     }

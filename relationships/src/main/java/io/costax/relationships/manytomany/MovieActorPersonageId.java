@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.manytomany;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;

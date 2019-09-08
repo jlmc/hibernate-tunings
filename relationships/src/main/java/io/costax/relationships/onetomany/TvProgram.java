@@ -1,4 +1,4 @@
-package io.costax.relationships;
+package io.costax.relationships.onetomany;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ public class TvProgram {
 
     private String content;
 
-    TvProgram() {}
+    protected TvProgram() {}
 
     private TvProgram(final LocalTime start, final LocalTime end, final String content) {
         this.start = start;
