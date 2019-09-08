@@ -12,15 +12,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
 import javax.persistence.RollbackException;
 import java.math.BigDecimal;
 import java.time.*;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -30,13 +32,13 @@ public class SingleTableTest {
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     @Test
-    public void a_shouldGetAllAllFinancialDocumentsUsingAPolymorphicJPQL() {
+    public void t00_shouldGetAllAllFinancialDocumentsUsingAPolymorphicJPQL() {
         provider.em().createQuery("select fd from FinancialDocument fd",
                 FinancialDocument.class).getResultList();
     }
 
     @Test
-    public void b_shouldCreateABordWithFiancialDocuments() {
+    public void t01_shouldCreateABordWithFiancialDocuments() {
         final ZoneOffset offset = OffsetDateTime.now().getOffset();
         final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
 
@@ -54,7 +56,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void c_shouldCreateABordWithFinancialDocuments() {
+    public void t02_shouldCreateABordWithFinancialDocuments() {
         //final ZoneOffset offset = OffsetDateTime.now().getOffset();
         //final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
 
@@ -70,7 +72,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void d_should_get_all_the_financialDocuments_the_tbone_board() {
+    public void t03_should_get_all_the_financialDocuments_the_tbone_board() {
         List<FinancialDocument> tboneFinancialDocuments =
                 provider.em()
                         .createQuery("select fd from FinancialDocument fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
@@ -87,7 +89,7 @@ public class SingleTableTest {
     }
 
     @Test
-    public void e_should_find_only_the_invoices() {
+    public void t04_should_find_only_the_invoices() {
         List<FinancialDocument> tboneInvoices =
                 provider.em()
                         .createQuery("select fd from Invoice fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
@@ -99,7 +101,7 @@ public class SingleTableTest {
 
 
     @Test
-    public void f_should_find_board_only_the_invoices() {
+    public void t05_should_find_board_only_the_invoices() {
         Board tbone =
                 provider.em()
                         .createQuery("select b from Board b left join fetch b.financialDocuments fd " +
@@ -115,7 +117,7 @@ public class SingleTableTest {
 
     //@Test(expected = org.hibernate.exception.ConstraintViolationException.class)
     @Test(expected = javax.persistence.RollbackException.class)
-    public void g_should_not_add_invoice_without_content() {
+    public void t06_should_not_add_invoice_without_content() {
         try {
             provider.beginTransaction();
 
@@ -141,7 +143,63 @@ public class SingleTableTest {
     }
 
     @Test
-    public void z_should_delete_all_using_polymorphic_delete_jpql() {
+    public void t07_should_extract_DiscriminatorValue_annotation_value() {
+        // WARN - HHH90000017: Found use of deprecated entity-type selector syntax in HQL/JPQL query ['t.class']; use TYPE operator instead : type(t)
+        List<Object[]> resultList = provider.em().createQuery("SELECT t.class, t FROM FinancialDocument t", Object[].class).getResultList();
+
+        Assert.assertThat(resultList.size(), is(4));
+        Assert.assertThat(resultList.get(0).length, is(2));
+
+        final Object objects0 = resultList.get(0)[0];
+        final Object objects1 = resultList.get(0)[1];
+
+        Assert.assertNotNull(objects0);
+        Assert.assertNotNull(objects1);
+        Assert.assertNotNull(String.class.isAssignableFrom(objects0.getClass()));
+        Assert.assertNotNull(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
+
+        Assert.assertEquals("Invoice", objects0);
+        Assert.assertEquals(Invoice.class, objects1.getClass());
+
+        System.out.println(resultList);
+    }
+
+    @Test
+    public void t08_should_extract_DiscriminatorValue_annotation_value_without_HHH90000017_warning() {
+        List<Object[]> resultList = provider.em().createQuery("SELECT type(t), t FROM FinancialDocument t", Object[].class).getResultList();
+
+        Assert.assertThat(resultList.size(), is(4));
+        Assert.assertThat(resultList.get(0).length, is(2));
+
+        final Object objects0 = resultList.get(0)[0];
+        final Object objects1 = resultList.get(0)[1];
+
+        Assert.assertNotNull(objects0);
+        Assert.assertNotNull(objects1);
+        Assert.assertNotNull(Class.class.isAssignableFrom(objects0.getClass()));
+        Assert.assertNotNull(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
+
+        Assert.assertEquals(Invoice.class, objects0);
+        Assert.assertEquals(Invoice.class, objects1.getClass());
+
+        //Class<? extends FinancialDocument> clazz = (Class<? extends FinancialDocument>) objects0;
+        //final DiscriminatorValue annotation = clazz.getAnnotation(DiscriminatorValue.class);
+        //final String value = annotation.value();
+
+        final Map<String, ? extends List<? extends FinancialDocument>> collect = resultList.stream()
+                .map(obj -> {
+                            return new AbstractMap.SimpleEntry<>(
+                                    ((DiscriminatorValue) ((Class<? extends FinancialDocument>) obj[0]).getAnnotation(DiscriminatorValue.class)).value(),
+                                    ((Class<? extends FinancialDocument>) obj[0]).cast(obj[1])
+                            );
+                        }
+                ).collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+
+        Assert.assertNotNull(collect);
+    }
+
+    @Test
+    public void t99_should_delete_all_using_polymorphic_delete_jpql() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
 
