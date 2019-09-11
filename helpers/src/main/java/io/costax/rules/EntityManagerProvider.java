@@ -1,5 +1,6 @@
 package io.costax.rules;
 
+import org.hibernate.Session;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -8,7 +9,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.sql.Connection;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class EntityManagerProvider implements TestRule {
     private EntityManagerFactory emf;
@@ -94,6 +97,19 @@ public class EntityManagerProvider implements TestRule {
         }
     }
 
+    public <T> T doIt(Function<EntityManager, T> function) {
+        final EntityManager em = emf.createEntityManager();
+        try {
+
+            return function.apply(em);
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     public void doInTx(Consumer<EntityManager> consumer) {
         final EntityManager em = emf.createEntityManager();
         EntityTransaction tx = null;
@@ -109,6 +125,19 @@ public class EntityManagerProvider implements TestRule {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public <T> T doJDBCReturningWork(Function<Connection, T> function) {
+        final EntityManager em = emf.createEntityManager();
+        try {
+
+            return em.unwrap(Session.class).doReturningWork(function::apply);
+
+        } catch (Exception e) {
             throw e;
         } finally {
             em.close();

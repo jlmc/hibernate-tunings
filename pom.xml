@@ -47,6 +47,7 @@
         <module>relationships</module>
         <module>bean-validation</module>
         <module>mapping-blobs-and-clobs</module>
+        <module>instrumentation</module>
     </modules>
     <packaging>pom</packaging>
 
