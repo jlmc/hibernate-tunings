@@ -10,7 +10,7 @@ public class Details {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false, unique = true)
     private User user;
 
     private String nickName;
@@ -33,5 +33,9 @@ public class Details {
 
     public void setUser(final User user) {
         this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

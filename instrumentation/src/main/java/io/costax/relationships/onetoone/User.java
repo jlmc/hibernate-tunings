@@ -22,6 +22,9 @@ public class User implements PersistentAttributeInterceptable {
             orphanRemoval = true)
     private Details details;
 
+    @Transient
+    private PersistentAttributeInterceptor interceptor;
+
     public Integer getId() {
         return id;
     }
@@ -46,10 +49,11 @@ public class User implements PersistentAttributeInterceptable {
     }
 
     void setDetails(final Details details) {
-        if (interceptor != null) {
-            this.details = (Details) interceptor.writeObject(this, "details", this.details, details);
-            return;
+        if (this.interceptor != null) {
+            this.details = (Details) this.interceptor.writeObject(this, "details", this.details, details);
+            //return;
         }
+
         this.details = details;
     }
 
@@ -59,14 +63,11 @@ public class User implements PersistentAttributeInterceptable {
             this.details = null;
         }
 
-        if(d != null) {
+        if (d != null) {
             d.setUser(this);
         }
         this.details = d;
     }
-
-    @Transient
-    private PersistentAttributeInterceptor interceptor;
 
     @Override
     public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {

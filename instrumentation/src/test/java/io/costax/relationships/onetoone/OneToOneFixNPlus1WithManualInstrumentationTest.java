@@ -90,8 +90,12 @@ public class OneToOneFixNPlus1WithManualInstrumentationTest {
         // Replace the  User.details, the Previous user.details must be deleted in cascade
         provider.doInTx(em -> {
             final User user = em.find(User.class, 1);
-            // user.defineDetails(null);
-            //em.flush();
+
+            user.defineDetails(null);
+
+            // because we are using a unique in the user_id fk, and the INSERT statements are executed before the DELETES
+            // we have to execute a flush method to clean the persistence context
+            em.flush();
 
             final Details details = new Details();
             details.setNickName("Zeus");
