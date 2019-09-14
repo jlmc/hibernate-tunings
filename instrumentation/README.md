@@ -17,8 +17,7 @@ This way, a parent row can be referenced by at most one child record only.
 
 In the following example, the User entity represents the parent-side, while the Details is the child-side of the one-to-one association. 
 
-As you may already know the mapping `@OneToOne(fetch = FetchType.LAZY)` not behaving lazily, even though the configuration `fetch = FetchType.LAZY` is present. This is because Hibernate cannot know whether the other Entity is null or not without execute an extra select.
-
+As you may already know, @OneToOne mapping (fetch = FetchType.LAZY) does not behave lazily, even with the `fetch = FetchType.LAZY` present. This is because Hibernate cannot know whether the other Entity is null or not without execute an extra select.
 
 1. To fix the problem the first thing we have to do is to add the annotation `@LazyToOne` in the `user.details` attribute. 
 
@@ -127,7 +126,7 @@ public class Details {
 ```
 
 
-That it. What we did was tell to Hibernate our class User has already been "instrumented" and we are giving the behavior we would like to have in the details attribute.
+That is it. What we did was tell to Hibernate our class User has already been "instrumented" and we are giving the behavior we would like to have in the details attribute.
 
 
 ## What about for hibernate versions under 5.1.x?
