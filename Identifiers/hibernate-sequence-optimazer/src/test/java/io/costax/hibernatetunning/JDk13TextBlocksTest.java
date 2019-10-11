@@ -17,6 +17,7 @@ import java.util.List;
  * <p>
  * https://openjdk.java.net/jeps/355
  */
+@SuppressWarnings({"unchecked", "SqlDialectInspection"})
 public class JDk13TextBlocksTest {
 
     @Rule
@@ -25,18 +26,19 @@ public class JDk13TextBlocksTest {
     @Test
     public void nativeQueryWithTextBlocks() {
         final EntityManager em = provider.em();
-        final List<Tuple> resultList = em.createNativeQuery(
+
+        List<Tuple> result = em.createNativeQuery(
                 """
-                            select d.id, d.name, count(pl.id) OVER ( PARTITION BY d.id ORDER BY d.id asc ) as developer_languagens
-                            from developer d
-                                left join developer_programing_language dpl on d.id = dpl.developer_id
-                                left join programing_language pl on dpl.programing_language_id = pl.id
-                        """
+                 select d.id, d.name, count(pl.id) over ( partition by d.id order by d.id asc ) as total_languages
+                 from developer d
+                     left join developer_programing_language dpl on d.id = dpl.developer_id
+                     left join programing_language pl on dpl.programing_language_id = pl.id
+                 """
                 , Tuple.class)
                 .getResultList();
 
 
-        System.out.println(resultList);
+        System.out.println(result);
     }
 
     @Test
