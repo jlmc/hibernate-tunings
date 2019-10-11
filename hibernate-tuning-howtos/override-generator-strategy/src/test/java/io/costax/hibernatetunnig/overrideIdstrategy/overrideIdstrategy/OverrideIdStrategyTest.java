@@ -1,6 +1,6 @@
 package io.costax.hibernatetunnig.overrideIdstrategy.overrideIdstrategy;
 
-import io.costax.hibernatetunnig.overrideIdstrategy.entity.ProgrammingLanguage;
+import io.costax.hibernatetunnig.overrideIdstrategy.entity.ProgramingLanguage;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.Session;
 import org.junit.*;
@@ -23,8 +23,8 @@ public class OverrideIdStrategyTest {
         provider.beginTransaction();
 
         for (String pn : programingLanguagesNames) {
-            ProgrammingLanguage programmingLanguage = ProgrammingLanguage.of(pn);
-            provider.em().persist(programmingLanguage);
+            ProgramingLanguage programingLanguage = ProgramingLanguage.of(pn);
+            provider.em().persist(programingLanguage);
         }
 
         provider.commitTransaction();
@@ -34,7 +34,7 @@ public class OverrideIdStrategyTest {
     public void after() {
         provider.beginTransaction();
         final EntityManager em = provider.em();
-        em.createQuery("select pl from ProgrammingLanguage pl", ProgrammingLanguage.class)
+        em.createQuery("select pl from ProgramingLanguage pl", ProgramingLanguage.class)
                 .getResultStream()
                 .forEach(em::remove);
         provider.commitTransaction();
@@ -44,18 +44,18 @@ public class OverrideIdStrategyTest {
     public void shoudlUseAsignedIds() {
         provider.beginTransaction();
 
-        provider.em().merge(ProgrammingLanguage.of(9001L, "python"));
-        provider.em().merge(ProgrammingLanguage.of(9002L, "scala"));
+        provider.em().merge(ProgramingLanguage.of(9001L, "python"));
+        provider.em().merge(ProgramingLanguage.of(9002L, "scala"));
 
         provider.em().flush();
         provider.commitTransaction();
 
 
-        final List<ProgrammingLanguage> resultList = provider.em().createQuery("select pl from ProgrammingLanguage  pl", ProgrammingLanguage.class).getResultList();
+        final List<ProgramingLanguage> resultList = provider.em().createQuery("select pl from ProgramingLanguage  pl", ProgramingLanguage.class).getResultList();
         Assert.assertEquals(6, resultList.size());
 
-        final ProgrammingLanguage python = resultList.stream().filter(pl -> pl.getId() == 9001L).findFirst().orElse(null);
-        final ProgrammingLanguage scala = resultList.stream().filter(pl -> pl.getId() == 9002L).findFirst().orElse(null);
+        final ProgramingLanguage python = resultList.stream().filter(pl -> pl.getId() == 9001L).findFirst().orElse(null);
+        final ProgramingLanguage scala = resultList.stream().filter(pl -> pl.getId() == 9002L).findFirst().orElse(null);
 
         Assert.assertEquals("python", python.getName());
         Assert.assertEquals("scala", scala.getName());
@@ -70,14 +70,14 @@ public class OverrideIdStrategyTest {
 
         final Session unwrap = provider.em().unwrap(Session.class);
 
-        final ProgrammingLanguage java = unwrap.bySimpleNaturalId(ProgrammingLanguage.class).load("java");
+        final ProgramingLanguage java = unwrap.bySimpleNaturalId(ProgramingLanguage.class).load("java");
 
         Assert.assertNotNull(java);
     }
 
     @Test
     public void selectWithoutFetch() {
-        List resultList = provider.em().createQuery("select c from ProgrammingLanguage c").getResultList();
+        List resultList = provider.em().createQuery("select c from ProgramingLanguage c").getResultList();
         resultList.forEach(System.out::println);
     }
 

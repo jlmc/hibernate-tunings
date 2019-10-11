@@ -24,9 +24,9 @@ public class Developer {
     private String licenceNumber;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "developer_programmig_language",
+    @JoinTable(name = "developer_programing_language",
             joinColumns = @JoinColumn(name = "developer_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<ProgrammingLanguage> programmingLanguages;
+    private Set<ProgramingLanguage> programingLanguages;
 }

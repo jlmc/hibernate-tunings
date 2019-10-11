@@ -27,10 +27,10 @@ public class Developer implements Identifiable<Long> {
     private String licenceNumber;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "developer_programmig_language",
+    @JoinTable(name = "developer_programing_language",
             joinColumns = @JoinColumn(name = "developer_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<ProgrammingLanguage> programmingLanguages = new HashSet<>();
+    private Set<ProgramingLanguage> programingLanguages = new HashSet<>();
 
 
     protected Developer() {
@@ -80,11 +80,11 @@ public class Developer implements Identifiable<Long> {
         return licenceNumber;
     }
 
-    public Set<ProgrammingLanguage> getProgrammingLanguages() {
-        return Collections.unmodifiableSet(programmingLanguages);
+    public Set<ProgramingLanguage> getProgramingLanguages() {
+        return Collections.unmodifiableSet(programingLanguages);
     }
 
-    public void add(ProgrammingLanguage pl) {
-        this.programmingLanguages.add(pl);
+    public void add(ProgramingLanguage pl) {
+        this.programingLanguages.add(pl);
     }
 }

@@ -8,12 +8,12 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "programming_language")
-public class ProgrammingLanguage implements Identifiable<Long> {
+@Table(name = "programing_language")
+public class ProgramingLanguage implements Identifiable<Long> {
 
     @Id
-    @GenericGenerator(name = "programming_language_identity", strategy = AssignedIdentityGenerator.STRATEGY)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "programming_language_identity")
+    @GenericGenerator(name = "programing_language_identity", strategy = AssignedIdentityGenerator.STRATEGY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "programing_language_identity")
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, unique = true)
     private Long id;
@@ -22,19 +22,19 @@ public class ProgrammingLanguage implements Identifiable<Long> {
     @Column(name = "name", nullable = false, updatable = false)
     private String name;
 
-    protected ProgrammingLanguage() {
+    protected ProgramingLanguage() {
     }
 
-    private ProgrammingLanguage(final String name) {
+    private ProgramingLanguage(final String name) {
         this.name = name;
     }
 
-    public static ProgrammingLanguage of(final String name) {
-        return new ProgrammingLanguage(name);
+    public static ProgramingLanguage of(final String name) {
+        return new ProgramingLanguage(name);
     }
 
-    public static ProgrammingLanguage of(final Long id, final String name) {
-        ProgrammingLanguage of = of(name);
+    public static ProgramingLanguage of(final Long id, final String name) {
+        ProgramingLanguage of = of(name);
         of.id = id;
         return of;
 
@@ -57,7 +57,7 @@ public class ProgrammingLanguage implements Identifiable<Long> {
 
     @Override
     public String toString() {
-        return "ProgrammingLanguage{" +
+        return "ProgramingLanguage{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
