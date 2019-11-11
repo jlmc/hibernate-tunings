@@ -28,6 +28,7 @@
         <module>how-to-map-a-jpa-entity-to-a-view-or-sql-query-using-hibernate</module>
         <module>entity-listener-for-all-entities</module>
         <module>how-map-localized-data-with-jpa</module>
+        <module>how-to-ignore-missing-relationships</module>
     </modules>
 
 </project>

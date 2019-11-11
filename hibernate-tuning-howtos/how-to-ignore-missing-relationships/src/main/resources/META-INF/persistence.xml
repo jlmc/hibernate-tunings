@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <description>Hibernate Performance Tuning</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <properties>
+
+
+            <!--
+            InMemory: In-memory (private) -
+                jdbc:h2:mem: __
+                only one connection, when the connection close everything will be erase.
+
+
+            Embedded (local) connection
+                jdbc:h2:[file:][<path>]<databaseName>
+                jdbc:h2:~/test
+                jdbc:h2:file:/data/sample
+                jdbc:h2:file:C:/data/sample (Windows only)
+
+                jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db
+            -->
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>-->
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
+<!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./data/rmissing-elationships"/>
+
+
+
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+
+
+
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+
+
+            <!--
+             javax.persistence.schema-generation.database.action
+             Defines whether the persistence provider shall create the database,
+             first drop and then recreate it, only drop it or do nothing at all.
+             If this property is not provided, no schema will be created.
+
+             none, create, drop-and-create, drop
+
+             -->
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+
+
+            <!-- javax.persistence.schema-generation.create-source = [metadata, script, metadata-then-script, script-then-metadata]-->
+            <property name="javax.persistence.schema-generation.create-source" value="metadata-then-script"/>
+            <property name="javax.persistence.schema-generation.create-script-source" value="datos/extra-creation.sql"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
+            <property name="javax.persistence.schema-generation.drop-script-source" value="datos/drop.sql"/>
+
+
+
+            <property name="javax.persistence.sql-load-script-source" value="datos/datos.sql"/>
+
+            <!--
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            -->
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <!--property name="hibernate.show_sql" value="true"/-->
+            <property name="hibernate.format_sql" value="true"/>
+            <!--property name="hibernate.use_sql_comments" value="true"/-->
+            <property name="hibernate.generate_statistics" value="true"/>
+
+            <!--property name="hibernate.connection.release_mode" value="after_transaction"/-->
+            <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/ -->
+            <!--property name="hibernate.jdbc.bash_size" value="5"/-->
+
+            <!-- Hibernate 5.2.10, introduced the hibernate.connection.provider_disables_autocommit configuration property which tells
+            Hibernate that the underlying JDBC Connection(s) already disabled the auto-commit mode.
+            -->
+            <property name="hibernate.connection.provider_disables_autocommit" value="false"/>
+
+
+            <property name="hibernate.archive.autodetection" value="class"/>
+
+
+            <!--
+            **************
+            ** Connection Pool C3P0
+            **************
+            -->
+            <!-- Important -->
+            <!--<property name="hibernate.connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider" />-->
+            <!--
+            <property name="hibernate.c3p0.max_size" value="2" />
+            <property name="hibernate.c3p0.min_size" value="0" />
+            <property name="hibernate.c3p0.acquire_increment" value="1" />
+            <property name="hibernate.c3p0.idle_test_period" value="300" />
+            <property name="hibernate.c3p0.max_statements" value="0" />
+            <property name="hibernate.c3p0.timeout" value="100" />
+            -->
+            <!-- ************** -->
+
+            <!--
+            **************
+            ** Connection Pool hikaricp
+            **************
+            -->
+            <!-- Connection pool -->
+            <!-- https://www.boraji.com/hibernate-5-hikaricp-configuration-example -->
+
+
+<!--            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>-->
+<!--            <property name="hibernate.hikari.minimumPoolSize" value="1"/>-->
+<!--            <property name="hibernate.hikari.maximumPoolSize" value="2"/>-->
+<!--            <property name="hibernate.hikari.minimumIdle" value="1"/>-->
+<!--            <property name="hibernate.hikari.connectionTimeout" value="30000"/>-->
+<!--            <property name="hibernate.hikari.dataSource.url" value="jdbc:postgresql://localhost:5432/postgresdemos"/>-->
+<!--            <property name="hibernate.hikari.dataSource.user" value="postgres"/>-->
+<!--            <property name="hibernate.hikari.dataSource.password" value="postgres"/>-->
+            <!-- ************** -->
+
+            <!-- Custom statistics implementation, add some extra information to the statistics -->
+            <!--property name="hibernate.stats.factory" value="io.costax.hibernatetunning.statistics.TransactionStatisticsFactory"/-->
+
+
+            <!-- enable batch processing -->
+            <property name="hibernate.jdbc.batch_size" value="25"/>
+            <property name="hibernate.order_inserts" value="true"/>
+            <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
+
+
+            <!--
+            tell Hibernate which timezone it shall use and set it to a timezone without daylight saving time, e.g. UTC. You can do that with the configuration parameter hibernate.jdbc.time_zone
+            -->
+            <property name="hibernate.jdbc.time_zone" value="UTC"/>
+
+
+            <!-- Identifier optimizer configurations-->
+            <!-- hibernate.id.new_generator_mappings is true by default in hibernate 5,
+                the JPA mapping above will use the **SequenceStyleGenerator**
+                By default, the **SequenceStyleGenerator** and **TableGenerator** identifier generators uses the pooled optimizer.
+                If the **hibernate.id.optimizer.pooled.prefer_lo**
+                configuration property is set to **true**, Hibernate will use the pooled-lo optimizer by default.
+            -->
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="false"/>
+
+
+        </properties>
+    </persistence-unit>
+</persistence>
