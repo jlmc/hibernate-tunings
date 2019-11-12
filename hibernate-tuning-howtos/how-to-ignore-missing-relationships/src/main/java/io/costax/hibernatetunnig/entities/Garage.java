@@ -26,7 +26,7 @@ public class Garage {
     /**
      * This property should be used for read only
      */
-    @OneToMany
+    @OneToMany(cascade = {})
     @JoinColumn(name = "garage_id", updatable = false, insertable = false)
     @Where(clause = "dtype = 'C'")
     private List<Car> cars = new ArrayList<>();
@@ -34,7 +34,7 @@ public class Garage {
     /**
      * This property should be used for read only
      */
-    @OneToMany(cascade = {}, orphanRemoval = true)
+    @OneToMany(cascade = {})
     @JoinColumn(name = "garage_id", updatable = false, insertable = false)
     @Where(clause = "dtype = 'B'")
     private List<Bicycle> bicycles = new ArrayList<>();
@@ -94,15 +94,15 @@ public class Garage {
     }
 
     public void addBicycle(Bicycle bicycle) {
-        // Caution: it good idea to add the instance in the both collections to keep the both synchronized,
-        // and one of them should do trigger any update or delete
+        // Caution: it is good idea to add the instance in the both collections to keep the both synchronized,
+        // and one of them should not trigger any insert,update or delete
         this.bicycles.add(bicycle);
         this.vehicles.add(bicycle);
     }
 
     public void removeBicycle(Bicycle bicycle) {
-        // Caution: it good idea to add the instance in the both collections to keep the both synchronized,
-        // and one of them should do trigger any update or delete
+        // Caution: it is good idea to remove the instance in the both collections to keep the both synchronized,
+        // and one of them should not trigger any insert,update or delete
         this.bicycles.remove(bicycle);
         this.vehicles.remove(bicycle);
     }
