@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.CascadeType.ALL;
+
 @Entity
 public class Garage {
 
@@ -19,23 +21,41 @@ public class Garage {
     /**
      * We can omit this property, but doing that we should make subtype collections updatable and insertable, not read only
      */
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(cascade = {ALL}, orphanRemoval = true)
     @JoinColumn(name = "garage_id")
     private List<Vehicle> vehicles = new ArrayList<>();
 
     /**
      * This property should be used for read only
      */
-    @OneToMany(cascade = {})
-    @JoinColumn(name = "garage_id", updatable = false, insertable = false)
+    @OneToMany(
+            cascade = {
+                    //ALL,
+                    //PERSIST,
+                    //MERGE,
+                    //REMOVE,
+                    //REFRESH,
+                    //DETACH
+            },
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "garage_id", updatable = false)
     @Where(clause = "dtype = 'C'")
     private List<Car> cars = new ArrayList<>();
 
     /**
      * This property should be used for read only
      */
-    @OneToMany(cascade = {})
-    @JoinColumn(name = "garage_id", updatable = false, insertable = false)
+    @OneToMany(
+            cascade = {
+                    //ALL,
+                    //PERSIST,
+                    //MERGE,
+                    //REMOVE,
+                    //REFRESH,
+                    //DETACH
+            },
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "garage_id", updatable = false)
     @Where(clause = "dtype = 'B'")
     private List<Bicycle> bicycles = new ArrayList<>();
 

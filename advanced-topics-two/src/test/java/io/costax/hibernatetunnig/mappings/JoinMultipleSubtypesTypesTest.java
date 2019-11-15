@@ -37,19 +37,20 @@ public class JoinMultipleSubtypesTypesTest {
 
         });
 
-        final Garage elephant = provider.em().find(Garage.class, 1);
+
+        Garage elephant = provider.em().find(Garage.class, 1);
         final List<Car> cars = elephant.getCars();
         final List<Bicycle> bicycles = elephant.getBicycles();
 
         Assert.assertThat(elephant.getVehicles(), Matchers.hasSize(4));
         Assert.assertThat(cars, Matchers.hasSize(2));
-        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(1, p.getId())).findAny().orElse(null) );
-        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(2, p.getId())).findAny().orElse(null) );
+        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(1, p.getId())).findAny().orElse(null));
+        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(2, p.getId())).findAny().orElse(null));
 
 
         Assert.assertThat(bicycles, Matchers.hasSize(2));
-        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(3, p.getId())).findAny().orElse(null) );
-        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(8, p.getId())).findAny().orElse(null) );
+        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(3, p.getId())).findAny().orElse(null));
+        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(8, p.getId())).findAny().orElse(null));
 
         provider.doInTx(em -> {
             final Garage elephant1 = em.find(Garage.class, 1);
@@ -57,12 +58,25 @@ public class JoinMultipleSubtypesTypesTest {
 
             final Bicycle bicycle = zebra1.getBicycles().get(0);
             elephant1.addBicycle(bicycle);
-
             em.flush();
 
         });
 
-        provider.em().refresh(elephant);
+        /*
+        provider.doIt(em -> {
+
+            final Garage garage1 = em.find(Garage.class, 1);
+            final List<Vehicle> vehicles1 = garage1.getVehicles();
+            final List<Bicycle> bicycles1 = garage1.getBicycles();
+
+            System.out.println("--- size of veh: " + vehicles1.size());
+            System.out.println("--- size of bic: " + bicycles1.size());
+
+        });
+         */
+
+        provider.em().clear();
+        elephant = provider.em().find(Garage.class, 1);
 
         Assert.assertThat(elephant.getVehicles(), Matchers.hasSize(5));
         Assert.assertThat(elephant.getBicycles(), Matchers.hasSize(3));
