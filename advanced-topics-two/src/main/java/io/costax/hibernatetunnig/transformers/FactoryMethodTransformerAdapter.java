@@ -27,9 +27,9 @@ public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
                 .filter(method -> Modifier.isStatic(method.getModifiers()))
                 .findFirst()
                 .map(method -> {
-                    //if (!Modifier.isPublic(method.getModifiers())) {
+                    if (!Modifier.isPublic(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
                         method.setAccessible(true);
-                    //}
+                    }
                     return method;
                 })
                 .orElseThrow(() -> new IllegalArgumentException(
