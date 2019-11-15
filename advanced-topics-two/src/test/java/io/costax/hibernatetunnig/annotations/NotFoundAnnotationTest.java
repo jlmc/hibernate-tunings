@@ -1,5 +1,6 @@
-package io.costax.hibernatetunnig.entities;
+package io.costax.hibernatetunnig.annotations;
 
+import io.costax.hibernatetunnig.entities.Machine;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Assert;
 import org.junit.Rule;

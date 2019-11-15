@@ -1,5 +1,8 @@
-package io.costax.hibernatetunnig.entities;
+package io.costax.hibernatetunnig.mappings;
 
+import io.costax.hibernatetunnig.entities.Bicycle;
+import io.costax.hibernatetunnig.entities.Car;
+import io.costax.hibernatetunnig.entities.Garage;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.junit.Assert;

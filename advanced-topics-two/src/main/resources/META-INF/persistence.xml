@@ -33,7 +33,7 @@
             <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
             <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
             <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./data/rmissing-elationships"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:./data/advanced-topics-two"/>
 
 
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
