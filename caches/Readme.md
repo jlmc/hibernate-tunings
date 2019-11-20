@@ -18,7 +18,7 @@ Hibernate provide us two well know cache level. The *1st level* and the *2nd lev
 
 # 2nd Level cache
 
-- Also keep entities, but is independenty of the hibernate session
+- Also keep entities, but is independent of the hibernate session
 - All the Hibernate sessions share this cache
 - session independent
 - requires additional configurations
@@ -26,31 +26,32 @@ Hibernate provide us two well know cache level. The *1st level* and the *2nd lev
 
 ## Query Cache
 
-O primeiro e segundo nivel de cache trabalham com entidades. No entanto esta cache trabalha query results.
-O Query cache é uma feacture proprietaria do hibernate, e tem por objectivo fazer cache de query results.
-session independent
-requeres additional configurations
+- The first and second cache levels work with entities. However this Query cache works query results. 
+- Query cache is a proprietary feature of hibernate.
+- The purpose of the query cache is to cached results, (ids and scalar values for example). 
+- Session independent.
+- Requires additional configurations.
 
 
 # 2nd level 
 
 store entities, but in deference to the 1en is independent from the session. 
-That meand that a Session A can put some instance in the cache, and a other Session B can read it from the cach
+That means that a Session A can put some instance in the cache, and a other Session B can read it from the cache
 
 - Transparent usage
-- Is part of the JPA specification, but the provider implementation don't need to provide it, allow us to choise the implementation that we need to use (eg. ECache or infinispan)
+- Is part of the JPA specification, but the provider implementation don't need to provide it, allow us to choice the implementation that we need to use (eg. ECache or infinispan)
 - Hibernate can provide some internal cache but it should not be used in production. it should be used only for test proposes
 - If we are using hibernate with the aplication server wildfly or jboss then we should use infinispan
-	
+    
 
 - Needs to be activated
-	
-	- on the persistence.xml or EntityManagerFactory 
+    
+    - on the persistence.xml or EntityManagerFactory 
 
-		```xml
-		<!-- enable selective 2nd level cache in persistence.xml -->
-		<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
-		```
+        ```xml
+        <!-- enable selective 2nd level cache in persistence.xml -->
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+        ```
 
 
 - We need to provide the **shared-cache-mode** when we actived the 2nd level cache, this configuration defines with entities should be cached. We can choose 4 different modes: 
@@ -134,7 +135,7 @@ public class Project {
 }
 ```
 
-Please check the testcase **TestSecoundLevelCache**
+Please check the testcase **TestSecondLevelCache**
 
 ###### What about the caching of relationship?
 
