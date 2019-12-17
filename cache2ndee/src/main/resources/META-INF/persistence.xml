@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="dev" transaction-type="JTA">
+        <jta-data-source>java:comp/DefaultDataSource</jta-data-source>
+        <!--<jta-data-source>jdbc/__default</jta-data-source>-->
+        <!--<jta-data-source>jdbc/__postgres</jta-data-source>-->
+
+        <!--
+          - We need to provide the **shared-cache-mode** when we active the 2nd level cache, this configuration defines with entities should be cached. We can choose 4 different modes:
+                - **ALL**  - cache all entities, not recommended
+                - **NONE** - cache no entities, not recommended
+                - **ENABLE_SELECTIVE**
+                    cache needs to be activated for specific entities
+                    the most commonly used mode is enable_selected, which allows you to define exactly which entities should be cached. this makes much more sense than to cache everything, because we do not get cache for free, it requires memory to store the entities and CPU time to manager the cache, so to use it we must have absolutely sure that the benefits of having a cached entity are higher than directly accessing the Database.
+                    this is only the case when the entity is only read without being changed.
+                    Entities that are not read from the cache only consumes memory, and if it is necessary to update the caches it will consumes time.
+                - **DISABLE_SELECTIVE**
+                    cache can be deactivated for specific entities
+        -->
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+        <!-- Validation modes: AUTO, CALLBACK, NONE -->
+        <validation-mode>AUTO</validation-mode>
+
+        <properties>
+
+            <!--
+             javax.persistence.schema-generation.database.action
+             Defines whether the persistence provider shall create the database, first drop and then recreate it, only drop it or do nothing at all.
+             If this property is not provided, no schema will be created.
+             [none, create, drop-and-create, drop]
+             <property name="javax.persistence.schema-generation.database.action" value="none"/>
+             -->
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <!-- property name="javax.persistence.schema-generation.create-source" value="script"/ -->
+            <!-- property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/ -->
+            <!-- property name="javax.persistence.schema-generation.drop-source" value="script"/ -->
+            <!-- property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/> -->
+
+            <property name="javax.persistence.sql-load-script-source" value="META-INF/import.sql"/>
+            <property name="hibernate.generate_statistics" value="true"/>
+
+            <!-- Hibernate-->
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <!-- property name = "hibernate.use_sql_comments" value = "true" / -->
+
+            <!-- in wildfly is active by default: https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/chapters/caching/Caching.html-->
+            <!--property name="hibernate.cache.use_second_level_cache" value="true"/-->
+
+            <property name="hibernate.cache.use_query_cache" value="true"/>
+            <!--Max time in millis one entity is in the cache-->
+            <property name="hibernate.cache.infinispan.entity.expiration.lifespan" value= "900000"/><!--in millis - 15min-->
+            <!--Max time one entity not used (IDLE) can be in the cache -->
+            <property name="hibernate.cache.infinispan.entity.expiration.max_idle" value= "300000"/><!--in millis -  5min-->
+            <property name="hibernate.cache.infinispan.entity.eviction.strategy" value= "LRU"/>
+            <property name="hibernate.cache.infinispan.entity.eviction.wake_up_interval" value= "2000"/>
+            <property name="hibernate.cache.infinispan.entity.eviction.max_entries" value= "5000"/>
+        </properties>
+    </persistence-unit>
+</persistence>
