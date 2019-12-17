@@ -40,6 +40,7 @@
         <module>advanced-topics</module>
         <module>bytecode-enhancement-dirty-checking</module>
         <module>caches</module>
+        <module>cache2ndee</module>
         <module>bulk-operations</module>
         <module>batching-of-write-operations</module>
         <module>concurrency</module>
