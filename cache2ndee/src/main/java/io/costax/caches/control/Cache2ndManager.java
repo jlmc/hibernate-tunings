@@ -1,4 +1,4 @@
-package io.costax.caches.boundary;
+package io.costax.caches.control;
 
 import io.costax.users.boundary.Users;
 import org.hibernate.Session;
