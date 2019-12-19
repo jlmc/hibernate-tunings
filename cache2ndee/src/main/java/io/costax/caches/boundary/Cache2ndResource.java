@@ -1,5 +1,7 @@
 package io.costax.caches.boundary;
 
+import io.costax.caches.control.Cache2ndManager;
+
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
