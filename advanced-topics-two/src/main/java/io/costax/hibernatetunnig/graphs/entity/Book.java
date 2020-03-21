@@ -10,8 +10,10 @@ public class Book {
 
     @Id
     private Long id;
+
     @Version
     private int version;
+
     private ZonedDateTime publishingDate;
 
     @ManyToOne
@@ -20,6 +22,15 @@ public class Book {
 
     @ManyToMany(mappedBy = "books")
     private Set<Author> authors = new HashSet<>();
+
+    public Book() {
+    }
+
+    public Book(final Long id, final ZonedDateTime publishingDate, final Publisher publisher) {
+        this.id = id;
+        this.publishingDate = publishingDate;
+        this.publisher = publisher;
+    }
 
     protected void addAuthor(final Author a) {
         authors.add(a);
@@ -31,5 +42,9 @@ public class Book {
 
     public Set<Author> getAuthors() {
         return Set.copyOf(authors);
+    }
+
+    public Publisher getPublisher() {
+        return publisher;
     }
 }

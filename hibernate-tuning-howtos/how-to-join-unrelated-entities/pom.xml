@@ -99,8 +99,8 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     -->
-                    <source>12</source>
-                    <target>12</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
                 <executions>

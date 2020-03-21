@@ -32,16 +32,24 @@ public class Author {
     )
     private Set<Book> books = new HashSet<>();
 
+    public Author() {
+    }
+
+    public Author(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Set<Book> getBooks() {
         return Set.copyOf(books);
     }
 
-    public void addTag(Book b) {
+    public void addBook(Book b) {
         books.add(b);
         b.addAuthor(this);
     }
 
-    public void removeTag(Book b) {
+    public void removeBook(Book b) {
         books.remove(b);
         b.removeAuthor(this);
     }

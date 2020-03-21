@@ -27,12 +27,12 @@ http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
 ###### 1. First off all, we need to create a Postgres Data Base with the name postgresdemos in the port 5432. For example we can use Docker to create that resource:
 
 ```bash
-docker run --name postgresdemos \
+docker run --name hibernate-tunings \
     -p 5432:5432 \
     -e POSTGRES_USER=postgres \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_DB=postgresdemos \
-    -v $(pwd)"/postgresdemos:/var/lib/postgresql/data" -d postgres:11.4
+    -v $(pwd)"/hibernate-tunings:/var/lib/postgresql/data" -d postgres:11.4
 ```
 
 ###### 2. Run the migrations:
