@@ -47,6 +47,8 @@
             <property name="hibernate.show_sql" value="true"/>
             <!-- property name = "hibernate.use_sql_comments" value = "true" / -->
 
+            <property name="hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS"  value="25"/>
+
             <!-- in wildfly is active by default: https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/chapters/caching/Caching.html-->
             <!--property name="hibernate.cache.use_second_level_cache" value="true"/-->
 

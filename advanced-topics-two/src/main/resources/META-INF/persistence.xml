@@ -74,6 +74,10 @@
             <!--property name="hibernate.use_sql_comments" value="true"/-->
             <property name="hibernate.generate_statistics" value="true"/>
 
+
+            <property name="hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS"  value="25"/>
+
+
             <!--property name="hibernate.connection.release_mode" value="after_transaction"/-->
             <!--property name="hibernate.hbm2ddl.auto" value="create-drop"/ -->
             <!--property name="hibernate.jdbc.bash_size" value="5"/-->
