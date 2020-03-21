@@ -24,7 +24,9 @@ http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
 ## HOW TO RUN THIS EXAMPLES
 
 
-###### 1. First off all, we need to create a Postgres Data Base with the name postgresdemos in the port 5432. For example we can use Docker to create that resource:
+#### 1. Postgres Data Base
+ 
+First off all, we need to create a Postgres Data Base with the name `hibernate-tunings` in the port `5432`. For example we can use Docker to create that resource:
 
 ```bash
 docker run --name hibernate-tunings \
@@ -35,7 +37,7 @@ docker run --name hibernate-tunings \
     -v $(pwd)"/hibernate-tunings:/var/lib/postgresql/data" -d postgres:11.4
 ```
 
-###### 2. Run the migrations:
+##### 2. Run the migrations:
 
 ```bash
 cd database-migrations
@@ -43,7 +45,7 @@ cd database-migrations
 mvn flyway:migrate -Dflyway.configFiles=local.conf
 ```
 
-###### 3. we are able to run the examples.
+#### 3. we are able to run the examples.
 
 **Very important note:**
 
@@ -59,7 +61,7 @@ or, on the limit to compile a single module:
 mvn clean install -rf :hibernate-open-source-custom-types-project -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
 ```
 
-otherwise, if you are using java JDK 8 then to run this project you sgould remove the following dependencies from the root main pom file:
+otherwise, if you are using java JDK 8 then to run this project you should remove the following dependencies from the root main pom file:
 
 ```xml
         <!-- using with JDK 11 -->
@@ -81,13 +83,14 @@ And then you can simple execute the maven command:
     mvn clean install -DskipTests
 ```
 
+---
 
 ## Agenda
 
 **1 - Get-Started**
 
  - 1.1. [logging-sql-statements]
-   - [Typical causes of performance problems](docs/1-Get-Started/1 and 2--loggers-notas.md)
+   - [Typical causes of performance problems](docs/1-Get-Started/1-and-2-loggers-notas.md)
    - [Why We Need Logging](docs/1-Get-Started/README.md)
    - [logging-sql-statements-examples](logging-sql-statements/README.md)
     
@@ -147,7 +150,6 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 **12 - Concurrency** [Concurrency](concurrency/Readme.md)
 
-
 **13 - Fetching**
 
  - 13.1 - [Query Hint Fetch Size](fetching/src/test/java/io/costax/queryhintfetchsize/QueryHintFetchSizeTest.java)
@@ -166,6 +168,6 @@ all the examples can be found in the module advanced-topics in the package: io.c
 
 > A - How to detect HHH000104 issues with hibernate.query.fail_on_pagination_over_collection_fetch
 
-> B - Fix N + 1 probleam with  hibernate-enhance-plugin  
+> B - Fix N + 1 problem with  hibernate-enhance-plugin  
 
 > C - override-generator-strategy: override the identity and sequence generation strategy

@@ -208,35 +208,6 @@ O hibernate possui varias categorias e levels de Log:
 
 
 
-
-O exemplo da configuração é o projecto: /Training/Logging
-
-```
-22:30:30,405 INFO  [org.thoughts.on.java.model.TestLogging] - ... selectAuthors ...
-22:30:30,558 DEBUG [org.hibernate.SQL] - select author0_.id as id1_0_, author0_.firstName as firstNam2_0_, author0_.lastName as lastName3_0_, author0_.version as version4_0_ from Author author0_ where author0_.id=1
-22:30:30,566 TRACE [org.hibernate.type.descriptor.sql.BasicExtractor] - extracted value ([id1_0_] : [BIGINT]) - [1]
-22:30:30,570 TRACE [org.hibernate.type.descriptor.sql.BasicExtractor] - extracted value ([firstNam2_0_] : [VARCHAR]) - [Joshua]
-22:30:30,570 TRACE [org.hibernate.type.descriptor.sql.BasicExtractor] - extracted value ([lastName3_0_] : [VARCHAR]) - [Bloch]
-22:30:30,571 TRACE [org.hibernate.type.descriptor.sql.BasicExtractor] - extracted value ([version4_0_] : [INTEGER]) - [0]
-22:30:30,578 DEBUG [org.hibernate.stat.internal.ConcurrentStatisticsImpl] - HHH000117: HQL: SELECT a FROM Author a WHERE a.id = 1, time: 22ms, rows: 1
-22:30:30,586 INFO  [org.hibernate.engine.internal.StatisticalLoggingSessionEventListener] - Session Metrics {
-    12505 nanoseconds spent acquiring 1 JDBC connections;
-    0 nanoseconds spent releasing 0 JDBC connections;
-    124721 nanoseconds spent preparing 1 JDBC statements;
-    4745752 nanoseconds spent executing 1 JDBC statements;
-    0 nanoseconds spent executing 0 JDBC batches;
-    0 nanoseconds spent performing 0 L2C puts;
-    0 nanoseconds spent performing 0 L2C hits;
-    0 nanoseconds spent performing 0 L2C misses;
-    4821482 nanoseconds spent executing 1 flushes (flushing a total of 1 entities and 1 collections);
-    41523 nanoseconds spent executing 1 partial-flushes (flushing a total of 0 entities and 0 collections)
-}
-
-```
-
-
-
-
 # Enable all this logging in wildfly
 
 In the standalone we should define the next level levels
