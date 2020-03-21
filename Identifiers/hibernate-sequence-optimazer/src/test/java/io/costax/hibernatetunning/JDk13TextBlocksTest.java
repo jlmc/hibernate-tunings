@@ -19,6 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings({"unchecked", "SqlDialectInspection"})
 public class JDk13TextBlocksTest {
+    /*
 
     @Rule
     public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
@@ -52,4 +53,5 @@ public class JDk13TextBlocksTest {
                         Developer.class)
                 .getResultList();
     }
+     */
 }

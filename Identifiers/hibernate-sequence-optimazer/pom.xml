@@ -125,7 +125,7 @@
                 -->
             </plugin>
 
-
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -133,7 +133,7 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <compilerArgs>- -enable-preview</compilerArgs>
                     <compilerArguments>
                         <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
                     </compilerArguments>
@@ -142,9 +142,10 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>--enable-preview</argLine>
+                    <argLine>- -enable-preview</argLine>
                 </configuration>
             </plugin>
+            -->
 
         </plugins>
     </build>

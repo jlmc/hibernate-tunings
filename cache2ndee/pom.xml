@@ -36,7 +36,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--<project.build.resourceEncoding>ISO-8859-1</project.build.resourceEncoding>-->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>13</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>

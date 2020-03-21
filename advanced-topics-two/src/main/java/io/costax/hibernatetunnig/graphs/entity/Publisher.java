@@ -20,4 +20,11 @@ public class Publisher {
     @OneToMany(mappedBy = "publisher", cascade = {CascadeType.ALL})
     private Set<Employee> employees = new HashSet<>();
 
+    public Publisher() {
+    }
+
+    public Publisher(final Long id, final String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
