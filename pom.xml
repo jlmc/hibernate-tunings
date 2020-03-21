@@ -79,6 +79,8 @@
         <!--<hibernate.version>5.4.0.Final</hibernate.version>-->
         <!--<hibernate.version>5.3.6.Final</hibernate.version>-->
         <!--hibernate.version>5.2.17.Final</hibernate.version-->
+        <hibernate-validator.version>6.1.2.Final</hibernate-validator.version>
+        <!--hibernate-validator.version>6.1.0.Final</hibernate-validator.version-->
         <postgresql.version>42.2.1</postgresql.version>
         <!--postgresql.version>9.4.1208</postgresql.version-->
         <oracle.version>12.2.0.1</oracle.version>
@@ -149,7 +151,7 @@
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.1.0.Final</version>
+                <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
