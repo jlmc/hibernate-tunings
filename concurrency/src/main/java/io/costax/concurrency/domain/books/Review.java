@@ -1,4 +1,4 @@
-package batching;
+package io.costax.concurrency.domain.books;
 
 import javax.persistence.*;
 import java.util.Arrays;

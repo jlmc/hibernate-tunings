@@ -1,4 +1,4 @@
-package batching;
+package io.costax.concurrency.domain.books;
 
 import org.hibernate.type.TimestampType;
 

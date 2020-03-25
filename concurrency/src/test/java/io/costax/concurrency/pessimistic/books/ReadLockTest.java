@@ -1,6 +1,6 @@
-package io.costax.concurrency.pessimistic;
+package io.costax.concurrency.pessimistic.books;
 
-import batching.Author;
+import io.costax.concurrency.domain.books.Author;
 import io.costax.rules.EntityManagerProvider;
 import io.costax.rules.Watcher;
 import org.junit.Rule;
