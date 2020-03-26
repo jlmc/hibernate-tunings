@@ -12,5 +12,5 @@ This project aims to demonstrate how:
 * Impacts of enhance plugin on @ManyToOne relationship when this is marked with fetch = LAZY
 
 
-other notes:
-https://www.thoughts-on-java.org/best-practices-many-one-one-many-associations-mappings/
+Other notes:
+ - https://www.thoughts-on-java.org/best-practices-many-one-one-many-associations-mappings/

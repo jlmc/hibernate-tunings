@@ -1,4 +1,4 @@
-#Difference between @NotNull and @Column(nullable = false)
+# Difference between @NotNull and @Column(nullable = false)
 
 
 Before we start it is important to note that if we want to use bean validation we should add some implementation to our project.

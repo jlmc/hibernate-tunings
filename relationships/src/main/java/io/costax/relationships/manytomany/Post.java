@@ -15,10 +15,10 @@ public class Post {
     private String title;
 
     /**
-     * For `@ManyToMany` associations, {@link CascadeType.REMOVE} does not make too much sense when both sides represent independent entities.
+     * For `@ManyToMany` associations, {@link CascadeType#REMOVE} does not make too much sense when both sides represent independent entities.
      * In this case, removing a {@code Post } entity should not trigger a Script removal because the {@code Tag} can be referenced by other {@code Post } as well.
      * The same arguments apply to orphan removal since removing an entry from the tags collection should only delete the junction record and not the target {@code Tag} entity.
-     * For both unidirectional and bidirectional associations, it is better to avoid the {@link CascadeType.REMOVE} mapping.
+     * For both unidirectional and bidirectional associations, it is better to avoid the {@link CascadeType#REMOVE} mapping.
      * Instead of {@code @ManyToMany(cascade = CascadeType.ALL )}, the cascade attributes should be declared explicitly
      * (e.g. {@code @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE } )})
      * <p>

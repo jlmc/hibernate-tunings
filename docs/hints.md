@@ -43,17 +43,17 @@ The Hibernate query hints defined by the QueryHints class can be summarized as f
 
 | Query hint name                     | QueryHints constant   | Description     |
 | ----------------------------------- |:--------------------- | :---------------|
-| org.hibernate.cacheMode             |	CACHE_MODE            | Equivalent to `org.hibernate.query.Query#setCacheMode` |
-| org.hibernate.cacheRegion           |	CACHE_REGION	      | Equivalent to `org.hibernate.query.Query#setCacheRegion` |
+| org.hibernate.cacheMode             | CACHE_MODE            | Equivalent to `org.hibernate.query.Query#setCacheMode` |
+| org.hibernate.cacheRegion           | CACHE_REGION          | Equivalent to `org.hibernate.query.Query#setCacheRegion` |
 | org.hibernate.cacheable             | CACHEABLE             | Equivalent to `org.hibernate.query.Query#setCacheable` |
-| org.hibernate.callable              |	CALLABLE              |	Useful for named queries that need to be executed using a `JDBC CallableStatement` |
-| org.hibernate.comment               |	COMMENT               |	Equivalent to `org.hibernate.query.Query#setComment` |
-| org.hibernate.fetchSize             |	FETCH_SIZE            | Equivalent to `org.hibernate.query.Query#setFetchSize` |
+| org.hibernate.callable              | CALLABLE              | Useful for named queries that need to be executed using a `JDBC CallableStatement` |
+| org.hibernate.comment               | COMMENT               | Equivalent to `org.hibernate.query.Query#setComment` |
+| org.hibernate.fetchSize             | FETCH_SIZE            | Equivalent to `org.hibernate.query.Query#setFetchSize` |
 | org.hibernate.flushMode             | FLUSH_MODE	          | Equivalent to `org.hibernate.query.Query#setFlushMode` |
-| hibernate.query.followOnLocking     |	FOLLOW_ON_LOCKING     |	Override the `Dialect#useFollowOnLocking` setting |
-| org.hibernate.lockMode              |	NATIVE_LOCKMODE       |	Specify a custom `javax.persistence.LockModeType` or` org.hibernate.LockMode` for the current query |
-| hibernate.query.passDistinctThrough |	PASS_DISTINCT_THROUGH |	Prevent the JPQL or Criteria API `DISTINCT` keyword from being passed to the SQL query |
-| org.hibernate.readOnly	          | READ_ONLY             |	Equivalent to `org.hibernate.query.Query#setReadOnly` |
-| org.hibernate.timeout	              | TIMEOUT_HIBERNATE	  | Equivalent to `org.hibernate.query.Query#setTimeout`. The timout value is specified in seconds. |
-| javax.persistence.query.timeout	  | TIMEOUT_JPA           | Equivalent to org.hibernate.query.Query#setReadOnly. The timout value is specified in milliseconds. |
+| hibernate.query.followOnLocking     | FOLLOW_ON_LOCKING     | Override the `Dialect#useFollowOnLocking` setting |
+| org.hibernate.lockMode              | NATIVE_LOCKMODE       | Specify a custom `javax.persistence.LockModeType` or` org.hibernate.LockMode` for the current query |
+| hibernate.query.passDistinctThrough | PASS_DISTINCT_THROUGH | Prevent the JPQL or Criteria API `DISTINCT` keyword from being passed to the SQL query |
+| org.hibernate.readOnly              | READ_ONLY             | Equivalent to `org.hibernate.query.Query#setReadOnly` |
+| org.hibernate.timeout               | TIMEOUT_HIBERNATE     | Equivalent to `org.hibernate.query.Query#setTimeout`. The timout value is specified in seconds. |
+| javax.persistence.query.timeout     | TIMEOUT_JPA           | Equivalent to org.hibernate.query.Query#setReadOnly. The timout value is specified in milliseconds. |
 

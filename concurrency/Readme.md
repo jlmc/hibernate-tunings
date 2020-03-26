@@ -17,7 +17,7 @@
     
     Hibernate inherits concurrency control from the database engine, for example hibernate uses base date features to block specific records
 
-## Isolution Issues
+## Isolation Issues
 
 The isolation of concurrent transactions it is use to serve different issues. Some examples of it use are the following:
 

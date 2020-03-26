@@ -6,6 +6,10 @@ import org.hibernate.annotations.NotFoundAction;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * {@link NotFound} in hibernate is used when entities are associated to each other by ManyToOne, OneToMany etc. Suppose joined subclass has no data related to any id due to some database inconsistency. And we do not want to throw error, in this case @NotFound helps us. If we use @NotFound, then for any id if there is no data in associated joined subclass, error will not be thrown.
+ * {@link NotFound} has two action {@link NotFoundAction#IGNORE} and {@link NotFoundAction#EXCEPTION}.
+ */
 @Entity
 public class Machine {
 
