@@ -39,4 +39,4 @@
   
 ## In Summary:
 
-![What type of collections should we use](docs/what-hibernate-collections-should-be-used.png)
+![What type of collections should we use](what-hibernate-collections-should-be-used.png)

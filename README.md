@@ -193,7 +193,7 @@ And then you can simple execute the maven command:
     - [What are the principal JPA and Hibernate Hints](docs/hints.md)
     - [How to enable hibernate query logging in Wildfly](docs/1-Get-Started/hibernate-logging-in-wildfly.md)
     - [How to use bytecode enhancement dirty checking with hibernate-enhance-maven-plugin](docs/7-Persistence-Context/7.4-bytecode-enhancement-dirty-checking.md)
-    - [JPA 2.1-Standardized schema generation and data loading](docs/JPA 2.1-Standardized.md)
+    - [JPA 2.1-Standardized schema generation and data loading](docs/JPA2.1_Standardized.md)
     - [How to Create An Entity Graph With Multiple Sub Graphs](advanced-topics-two/src/test/java/io/costax/hibernatetunnig/graphs/CreateAnEntityGraphWithMultipleSubGraphsTest.java)
     - [How to use NotFound hibernate annotation, Action to do when an element is not found on a association](advanced-topics-two/src/test/java/io/costax/hibernatetunnig/annotations/NotFoundAnnotationTest.java)
     - [How to Join @ManyToOne of multiple subtypes in multiple collections in the same entity](advanced-topics-two/src/test/java/io/costax/hibernatetunnig/mappings/JoinMultipleSubtypesTypesTest.java)
@@ -201,6 +201,7 @@ And then you can simple execute the maven command:
     - [How logging Hibernate slow query](advanced-topics-two/src/test/java/io/costax/hibernatetunnig/sqlslow/ShowQueriesLogTest.java)
         - `<property name="hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS" value="25"/>`
     - [How to map OneToMany to a java.util.Map](hibernate-tuning-howtos/how-map-localized-data-with-jpa/src/main/java/io/costax/resourcebundle/Beer.java)
+    - [Hibernate ToMany How to choice the right collection type](docs/Hibernate-toMany-in-what-collection.md)
     - [Localized Data – How to Map It With Hibernate](hibernate-tuning-howtos/how-map-localized-data-with-jpa)
     - [How to Fix OneToOne N+1 with manual enhance](instrumentation)
     - [How to keep Order in a Collections using javax.persistence.OrderColumn - JPA annotation](docs/OrderColumn.md)
