@@ -46,3 +46,14 @@ INSERT INTO multimedia.review (id, book_id, rating, comment, version) VALUES (4,
 
 insert into multimedia.publisher (id, mod_date, name) VALUES (1, cast ('2019-03-31 14:13:41.078041' as timestamp), 'Orealy');
 insert into multimedia.publisher (id, mod_date, name) VALUES (2, cast ('2019-03-31 14:14:41.078041' as timestamp), 'G.IT');
+
+
+-- bank
+
+insert into bank.client (code, name) values (1, 'johnny');
+insert into bank.bank_account(code, number, amount) values (1, '1010', 100.0);
+insert into bank.bank_account(code, number, amount) values (2, '2020', 200.0);
+insert into  bank.bank_account_client (bank_account_code, client_code) values (1, 1);
+SELECT setval('bank.client_code_seq', (SELECT coalesce(MAX(code), 1) FROM bank.client));
+SELECT setval('bank.bank_account_code_seq', (SELECT coalesce(MAX(code), 1) FROM bank.bank_account));
+

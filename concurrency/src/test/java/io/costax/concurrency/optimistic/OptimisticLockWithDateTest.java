@@ -1,6 +1,6 @@
 package io.costax.concurrency.optimistic;
 
-import batching.Publisher;
+import io.costax.concurrency.domain.books.Publisher;
 import io.costax.rules.EntityManagerProvider;
 import io.costax.rules.Watcher;
 import org.junit.Rule;
