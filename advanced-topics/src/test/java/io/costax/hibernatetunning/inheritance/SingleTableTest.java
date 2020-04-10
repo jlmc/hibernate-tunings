@@ -99,7 +99,6 @@ public class SingleTableTest {
         assertThat(tboneInvoices, hasSize(2));
     }
 
-
     @Test
     public void t05_should_find_board_only_the_invoices() {
         Board tbone =
@@ -155,8 +154,8 @@ public class SingleTableTest {
 
         Assert.assertNotNull(objects0);
         Assert.assertNotNull(objects1);
-        Assert.assertNotNull(String.class.isAssignableFrom(objects0.getClass()));
-        Assert.assertNotNull(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
+        Assert.assertTrue(String.class.isAssignableFrom(objects0.getClass()));
+        Assert.assertFalse(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
 
         Assert.assertEquals("Invoice", objects0);
         Assert.assertEquals(Invoice.class, objects1.getClass());
