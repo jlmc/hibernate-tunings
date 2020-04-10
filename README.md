@@ -2,30 +2,29 @@
 
 ## Performance Facts
 
-“More than half of application performance bottlenecks originate in the database” - http://www.appdynamics.com/database/
+- [“More than half of application performance bottlenecks originate in the database” - http://www.appdynamics.com/database/](http://www.appdynamics.com/database/)
 
+- “Like us, our users place a lot of value in speed — that's why we've decided to take site speed into account in our search rankings.”
+[Google Ranking - https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html](https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html)
 
-“Like us, our users place a lot of value in speed — that's why we've decided to take site speed into account in our search rankings.”
-Google Ranking - https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html
-
-
-“It has been reported that every 100ms of latency costs Amazon 1% of profit.”
-http://radar.oreilly.com/2008/08/radar-theme-web-ops.html
+- [“It has been reported that every 100ms of latency costs Amazon 1% of profit.”
+http://radar.oreilly.com/2008/08/radar-theme-web-ops.html](http://radar.oreilly.com/2008/08/radar-theme-web-ops.html)
 
 ## JPA vs Hibernate
 
-* JPA is only a specification. It describes the interfaces that the client operates with and the standard object-relational mapping metadata (annotations, XML).
+- JPA is only a specification. It describes the interfaces that the client operates with and the standard object-relational mapping metadata (annotations, XML).
 
-* Although it implements the JPA specification, Hibernate retains its native API for both backward compatibility and to accommodate non-standard features.
+- Although it implements the JPA specification, Hibernate retains its native API for both backward compatibility and to accommodate non-standard features.
 
 
 ## HOW TO RUN THIS EXAMPLES
 
 #### 1. Postgres Data Base
  
-First off all, we need to create a Postgres Data Base with the name `hibernate-tunings` in the port `5432`. For example we can use Docker to create that resource:
+First off all, we need to create a Postgres Data Base with the name `hibernate-tunings` in the port `5432`. 
+For example, we can use Docker to create that resource:
 
-```bash
+```shell script
 docker run --name hibernate-tunings \
     -p 5432:5432 \
     -e POSTGRES_USER=postgres \
@@ -36,9 +35,16 @@ docker run --name hibernate-tunings \
 
 ##### 2. Run the migrations:
 
-```bash
+```shell script
+mvn flyway:migrate -pl database-migrations \
+ -Dflyway.configFiles=local.conf \
+ -Dflyway.locations=filesystem:database-migrations/migration
+```
+
+Or, in alternative:
+
+```shell script
 cd database-migrations
-    
 mvn flyway:migrate -Dflyway.configFiles=local.conf
 ```
 
@@ -48,13 +54,13 @@ mvn flyway:migrate -Dflyway.configFiles=local.conf
 
 This project is builder at the moment using Java JDK  11, so to compile the project we must execute the following command.
 
-```bash
+```shell script
 mvn clean install -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
 ```
 
 or, on the limit to compile a single module: 
 
-```bash
+```shell script
 mvn clean install -rf :hibernate-open-source-custom-types-project -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
 ```
 
@@ -74,10 +80,10 @@ otherwise, if you are using java JDK 8 then to run this project you should remov
         </dependency>
 ``` 
 
-And then you can simple execute the maven command:
+Then you can simple execute the maven command:
 
-```bash
-    mvn clean install -DskipTests
+```shell script
+mvn clean install -DskipTests
 ```
 
 ---
