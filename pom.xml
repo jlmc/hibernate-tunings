@@ -50,6 +50,7 @@
         <module>mapping-blobs-and-clobs</module>
         <module>instrumentation</module>
         <module>advanced-topics-two</module>
+        <module>hibernate-5-naming-strategies</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -15,7 +15,7 @@ public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL95D
         
         registerHibernateType(Types.OTHER, "pg-uuid");
 
-        // registe function to use in JPQL
+        // register function to use in JPQL
         // If we need the functions results in the queries projection then we must register the functions
         registerFunction("date", new org.hibernate.dialect.function.StandardSQLFunction("date", new LocalDateType()));
         registerFunction("date_part", new org.hibernate.dialect.function.StandardSQLFunction("date_part", StandardBasicTypes.INTEGER));
