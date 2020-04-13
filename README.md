@@ -19,7 +19,7 @@ http://radar.oreilly.com/2008/08/radar-theme-web-ops.html](http://radar.oreilly.
 
 ## HOW TO RUN THIS EXAMPLES
 
-#### 1. Postgres Data Base
+### 1. Postgres Data Base
  
 First off all, we need to create a Postgres Data Base with the name `hibernate-tunings` in the port `5432`. 
 For example, we can use Docker to create that resource:
@@ -33,7 +33,22 @@ docker run --name hibernate-tunings \
     -v $(pwd)"/hibernate-tunings:/var/lib/postgresql/data" -d postgres:11.4
 ```
 
-##### 2. Run the migrations:
+### 2. Run all modules in a single command
+
+To run all modules in a single command, we can execute:
+
+```shell script
+mvn flyway:migrate -pl database-migrations \
+ -Dflyway.configFiles=local.conf \
+ -Dflyway.locations=filesystem:database-migrations/migration \
+&& mvn clean install -pl helpers \
+&& mvn clean package
+```
+
+### 3. Run Step by Step 
+
+
+1. Run the migrations:
 
 ```shell script
 mvn flyway:migrate -pl database-migrations \
@@ -48,47 +63,15 @@ cd database-migrations
 mvn flyway:migrate -Dflyway.configFiles=local.conf
 ```
 
-#### 3. we are able to run the examples.
-
-**Very important note:**
-
-This project is builder at the moment using Java JDK  11, so to compile the project we must execute the following command.
+2. build and run all the examples.
 
 ```shell script
-mvn clean install -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
-```
-
-or, on the limit to compile a single module: 
-
-```shell script
-mvn clean install -rf :hibernate-open-source-custom-types-project -Dmaven.test.skip=true -X -Dnet.bytebuddy.experimental=true
-```
-
-otherwise, if you are using java JDK 8 then to run this project you should remove the following dependencies from the root main pom file:
-
-```xml
-        <!-- using with JDK 11 -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.0.1</version>
-        </dependency>
-``` 
-
-Then you can simple execute the maven command:
-
-```shell script
-mvn clean install -DskipTests
+mvn clean install -pl helpers && mvn clean package
 ```
 
 ---
 
-## Agenda
+## AGENDA
 
 1. **Get-Started**
     1. logging-sql-statements

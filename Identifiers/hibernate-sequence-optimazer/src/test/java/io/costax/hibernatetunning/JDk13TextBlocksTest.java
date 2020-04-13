@@ -1,14 +1,5 @@
 package io.costax.hibernatetunning;
 
-import io.costa.hibernatetunings.entities.Developer;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
-import java.util.List;
-
 /**
  * JEP 355: Text Blocks (Preview)
  * <p>

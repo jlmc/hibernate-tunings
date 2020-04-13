@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.persistencecontext;
 
-import io.costa.hibernatetunings.entities.exchange.Tread;
+import io.costax.hibernatetunings.entities.exchange.Tread;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.jpa.QueryHints;
 import org.junit.FixMethodOrder;

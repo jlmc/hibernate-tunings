@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.customtypes;
 
-import io.costa.hibernatetunings.entities.Configuration;
+import io.costax.hibernatetunings.entities.Configuration;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.Session;
 import org.junit.*;

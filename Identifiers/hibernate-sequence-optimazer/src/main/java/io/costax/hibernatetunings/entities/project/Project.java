@@ -1,6 +1,6 @@
 package io.costax.hibernatetunings.entities.project;
 
-import io.costa.hibernatetunings.entities.base.BaseEntity;
+import io.costax.hibernatetunings.entities.base.BaseEntity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

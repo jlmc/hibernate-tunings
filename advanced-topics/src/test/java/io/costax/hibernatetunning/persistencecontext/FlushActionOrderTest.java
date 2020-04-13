@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.persistencecontext;
 
-import io.costa.hibernatetunings.entities.client.Client;
+import io.costax.hibernatetunings.entities.client.Client;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;

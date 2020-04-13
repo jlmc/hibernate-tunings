@@ -26,8 +26,9 @@ public class Video {
    @Max(1000)
    private int minutes;
 
-   protected Video() {
-   }
+   //@formatter:off
+   protected Video() {}
+   //@formatter:on
 
    private Video(final Integer id, final String name, @NotNull final String description) {
       this.id = id;

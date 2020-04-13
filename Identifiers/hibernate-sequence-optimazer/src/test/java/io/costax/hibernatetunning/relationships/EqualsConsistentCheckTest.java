@@ -1,7 +1,7 @@
 package io.costax.hibernatetunning.relationships;
 
-import io.costa.hibernatetunings.entities.Developer;
-import io.costa.hibernatetunings.entities.Tiket;
+import io.costax.hibernatetunings.entities.Developer;
+import io.costax.hibernatetunings.entities.Tiket;
 import io.costax.hibernatetunning.functions.InJPAConsumer;
 import org.hibernate.Session;
 import org.junit.AfterClass;

@@ -25,7 +25,7 @@ We can enforce NOT NULL constraints at the database table level with:
 ```java
 package io.costa.hibernatetunings.entities.financial;
     
-import org.hibernate.annotations.NaturalId;
+import io.costax.hibernatetunings.entities.financial.FinancialDocument;import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -62,8 +62,8 @@ public class Board {
         this.code = code;
     }
     
-    public static Board of(String code, final String name) {
-        return new Board(code, name);
+    public static io.costax.hibernatetunings.entities.financial.Board of(String code, final String name) {
+        return new io.costax.hibernatetunings.entities.financial.Board(code, name);
     }
     
     public void add(FinancialDocument fd) {
@@ -89,7 +89,7 @@ public class Board {
 package io.costa.hibernatetunings.entities.financial;
     
     
-import org.hibernate.annotations.CreationTimestamp;
+import io.costax.hibernatetunings.entities.financial.Board;import org.hibernate.annotations.CreationTimestamp;
     
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -133,7 +133,7 @@ public class FinancialDocument {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final FinancialDocument that = (FinancialDocument) o;
+        final io.costax.hibernatetunings.entities.financial.FinancialDocument that = (io.costax.hibernatetunings.entities.financial.FinancialDocument) o;
         return this.id != null && Objects.equals(id, that.id);
     }
     
