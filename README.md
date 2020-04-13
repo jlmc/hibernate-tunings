@@ -198,3 +198,4 @@ mvn clean install -pl helpers && mvn clean package
     - [How to implement a custom application GenericGenerator for complex Identifiers](hibernate-tuning-howtos/custom-identifiers-generator)
     - [How to use Bean Validation In JPA Entities](bean-validation)
     - [Difference between @NotNull and @Column(nullable = false)](bean-validation)
+    - [Hibernate 5 naming strategies](hibernate-5-naming-strategies)
