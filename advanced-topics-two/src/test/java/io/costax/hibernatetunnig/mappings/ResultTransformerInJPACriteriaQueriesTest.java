@@ -59,7 +59,7 @@ public class ResultTransformerInJPACriteriaQueriesTest {
         assertThat(firstItem.getScalarValue(), is(1L));
         assertThat(lastItem.scalarValue, is(1L));
         assertThat(firstItem.getDescription(), is("Spot of 'Ricardo' using the Machine [1 - mac] --> 1 Systems"));
-        assertThat(lastItem.getDescription(), is("Spot of 'Joana' using the Machine [4 - Asus] --> 1 Systems"));
+        assertThat(lastItem.getDescription(), is("Spot of 'Joana' using the Machine [4 - mac] --> 1 Systems"));
     }
 
     @Test

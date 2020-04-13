@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.inheritance;
 
-import io.costa.hibernatetunings.entities.blog.*;
+import io.costax.hibernatetunings.entities.blog.*;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;

@@ -1,8 +1,8 @@
 package io.costax.hibernatetunning.persistencecontext;
 
-import io.costa.hibernatetunings.entities.blog.Dashboard;
-import io.costa.hibernatetunings.entities.blog.Post;
-import io.costa.hibernatetunings.entities.blog.TopicStatistic;
+import io.costax.hibernatetunings.entities.blog.Dashboard;
+import io.costax.hibernatetunings.entities.blog.Post;
+import io.costax.hibernatetunings.entities.blog.TopicStatistic;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;

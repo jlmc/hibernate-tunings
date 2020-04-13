@@ -1,8 +1,8 @@
 package io.costax.hibernatetunning.customtypes;
 
-import io.costa.hibernatetunings.customtype.IPv4;
-import io.costa.hibernatetunings.customtype.MacAddr;
-import io.costa.hibernatetunings.entities.Machine;
+import io.costax.hibernatetunings.customtype.IPv4;
+import io.costax.hibernatetunings.customtype.MacAddr;
+import io.costax.hibernatetunings.entities.Machine;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.*;
 

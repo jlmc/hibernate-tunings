@@ -1,8 +1,8 @@
 package io.costax.hibernatetunning.customtypes;
 
-import io.costa.hibernatetunings.entities.Developer;
-import io.costa.hibernatetunings.entities.Event;
-import io.costa.hibernatetunings.entities.Location;
+import io.costax.hibernatetunings.entities.Developer;
+import io.costax.hibernatetunings.entities.Event;
+import io.costax.hibernatetunings.entities.Location;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.After;
 import org.junit.FixMethodOrder;

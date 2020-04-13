@@ -8,32 +8,15 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>instrumentation</artifactId>
-
-
     <dependencies>
-        <!-- just for the JDK 11
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.0.1</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-52</artifactId>
-            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -41,7 +24,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -58,7 +40,6 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -72,11 +53,9 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -88,8 +67,8 @@
                         <configuration>
                             <failOnError>true</failOnError>
                             <enableLazyInitialization>false</enableLazyInitialization>
-                            <enableDirtyTracking>false</enableDirtyTracking> <!-- -->
-                            <enableAssociationManagement>false</enableAssociationManagement> <!---->
+                            <enableDirtyTracking>false</enableDirtyTracking>
+                            <enableAssociationManagement>false</enableAssociationManagement>
                             <enableExtendedEnhancement>false</enableExtendedEnhancement>
                         </configuration>
                         <goals>

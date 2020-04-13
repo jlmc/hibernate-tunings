@@ -1,9 +1,9 @@
 package io.costax.hibernatetunning.inheritance;
 
-import io.costa.hibernatetunings.entities.financial.Board;
-import io.costa.hibernatetunings.entities.financial.CreditNote;
-import io.costa.hibernatetunings.entities.financial.FinancialDocument;
-import io.costa.hibernatetunings.entities.financial.Invoice;
+import io.costax.hibernatetunings.entities.financial.Board;
+import io.costax.hibernatetunings.entities.financial.CreditNote;
+import io.costax.hibernatetunings.entities.financial.FinancialDocument;
+import io.costax.hibernatetunings.entities.financial.Invoice;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.Session;
 import org.junit.Assert;

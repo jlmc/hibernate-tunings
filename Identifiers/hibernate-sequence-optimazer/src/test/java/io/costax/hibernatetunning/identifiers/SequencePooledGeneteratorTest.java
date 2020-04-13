@@ -1,8 +1,8 @@
 package io.costax.hibernatetunning.identifiers;
 
-import io.costa.hibernatetunings.entities.Developer;
-import io.costa.hibernatetunings.entities.TimePeriod;
-import io.costa.hibernatetunings.entities.Timesheet;
+import io.costax.hibernatetunings.entities.Developer;
+import io.costax.hibernatetunings.entities.TimePeriod;
+import io.costax.hibernatetunings.entities.Timesheet;
 import io.costax.rules.EntityManagerProvider;
 import org.junit.Rule;
 import org.junit.Test;
