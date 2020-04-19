@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  postgres-db:
+    image: postgres:12.2-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgresdemos
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - hibernate-tunings
+    volumes:
+      - .volumes/postgres-db:/var/lib/postgresql/data
+
+  maven-db-migration:
+    build:
+      dockerfile: Dockerfile
+      context: database-migrations
+    #maven-db-migration-img:latest
+    entrypoint: ["./wait-for-it.sh", "postgres-db:5432", "-t", "50", "--", "mvn", "flyway:migrate", "-Dflyway.url=jdbc:postgresql://postgres-db:5432/postgresdemos", "-Dflyway.schemas=public,communication,exchange,workarounds,tasks,nplusonetoone,multimedia", "-Dflyway.locations=filesystem:migration", "-Dflyway.user=postgres", "-Dflyway.password=postgres", "-Dflyway.cleanDisabled=false"]
+    networks:
+      - hibernate-tunings
+#    depends_on:
+#      - postgres-db
+
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+#    networks:
+#      - hibernate-tunings
+#    depends_on:
+#      - postgres-db
+
+networks:
+  hibernate-tunings:
+    driver: bridge

@@ -23,3 +23,6 @@ core/btm2.tlog
 .classpath
 .settings
 .factorypath
+
+# Docker volumes
+.volumes
