@@ -1,0 +1,33 @@
+# 1. First make sure you have a swarm. If you don't, run:
+# $  docker swarm init
+# 2. Deploy `postgres-db` stack:
+# $ docker stack deploy -c docker-stack.yml postgres-db
+# or
+# $ docker stack deploy --compose-file docker-stack.yml postgres-db
+#
+# 3. Remove the project stack:
+# $ docker stack rm postgres-db
+# 4. Leave the swarm:
+# $ docker swarm leave --force
+
+version: "3.7"
+
+services:
+  postgres-db:
+    image: postgres:12.2-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgresdemos
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - hibernate-tunings
+    deploy:
+      replicas: 1
+    volumes:
+      - .volumes/postgres-db:/var/lib/postgresql/data
+
+networks:
+  hibernate-tunings:
+    driver: overlay

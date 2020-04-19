@@ -33,6 +33,11 @@ docker run --name hibernate-tunings \
     -v $(pwd)"/hibernate-tunings:/var/lib/postgresql/data" -d postgres:11.4
 ```
 
+Or, simply run the docker-compose up command, which will raise a database and run the migrations for us:
+```
+docker-compose up
+```
+
 ### 2. Run all modules in a single command
 
 To run all modules in a single command, we can execute:

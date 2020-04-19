@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.costax</groupId>
+    <artifactId>database-migrations</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.1-SNAPSHOT</version>
+
+    <properties>
+        <flyway.cleanDisabled>true</flyway.cleanDisabled>
+        <java-version>11</java-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>6.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>6.3.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>6.3.1</version>
+                <configuration>
+                    <placeholders>
+                        <tunning_server_port>5432</tunning_server_port>
+                    </placeholders>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
