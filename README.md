@@ -204,3 +204,4 @@ mvn clean install -pl helpers && mvn clean package
     - [How to use Bean Validation In JPA Entities](bean-validation)
     - [Difference between @NotNull and @Column(nullable = false)](bean-validation)
     - [Hibernate 5 naming strategies](hibernate-5-naming-strategies)
+    - [Xa Transactions (2-phase-commit)](xa-transactions-2-phase-commit)
