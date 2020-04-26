@@ -51,6 +51,7 @@
         <module>instrumentation</module>
         <module>advanced-topics-two</module>
         <module>hibernate-5-naming-strategies</module>
+        <module>xa-transactions-2-phase-commit</module>
     </modules>
     <packaging>pom</packaging>
 

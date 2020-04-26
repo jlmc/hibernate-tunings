@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <persistence-unit name="dev1" transaction-type="JTA">
+        <description>Persistence Unit to the Account</description>
+        <jta-data-source>java:jboss/datasources/db1DS</jta-data-source>
+        <class>io.costax.trading.finex.entity.Account</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <!--property name="hibernate.show_sql" value="true"/-->
+
+
+            <!--
+                javax.persistence.schema-generation.database.action
+                Defines whether the persistence provider shall create the database,
+                first drop and then recreate it, only drop it or do nothing at all.
+                If this property is not provided, no schema will be created.
+                none, create, drop-and-create, drop
+             -->
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+            <!-- javax.persistence.schema-generation.create-source = [metadata, script, metadata-then-script, script-then-metadata]-->
+            <property name="javax.persistence.schema-generation.create-source" value="script"/>
+            <property name="javax.persistence.schema-generation.create-script-source" value="db1/create-script-source.sql"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
+            <property name="javax.persistence.schema-generation.drop-script-source" value="db1/drop-script-source.sql"/>
+            <!--property name="javax.persistence.sql-load-script-source" value="datos/datos.sql"/ -->
+
+        </properties>
+    </persistence-unit>
+
+
+    <persistence-unit name="dev2" transaction-type="JTA">
+        <description>Persistence Unit to the AuditLog</description>
+        <jta-data-source>java:jboss/datasources/db2DS</jta-data-source>
+        <class>io.costax.trading.finex.entity.AuditLog</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+            <property name="javax.persistence.schema-generation.create-source" value="script"/>
+            <property name="javax.persistence.schema-generation.create-script-source" value="db2/create-script-source.sql"/>
+            <property name="javax.persistence.schema-generation.drop-source" value="script"/>
+            <property name="javax.persistence.schema-generation.drop-script-source" value="db2/drop-script-source.sql"/>
+
+        </properties>
+    </persistence-unit>
+
+</persistence>
