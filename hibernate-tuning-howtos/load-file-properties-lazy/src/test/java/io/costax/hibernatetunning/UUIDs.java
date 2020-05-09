@@ -1,4 +1,4 @@
-package io.costa.hibernatetunning;
+package io.costax.hibernatetunning;
 
 import java.util.UUID;
 

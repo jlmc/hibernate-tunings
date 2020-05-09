@@ -30,7 +30,7 @@ public class Configuration {
      * <p>
      * Eg. 2:
      * <code>
-     * @Type(type = "io.costa.hibernatetunings.arrays.StringArrayType")
+     * @Type(type = "io.costax.hibernatetunings.arrays.StringArrayType")
      * </code>
      */
     @Type(type = "string-array")

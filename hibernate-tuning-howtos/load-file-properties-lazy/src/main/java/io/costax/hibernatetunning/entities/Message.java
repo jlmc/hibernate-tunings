@@ -1,4 +1,4 @@
-package io.costa.hibernatetunning.entities;
+package io.costax.hibernatetunning.entities;
 
 import javax.persistence.*;
 import java.util.ArrayList;

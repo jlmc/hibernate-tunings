@@ -1,6 +1,6 @@
 package io.costax.hibernatetuning.storedprocedures;
 
-import io.costa.hibernatetunning.entities.Project;
+import io.costax.hibernatetunning.entities.Project;
 import io.costax.rules.EntityManagerProvider;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;

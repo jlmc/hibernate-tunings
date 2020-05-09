@@ -23,7 +23,7 @@ We can enforce NOT NULL constraints at the database table level with:
 
 ##
 ```java
-package io.costa.hibernatetunings.entities.financial;
+package io.costax.hibernatetunings.entities.financial;
     
 import io.costax.hibernatetunings.entities.financial.FinancialDocument;import org.hibernate.annotations.NaturalId;
 
@@ -86,7 +86,7 @@ public class Board {
 # Basic base entity class:
 
 ```java
-package io.costa.hibernatetunings.entities.financial;
+package io.costax.hibernatetunings.entities.financial;
     
     
 import io.costax.hibernatetunings.entities.financial.Board;import org.hibernate.annotations.CreationTimestamp;
