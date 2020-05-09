@@ -52,6 +52,7 @@
         <module>advanced-topics-two</module>
         <module>hibernate-5-naming-strategies</module>
         <module>xa-transactions-2-phase-commit</module>
+        <module>how-to-use-a-sequence-generator-for-a-non-id-field</module>
     </modules>
     <packaging>pom</packaging>
 
