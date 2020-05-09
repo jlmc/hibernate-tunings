@@ -100,8 +100,8 @@ mvn clean install -pl helpers && mvn clean package
 
 4. Identifiers
    1. [Generating Primary Keys](docs/4-Identifiers/GeneratingPrimaryKeys.md)
-   2. [Identifiers Generators and Natural Keys](docs/4-Identifiers/4.1%20-%20Identifier.md)
-   3. [Hibernate Sequence Optimizers](docs/4-Identifiers/4.2%20-%20hibernate-sequence-optimizers.md)
+   2. [Identifiers Generators and Natural Keys](docs/4-Identifiers/4.1-Identifier.md)
+   3. [Hibernate Sequence Optimizers](docs/4-Identifiers/4.2-hibernate-sequence-optimizers.md)
 
 5. **JPA Relationships Types**    
     1. [About](relationships/Readme.md) 
@@ -205,3 +205,4 @@ mvn clean install -pl helpers && mvn clean package
     - [Difference between @NotNull and @Column(nullable = false)](bean-validation)
     - [Hibernate 5 naming strategies](hibernate-5-naming-strategies)
     - [Xa Transactions (2-phase-commit)](xa-transactions-2-phase-commit)
+    - [How to map generated values](how-to-use-a-sequence-generator-for-a-non-id-field)
