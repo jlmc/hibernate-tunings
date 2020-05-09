@@ -1,7 +1,7 @@
-package io.costa.hibernatetunning;
+package io.costax.hibernatetunning;
 
-import io.costa.hibernatetunning.entities.Attachment;
-import io.costa.hibernatetunning.entities.Message;
+import io.costax.hibernatetunning.entities.Attachment;
+import io.costax.hibernatetunning.entities.Message;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;

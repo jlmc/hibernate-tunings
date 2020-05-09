@@ -1,4 +1,4 @@
-package io.costa.hibernatetunning.customdialects;
+package io.costax.hibernatetunning.customdialects;
 
 import java.sql.Types;
 

@@ -1,7 +1,7 @@
-package io.costa.hibernatetunning;
+package io.costax.hibernatetunning;
 
-import io.costa.hibernatetunning.entities.Image;
-import io.costa.hibernatetunning.entities.Message;
+import io.costax.hibernatetunning.entities.Image;
+import io.costax.hibernatetunning.entities.Message;
 import io.costax.rules.EntityManagerProvider;
 import org.hamcrest.Matchers;
 import org.junit.*;
@@ -9,8 +9,6 @@ import org.junit.runners.MethodSorters;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-
-import static io.costa.hibernatetunning.FileContentReader.readAllBytes;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LobDocumentTest {
@@ -26,7 +24,7 @@ public class LobDocumentTest {
         Message message = Message.of("Jcosta", "jsousa", "make it up", "Make it Up... and go on!!!");
         em.persist(message);
 
-        final Image png = Image.png(readAllBytes("example.png"));
+        final Image png = Image.png(FileContentReader.readAllBytes("example.png"));
 
         message.addImage(png);
 
