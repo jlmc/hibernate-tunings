@@ -2,13 +2,13 @@
 
 ## Performance Facts
 
-- [“More than half of application performance bottlenecks originate in the database” - http://www.appdynamics.com/database/](http://www.appdynamics.com/database/)
+- “More than half of application performance bottlenecks originate in the database - [http://www.appdynamics.com/database/](http://www.appdynamics.com/database/)
 
 - “Like us, our users place a lot of value in speed — that's why we've decided to take site speed into account in our search rankings.”
-[Google Ranking - https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html](https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html)
+[Google Ranking](https://webmasters.googleblog.com/2010/04/using-site-speed-in-web-search-ranking.html)
 
-- [“It has been reported that every 100ms of latency costs Amazon 1% of profit.”
-http://radar.oreilly.com/2008/08/radar-theme-web-ops.html](http://radar.oreilly.com/2008/08/radar-theme-web-ops.html)
+- “It has been reported that every 100ms of latency costs Amazon 1% of profit."
+[http://radar.oreilly.com/2008/08/radar-theme-web-ops.html](http://radar.oreilly.com/2008/08/radar-theme-web-ops.html)
 
 ## JPA vs Hibernate
 
@@ -21,7 +21,7 @@ http://radar.oreilly.com/2008/08/radar-theme-web-ops.html](http://radar.oreilly.
 
 ### 1. Postgres Data Base
  
-First off all, we need to create a Postgres Data Base with the name `hibernate-tunings` in the port `5432`. 
+First off all, we need to create a Postgres database with the name `hibernate-tunings` in the port `5432`. 
 For example, we can use Docker to create that resource:
 
 ```shell script

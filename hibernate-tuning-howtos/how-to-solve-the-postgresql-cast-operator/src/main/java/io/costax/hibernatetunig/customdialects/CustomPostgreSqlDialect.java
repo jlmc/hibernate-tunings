@@ -4,6 +4,7 @@ import org.hibernate.type.LocalDateType;
 import org.hibernate.type.StandardBasicTypes;
 
 import java.sql.Types;
+import java.util.List;
 
 /**
  * An SQL dialect for Postgres 10.0 and later, adds support for PG-UUID data type in Native Queries.
@@ -31,5 +32,16 @@ public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL10D
         registerFunction("f_risk_category_type_is_disable", new org.hibernate.dialect.function.StandardSQLFunction("f_risk_category_type_is_disable", org.hibernate.type.StandardBasicTypes.BOOLEAN));
         registerFunction("f_impacted_objective_type_is_disable", new org.hibernate.dialect.function.StandardSQLFunction("f_impacted_objective_type_is_disable", org.hibernate.type.StandardBasicTypes.BOOLEAN));
         */
+    }
+
+    /**
+     * An SQL Dialect for PostgreSQL 10 and later. Adds support for Partition table.
+     *
+     * @param tableTypesList
+     */
+    @Override
+    public void augmentRecognizedTableTypes(List<String> tableTypesList) {
+        super.augmentRecognizedTableTypes( tableTypesList );
+        tableTypesList.add( "PARTITIONED TABLE" );
     }
 }
