@@ -97,7 +97,7 @@
         <h2.version>1.4.200</h2.version>
         <junit.version>4.12</junit.version>
 
-        <hibernate-types-52.version>2.3.3</hibernate-types-52.version>
+        <hibernate-types-52.version>2.9.9</hibernate-types-52.version>
         <surefire-failsafe.version>3.0.0-M4</surefire-failsafe.version>
     </properties>
 
