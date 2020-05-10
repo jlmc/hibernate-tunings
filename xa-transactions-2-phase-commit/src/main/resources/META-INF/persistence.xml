@@ -10,7 +10,7 @@
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!--property name="hibernate.show_sql" value="true"/-->
 
 
@@ -40,7 +40,7 @@
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
 
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
             <property name="javax.persistence.schema-generation.create-source" value="script"/>

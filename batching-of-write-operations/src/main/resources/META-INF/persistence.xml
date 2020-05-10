@@ -52,7 +52,7 @@
             < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
             -->
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!--property name="hibernate.show_sql" value="true"/-->
             <property name="hibernate.format_sql" value="true"/>
             <!--property name="hibernate.use_sql_comments" value="true"/-->
