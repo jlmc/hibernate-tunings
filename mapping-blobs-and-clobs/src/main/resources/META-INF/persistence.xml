@@ -61,7 +61,7 @@
 
 
             <!-- ### Hibernate dialect ### -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
             <!-- show_sql: when true tells that the sql statements are printed to System.out -->
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>

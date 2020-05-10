@@ -8,7 +8,7 @@ import java.sql.Types;
 /**
  * An SQL dialect for Postgres 10.0 and later, adds support for PG-UUID data type in Native Queries.
  */
-public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL95Dialect {
+public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL10Dialect {
 
     public CustomPostgreSqlDialect() {
         super();
