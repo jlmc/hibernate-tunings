@@ -15,14 +15,14 @@ Hibernate only make it more comfortable to use because:
 
 The main goal of batching is to:
 
-- Group identical PreparedStatements, reduce number of database roundtrips
+- Group identical PreparedStatements, reduce number of database round trips
 
 ## inserts statements
 
 - Unless we want to execute inserts statements we do not have to worry that statements
 
 If we need to insert in batching then we must consider to use sequences generator strategy. because other wise if we use identity all the batching we have no effect because the insert must be always executed to retrieve the primary key.
-So GenerationType.IDENTITY is not supported.
+So GenerationType.IDENTITY it is not supported.
 
 
 ## Order insert statements
@@ -57,7 +57,7 @@ The Hibernate 4: configurations that allow us to Activate batching for versioned
 <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
 ```
 
-In Hibernate 5 the same configuration is Activated by default.
+In Hibernate 5 the same configuration it is activated by default.
 
 
 ## Delete statements
