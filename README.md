@@ -207,3 +207,4 @@ mvn clean install -pl helpers && mvn clean package
     - [Xa Transactions (2-phase-commit)](xa-transactions-2-phase-commit)
     - [How to map generated values](how-to-use-a-sequence-generator-for-a-non-id-field)
     - [When and why JPA entities should implement the Serializable interface](docs/When-entities-should-implement-theSerializable-interface.md)
+    - [The best way to use Java Records With JPA](the-best-way-to-use-java-records-with-jpa)
