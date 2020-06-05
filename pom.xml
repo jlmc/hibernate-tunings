@@ -68,7 +68,8 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <!-- dependencies versions-->
-        <hibernate.version>5.4.16.Final</hibernate.version>
+        <hibernate.version>5.4.17.Final</hibernate.version>
+        <!--<hibernate.version>5.4.16.Final</hibernate.version>-->
         <!--hibernate.version>5.4.14.Final</hibernate.version-->
         <!--hibernate.version>5.4.12.Final</hibernate.version-->
         <!--hibernate.version>5.4.4.Final</hibernate.version-->
@@ -94,7 +95,7 @@
         <!--jackson.version>2.7.4</jackson.version-->
         <jackson.version>2.11.0</jackson.version>
         <!--jackson.version>2.9.10.4</jackson.version-->
-        <flyway.version>6.3.1</flyway.version>
+        <flyway.version>6.4.3</flyway.version>
         <!--flyway.version>5.2.4</flyway.version-->
         <!--flyway.version>3.2.1</flyway.version-->
         <aspectj.version>1.8.7</aspectj.version>
@@ -343,6 +344,16 @@
                     </executions>
                     -->
                 </plugin>
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${flyway.version}</version>
+                    <configuration>
+                        <placeholders>
+                            <tunning_server_port>5432</tunning_server_port>
+                        </placeholders>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -390,6 +401,26 @@
                     <argLine>--enable-preview</argLine>
                 </configuration>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence/>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
         </plugins>
     </build>
 

@@ -15,6 +15,28 @@
         <flyway.cleanDisabled>true</flyway.cleanDisabled>
     </properties>
 
+    <!--
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-annotations</artifactId>
+                <version>1.5.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>2.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-sec-dispatcher</artifactId>
+                <version>1.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    -->
+
     <dependencies>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -35,7 +57,6 @@
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>${flyway.version}</version>
                 <configuration>
                     <placeholders>
                         <tunning_server_port>5432</tunning_server_port>
