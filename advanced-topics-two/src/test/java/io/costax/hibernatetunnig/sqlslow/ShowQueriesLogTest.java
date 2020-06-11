@@ -1,12 +1,15 @@
 package io.costax.hibernatetunnig.sqlslow;
 
 import io.costax.hibernatetunnig.graphs.entity.Author;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.LongStream;
 
@@ -62,31 +65,35 @@ import java.util.stream.LongStream;
  * <p>
  *     To see how the Hibernate slow query log works, we can check the Hibernate {@link org.hibernate.engine.jdbc.internal.ResultSetReturnImpl} class which is used for all SQL query
  * </p>
- *
- *
  */
+@JpaTest(persistenceUnit = "it")
 public class ShowQueriesLogTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        provider.doInTx(em -> {
-            LongStream.rangeClosed(1L, 5001)
-                    .mapToObj(i -> new Author(i, "Author-" + i))
-                    .forEach(em::persist);
-        });
+        provider.doInTx(em ->
+                LongStream.rangeClosed(1L, 5001)
+                .mapToObj(i -> new Author(i, "Author-" + i))
+                .forEach(em::persist));
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    public void tearDown() {
         provider.doInTx(em -> em.createQuery("delete from Author").executeUpdate());
     }
 
     @Test
     public void should_log_slow_queries() {
-        final List<Author> authors = provider.em().createQuery("select a from Author a", Author.class).getResultList();
+        final EntityManager em = provider.em();
+
+        final List<Author> authors = em.createQuery("select a from Author a", Author.class).getResultList();
         System.out.println("---> Please check the logger and try to find  \"[org.hibernate.SQL_SLOW] - SlowQuery:\" Entries");
+
+        em.close();
+
+        Assertions.assertNotNull(authors);
     }
 }

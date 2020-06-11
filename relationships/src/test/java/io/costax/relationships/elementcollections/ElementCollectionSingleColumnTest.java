@@ -1,22 +1,27 @@
 package io.costax.relationships.elementcollections;
 
 import io.costax.relationships.onetomany.Actor;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ElementCollectionSingleColumnTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void t00__create_actor_with_language_enum() {
+    @Order(0)
+    public void create_actor_with_language_enum() {
         provider.doInTx(em -> {
 
             final Actor johnTravolta = Actor.of(1, "John Travolta");
@@ -36,7 +41,8 @@ public class ElementCollectionSingleColumnTest {
     }
 
     @Test
-    public void t01_create_actor_with_prize() {
+    @Order(1)
+    public void create_actor_with_prize() {
         provider.doInTx(em -> {
 
             final Actor samuelLJackson = Actor.of(2, "Samuel L. Jackson");
@@ -68,7 +74,8 @@ public class ElementCollectionSingleColumnTest {
     }
 
     @Test
-    public void t02_create_tv_serie() {
+    @Order(3)
+    public void create_tv_serie() {
         provider.doInTx(em -> {
 
             final TvSerie tvSerie = new TvSerie(1);
@@ -80,13 +87,13 @@ public class ElementCollectionSingleColumnTest {
     }
 
     @Test
-    public void t03_create_tv_serie_prize() {
+    @Order(4)
+    public void create_tv_serie_prize() {
         provider.doInTx(em -> {
 
             final ZoneOffset currentOffSet = OffsetDateTime.now().getOffset();
             final Prize prize1 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2018, 1, 1, 15, 0), currentOffSet), new BigDecimal("9999.98"));
             final Prize prize2 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2018, 3, 31, 15, 0), currentOffSet), new BigDecimal("1567.98"));
-            final Prize prize3 = Prize.of(OffsetDateTime.of(LocalDateTime.of(2019, 3, 31, 15, 0), currentOffSet), new BigDecimal("9981182.98"));
 
 
             final TvSerie tvSerie = new TvSerie(2);

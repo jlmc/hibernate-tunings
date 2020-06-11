@@ -3,18 +3,23 @@ package io.costax.relationships.manytomany;
 import io.costax.relationships.onetomany.Actor;
 import io.costax.relationships.onetomany.Director;
 import io.costax.relationships.onetomany.Movie;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyAlternativeOneToManyTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManyToManyAlternativeOneToManyTest.class);
 
@@ -48,9 +53,9 @@ public class ManyToManyAlternativeOneToManyTest {
 
             em.getTransaction().commit();
 
-            final Integer johnTravoltaEntry = (Integer) em.createNativeQuery(
-                    "select entry from MOVIE_ACTOR_PERSONAGE where actor_id = :_id"
-                    )
+            @SuppressWarnings("SqlResolve")
+            final Integer johnTravoltaEntry = (Integer)
+                    em.createNativeQuery("select entry from MOVIE_ACTOR_PERSONAGE where actor_id = :_id")
                     .setParameter("_id", johnTravolta.getId())
                     .getSingleResult();
 
@@ -67,7 +72,13 @@ public class ManyToManyAlternativeOneToManyTest {
 
         provider.doIt(em -> {
 
-            final List<MovieActorPersonage> personages = em.createQuery("select ma from MovieActorPersonage ma where ma.movie.id = :_movie", MovieActorPersonage.class)
+            final List<MovieActorPersonage> personages =
+                    em.createQuery(
+                    """
+                    select ma 
+                    from MovieActorPersonage ma 
+                    where ma.movie.id = :_movie
+                    """, MovieActorPersonage.class)
                     .setParameter("_movie", 2)
                     .getResultList();
 

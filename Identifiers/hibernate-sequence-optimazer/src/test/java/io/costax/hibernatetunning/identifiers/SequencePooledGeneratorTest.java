@@ -3,25 +3,26 @@ package io.costax.hibernatetunning.identifiers;
 import io.costax.hibernatetunings.entities.Developer;
 import io.costax.hibernatetunings.entities.TimePeriod;
 import io.costax.hibernatetunings.entities.Timesheet;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.*;
 import java.util.List;
 
-public class SequencePooledGeneteratorTest {
+@JpaTest(persistenceUnit = "it")
+public class SequencePooledGeneratorTest {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(SequencePooledGeneteratorTest.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(SequencePooledGeneratorTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
-    public void createTheTimeShets() {
+    public void createTheTimeSheets() {
         /*
         select nextval('timesheet_id_sequence');
         alter sequence timesheet_id_sequence restart;
@@ -36,9 +37,7 @@ public class SequencePooledGeneteratorTest {
                 offset);
 
 
-        final EntityManager em = provider.em();
-
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         final List<Developer> gangOfFour = em.createQuery("from Developer d order by d.id", Developer.class).getResultList();
 
@@ -84,15 +83,12 @@ public class SequencePooledGeneteratorTest {
             }
         }
 
-        provider.commitTransaction();
-
+        em.getTransaction().commit();
     }
 
     @Test
     public void createTheGangOfFourDevelopers() {
-        final EntityManager em = provider.em();
-
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         final Developer erichGamma = new Developer.Builder().setNome("Erich Gamma").createDeveloper();
         final Developer richardHelm = new Developer.Builder().setNome("Richard Helm").createDeveloper();
@@ -105,6 +101,6 @@ public class SequencePooledGeneteratorTest {
         em.persist(ralphJohnson);
         em.persist(johnVlissides);
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 }

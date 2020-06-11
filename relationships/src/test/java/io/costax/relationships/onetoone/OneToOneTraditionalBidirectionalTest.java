@@ -1,26 +1,31 @@
 package io.costax.relationships.onetoone;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.hibernate.LazyInitializationException;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
 import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 
-public class OneToOneTradicionalBidimentionalTest {
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class OneToOneTraditionalBidirectionalTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OneToOneTradicionalBidimentionalTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OneToOneTraditionalBidirectionalTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void testCreation() {
+    @Order(1)
+    public void test_creation() {
 
         provider.doInTx(em -> {
 
@@ -61,28 +66,40 @@ public class OneToOneTradicionalBidimentionalTest {
     }
 
     @Test
-    public void testFetchOne() {
+    @Order(2)
+    @DisplayName("How to fix OneToOne N+1 problem even with fetch Lazy with Using Maven hibernate-enhance-maven-plugin with the configuration enableLazyInitialization true")
+    public void test_fetch_one() {
 
         /*
          * even with lazy Loading two queries will be executed.
          */
-        final EntityManager em = provider.em();
-        final Festival festival = em.find(Festival.class, 5);
+        final Festival festival =
+                provider.doItWithReturn(em -> em.find(Festival.class, 5));
 
         LOGGER.info("****** Festival: [{}]", festival);
 
-        LOGGER.info("****** Festival-Details: [{}]", festival.getDetails());
+        // note that this is true and the exception is throw when the bytecode is enhanced
+        Assertions.assertThrows(LazyInitializationException.class, () -> System.out.println(festival.getDetails().toString()));
     }
 
     @Test
-    public void testFetchMultiple() {
+    @Order(3)
+    public void test_fetch_multiple() {
 
         /*
          * More than one query will be executed.
          */
 
-        final List<Festival> festivals = provider.em().createQuery("select f from Festival f", Festival.class).getResultList();
+        provider.doIt(em -> {
 
-        festivals.forEach(f -> LOGGER.info("**** Festival: [{}]", f));
+            LOGGER.info("Fetching Festival records");
+
+            final List<Festival> festivals =
+                    em.createQuery("select f from Festival f", Festival.class)
+                            .getResultList();
+
+            festivals.forEach(f -> LOGGER.info("**** Festival: [{}]", f));
+        });
+
     }
 }

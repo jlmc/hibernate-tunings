@@ -23,4 +23,8 @@ public class TopicStatistic {
     public void incrementViews() {
         views++;
     }
+
+    public Topic getTopic() {
+        return topic;
+    }
 }

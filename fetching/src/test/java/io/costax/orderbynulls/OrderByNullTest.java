@@ -1,32 +1,30 @@
 package io.costax.orderbynulls;
 
 import io.costax.model.Issue;
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.*;
 import java.time.*;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
  * How to Handle NULL Values while Ordering Query Results in JPQL
  */
+@JpaTest(persistenceUnit = "it")
 public class OrderByNullTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(io.costax.queryhintfetchsize.QueryHintFetchSizeTest.class);
 
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
 
     /* *************************************
@@ -39,26 +37,22 @@ public class OrderByNullTest {
     public void nulls_firsts_jpql() {
 
         // select * from issue order by title nulls first
-        final List<Issue> resultList =
-                provider.em()
-                        .createQuery(
-                                "select i from Issue i order by i.title desc NULLS FIRST", Issue.class)
-                        .getResultList();
+        final List<Issue> resultList = em
+                .createQuery("select i from Issue i order by i.title desc NULLS FIRST", Issue.class)
+                .getResultList();
 
-        Assert.assertNotNull(resultList);
+        assertNotNull(resultList);
     }
 
     @Test
     public void nulls_lasts_jpql() {
 
         // select * from issue order by title nulls last
-        final List<Issue> resultList =
-                provider.em()
-                        .createQuery(
-                                "select i from Issue i order by i.title desc NULLS LAST", Issue.class)
-                        .getResultList();
+        final List<Issue> resultList = em
+                .createQuery("select i from Issue i order by i.title desc NULLS LAST", Issue.class)
+                .getResultList();
 
-        Assert.assertNotNull(resultList);
+        assertNotNull(resultList);
     }
 
     /* *************************************
@@ -68,8 +62,7 @@ public class OrderByNullTest {
      ************************************* */
 
     @Test
-    public void nulls_firts_criteria_with_swicth_case() {
-        final EntityManager em = provider.em();
+    public void nulls_first_criteria_with_switch_case() {
 
         final CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -86,12 +79,11 @@ public class OrderByNullTest {
 
         final List<Issue> resultList = em.createQuery(cq).getResultList();
 
-        Assert.assertNotNull(resultList);
+        assertNotNull(resultList);
     }
 
     @Test
     public void nulls_firts_criteria_with_coalesce() {
-        final EntityManager em = provider.em();
 
         final CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -107,13 +99,11 @@ public class OrderByNullTest {
 
         final List<Issue> resultList = em.createQuery(cq).getResultList();
 
-        Assert.assertNotNull(resultList);
+        assertNotNull(resultList);
     }
 
     @Test
     public void nulls_firts_criteria_with_coalesce_with_dates() {
-        final EntityManager em = provider.em();
-
         final CriteriaBuilder cb = em.getCriteriaBuilder();
 
         final CriteriaQuery<Issue> cq = cb.createQuery(Issue.class);
@@ -129,7 +119,7 @@ public class OrderByNullTest {
 
         final List<Issue> resultList = em.createQuery(cq).getResultList();
 
-        Assert.assertNotNull(resultList);
+        assertNotNull(resultList);
     }
 
     private OffsetDateTime getMaxPostgresOffsetDateTime() {

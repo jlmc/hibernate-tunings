@@ -4,11 +4,12 @@ import io.costax.hibernation.model.ShoppingList;
 import io.costax.hibernation.model.ShoppingList_;
 import io.costax.hibernation.model.Topic;
 import io.costax.hibernation.model.Topic_;
-import io.costax.persistence.api.PersistenceExtension;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.annotations.QueryHints;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.persistence.criteria.*;
 import java.time.*;
@@ -16,18 +17,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static io.costax.persistence.api.ThreadLocalEntityManagerProvider.doIt;
-import static io.costax.persistence.api.ThreadLocalEntityManagerProvider.doItTx;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsLast;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-//@ExtendWith(PersistenceExtension.class)
+@JpaTest(persistenceUnit = "it")
 class RepositoryTest {
 
-    @RegisterExtension
-    static PersistenceExtension persistenceExtension = PersistenceExtension.withPersistenceUnit("it");
+    @JpaContext
+    JpaProvider provider;
 
     @Test
     @Order(1)
@@ -37,19 +36,18 @@ class RepositoryTest {
                 .atTime(LocalTime.of(13, 5, 1, 123_456_789))
                 .atZone(ZoneId.of("Europe/Lisbon"));
 
-        List<ShoppingList> result = doIt(em -> {
-            return em.createQuery("""
-                            select distinct m 
-                            from ShoppingList m 
-                            left join fetch m.topics t 
-                            where m.createAt >= :time
-                            order by m.id ,t.id 
-                            """
-                    , ShoppingList.class)
-                    .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
-                    .setParameter("time", zonedDateTime.toOffsetDateTime())
-                    .getResultList();
-        });
+        List<ShoppingList> result = provider.doItWithReturn(em ->
+                em.createQuery("""
+                                select distinct m 
+                                from ShoppingList m 
+                                left join fetch m.topics t 
+                                where m.createAt >= :time
+                                order by m.id ,t.id 
+                                """
+                        , ShoppingList.class)
+                        .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+                        .setParameter("time", zonedDateTime.toOffsetDateTime())
+                        .getResultList());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -62,7 +60,7 @@ class RepositoryTest {
     void shouldExecuteCriteriaQuery() {
         final long shoppingListId = 1L;
 
-        List<Topic> results = doIt(em -> {
+        List<Topic> results = provider.doItWithReturn(em -> {
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<Topic> query = builder.createQuery(Topic.class);
@@ -95,7 +93,7 @@ class RepositoryTest {
     @Order(3)
     void shouldAddMoreTopics() {
         final long primaryKey = 1L;
-        doItTx(em -> {
+        provider.doInTx(em -> {
             ShoppingList shoppingList = em.find(ShoppingList.class, primaryKey);
 
             shoppingList
@@ -110,7 +108,7 @@ class RepositoryTest {
         });
 
 
-        List<Topic> topics = doIt(em -> {
+        List<Topic> topics = provider.doItWithReturn(em -> {
             ShoppingList shoppingList = em.find(ShoppingList.class, primaryKey);
             return shoppingList.getTopics();
         });

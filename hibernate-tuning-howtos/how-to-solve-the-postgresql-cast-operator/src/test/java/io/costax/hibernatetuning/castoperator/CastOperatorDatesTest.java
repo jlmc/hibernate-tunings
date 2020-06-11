@@ -4,10 +4,11 @@ import io.costax.hibernatetunig.model.Issue;
 import io.costax.hibernatetunig.model.Issue_;
 import io.costax.hibernatetunig.model.Project;
 import io.costax.hibernatetunig.model.projections.IssueSummary;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,58 +18,48 @@ import java.time.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Sql(statements = {
+        "delete from Issue where true",
+        "delete from Project where true"
+}, phase = Sql.Phase.AFTER_TEST_METHOD)
 public class CastOperatorDatesTest {
-
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     private final LocalDate startSearch = LocalDate.of(2018, 1, 20);
     private final LocalDate endSearch = LocalDate.of(2018, 2, 1);
+    @JpaContext
+    public JpaProvider provider;
 
-    @After
-    public void cleanup() {
-        provider.beginTransaction();
-
-        provider.em().createQuery("delete from Issue ").executeUpdate();
-        provider.em().createQuery("delete from Project ").executeUpdate();
-
-        provider.commitTransaction();
-    }
-
-    @Before
+    @BeforeEach
     public void populate() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+        provider.doInTx(em -> {
 
-        em.createQuery("delete from Issue ").executeUpdate();
-        em.createQuery("delete from Project ").executeUpdate();
+            em.createQuery("delete from Issue ").executeUpdate();
+            em.createQuery("delete from Project ").executeUpdate();
 
-        final Project castingDates = Project.of("Casting Dates");
+            final Project castingDates = Project.of("Casting Dates");
+            final OffsetDateTime startProjecTime = OffsetDateTime.of(
+                    LocalDateTime.of(
+                            LocalDate.of(2018, 1, 1),
+                            LocalTime.of(8, 15)),
+                    ZoneOffset.UTC);
 
-        final OffsetDateTime startProjecTime = OffsetDateTime.of(
-                LocalDateTime.of(
-                        LocalDate.of(2018, 1, 1),
-                        LocalTime.of(8, 15)),
-                ZoneOffset.UTC);
+            IntStream.range(0, 100)
+                    .mapToObj(i -> Issue.of(castingDates, "Issue - " + i, startProjecTime.plusDays(i)))
+                    .forEachOrdered(castingDates::addIssue);
 
-        IntStream.range(0, 100)
-                .mapToObj(i -> Issue.of(castingDates, "Issue - " + i, startProjecTime.plusDays(i)))
-                .forEachOrdered(castingDates::addIssue);
+            em.persist(castingDates);
+        });
 
-        em.persist(castingDates);
 
-        provider.commitTransaction();
     }
 
     @Test
     public void should_find_issue_summary_using_jpql() {
-
         final EntityManager em = provider.em();
 
         final List<IssueSummary> issues = em.createQuery(
@@ -86,6 +77,8 @@ public class CastOperatorDatesTest {
                 .getResultList();
 
         assertResultIssues(issues);
+
+        em.close();
     }
 
     @Test
@@ -98,27 +91,29 @@ public class CastOperatorDatesTest {
 
         // NOTE: If we need the functions results in the queries projection then we must register the functions
         cq.select(cb.construct(
-            IssueSummary.class,
-            from.get(Issue_.id),
-            from.get(Issue_.title),
-            cb.function("date", LocalDate.class, from.get(Issue_.createAt))
+                IssueSummary.class,
+                from.get(Issue_.id),
+                from.get(Issue_.title),
+                cb.function("date", LocalDate.class, from.get(Issue_.createAt))
         ))
-        .where(
-            cb.greaterThan(
-                    cb.function("date", LocalDate.class, from.get(Issue_.createAt)),
-                    startSearch),
-            cb.lessThan(
-                    cb.function("date", LocalDate.class, from.get(Issue_.createAt)),
-                    endSearch)
-        )
-        .orderBy(
-                // 'dow' - The day of the week as Sunday (0) to Saturday (6)
-            cb.asc(cb.function("date_part", Integer.class, cb.literal("dow"), from.get(Issue_.createAt))),
-            cb.asc(from.get(Issue_.id)));
+                .where(
+                        cb.greaterThan(
+                                cb.function("date", LocalDate.class, from.get(Issue_.createAt)),
+                                startSearch),
+                        cb.lessThan(
+                                cb.function("date", LocalDate.class, from.get(Issue_.createAt)),
+                                endSearch)
+                )
+                .orderBy(
+                        // 'dow' - The day of the week as Sunday (0) to Saturday (6)
+                        cb.asc(cb.function("date_part", Integer.class, cb.literal("dow"), from.get(Issue_.createAt))),
+                        cb.asc(from.get(Issue_.id)));
 
         final List<IssueSummary> issues = em.createQuery(cq).getResultList();
 
         assertResultIssues(issues);
+
+        em.close();
     }
 
     @Test
@@ -128,62 +123,68 @@ public class CastOperatorDatesTest {
         // NOTE: we are using Java types: cast( i.createAt as LocalDate ) is the same as cast( i.createAt as java.time.LocalDate )
 
         final List<IssueSummary> issues = em.createQuery(
-                "select new io.costax.hibernatetunig.model.projections.IssueSummary(" +
-                        "   i.id, " +
-                        "   i.title," +
-                        "   cast( i.createAt as LocalDate ) " +
-                        ") " +
-                        "from Issue i " +
-                        "where cast( i.createAt as LocalDate ) > :start " +
-                        "   and cast(  i.createAt as LocalDate ) < :end " +
-                        "order by function('date_part', 'dow', i.createAt) asc, i.id asc ", IssueSummary.class)
+                """
+                        select new io.costax.hibernatetunig.model.projections.IssueSummary(
+                                i.id,
+                                i.title,
+                                cast( i.createAt as LocalDate ) 
+                                )
+                        from Issue i 
+                        where cast( i.createAt as LocalDate ) > :start 
+                            and cast(  i.createAt as LocalDate ) < :end 
+                        order by function('date_part', 'dow', i.createAt) asc, i.id asc
+                        """
+                , IssueSummary.class)
                 .setParameter("start", startSearch)
                 .setParameter("end", endSearch)
                 .getResultList();
+
+        em.close();
 
         assertResultIssues(issues);
     }
 
     @Test
     public void should_find_issue_summary_using_native_query() {
-
         final EntityManager em = provider.em();
 
         List<IssueSummary> issues = em.createNativeQuery(
-                "select " +
-                "   i.id as id, " +
-                "   i.title as title, " +
-                "   cast(i.create_at as date) as day " +
-                "from " +
-                "   issue i " +
-                "where cast(i.create_at as date) > :startp " +
-                "   and cast(i.create_at as date) < :endp " +
-                "order by date_part('dow',i.create_at) asc, i.id asc ",
-                "IssueSummaryMapper")
-             .setParameter("startp", startSearch)
-             .setParameter("endp", endSearch)
-             .getResultList();
+                """
+                        select
+                           i.id as id, 
+                           i.title as title, 
+                           cast(i.create_at as date) as day 
+                        from issue i 
+                        where cast(i.create_at as date) > :startp 
+                           and cast(i.create_at as date) < :endp 
+                        order by date_part('dow',i.create_at) asc, i.id asc
+                        """
+                , "IssueSummaryMapper")
+                .setParameter("startp", startSearch)
+                .setParameter("endp", endSearch)
+                .getResultList();
+
+        em.close();
 
         assertResultIssues(issues);
     }
 
     private void assertResultIssues(final List<IssueSummary> issues) {
-        assertThat(issues, Matchers.hasSize(11));
+        Assertions.assertTrue(11 == issues.size());
         IssueSummary issueSummary = issues.get(0);
         assertNotNull(issueSummary);
 
-        assertThat(issueSummary.getTitle(), is("Issue - 20"));
-        assertThat(issueSummary.getDay(), notNullValue());
-        assertThat(issueSummary.getDay(), is(LocalDate.of(2018, 1, 21)));
-        assertThat(issueSummary.getDay().getDayOfWeek(), is(DayOfWeek.SUNDAY));
+        assertEquals("Issue - 20", issueSummary.getTitle());
+        assertNotNull(issueSummary.getDay());
+        assertEquals(LocalDate.of(2018, 1, 21), issueSummary.getDay());
+        assertEquals(DayOfWeek.SUNDAY, issueSummary.getDay().getDayOfWeek());
 
 
         assertNotNull(issues.get(issues.size() - 1));
         issueSummary = issues.get(issues.size() - 1);
         assertNotNull(issueSummary);
-        assertThat(issueSummary.getTitle(), is("Issue - 26"));
-        assertThat(issueSummary.getDay(), notNullValue());
-        assertThat(issueSummary.getDay(), is(LocalDate.of(2018, 1, 27)));
-        assertThat(issueSummary.getDay().getDayOfWeek(), is(DayOfWeek.SATURDAY));
+        assertEquals("Issue - 26", issueSummary.getTitle());
+        assertNotNull(issueSummary.getDay());
+        assertEquals(LocalDate.of(2018, 1, 27), issueSummary.getDay());
     }
 }

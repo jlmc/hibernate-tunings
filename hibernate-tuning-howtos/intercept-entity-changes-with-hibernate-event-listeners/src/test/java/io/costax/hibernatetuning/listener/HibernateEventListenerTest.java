@@ -1,106 +1,109 @@
 package io.costax.hibernatetuning.listener;
 
 import io.costax.hibernatetuning.entities.Client;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import javax.persistence.EntityManager;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class HibernateEventListenerTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void a_createTwoClients() {
+    @Order(0)
+    public void create_Two_Clients() {
+        provider.doInTx(em -> {
+            em.createNativeQuery("delete from client c").executeUpdate();
+            em.flush();
 
-        provider.beginTransaction();
+            final Client ptech = new Client(1, "Ptech", "Present-Technologies");
+            em.persist(ptech);
 
-        provider.em().createNativeQuery("delete from client c").executeUpdate();
-        provider.em().flush();
+            final Client nasa = new Client(2, "Nasa", "Nasa");
+            em.persist(nasa);
 
-        final Client ptech = new Client(1, "Ptech", "Present-Technologies");
-        provider.em().persist(ptech);
-
-        final Client nasa = new Client(2, "Nasa", "Nasa");
-        provider.em().persist(nasa);
-
-        final Client google = new Client(3, "G", "Google");
-        provider.em().persist(google);
-
-        provider.commitTransaction();
+            final Client google = new Client(3, "G", "Google");
+            em.persist(google);
+        });
     }
 
     @Test
-    public void b_updateAExistingClient() {
-        provider.beginTransaction();
+    @Order(1)
+    public void update_a_existing_client() {
+        provider.doInTx(em -> {
 
-        final Client nasa = provider.em().find(Client.class, 2);
-        nasa.setName("National Aeronautics and Space Administration");
+            final Client nasa = em.find(Client.class, 2);
+            nasa.setName("National Aeronautics and Space Administration");
 
-        provider.commitTransaction();
+        });
     }
 
     @Test
-    public void c_deleteeAExistingClient() {
-        provider.beginTransaction();
+    @Order(2)
+    public void delete_a_existing_client() {
+        provider.doInTx(em -> {
 
-        final Client nasa = provider.em().getReference(Client.class, 2);
-        provider.em().remove(nasa);
+            final Client nasa = em.getReference(Client.class, 2);
+            em.remove(nasa);
 
-        provider.commitTransaction();
+        });
     }
 
     @Test
-    public void d_deleteAexistingClientUsingNativeQuery() {
-        final Number before = (Number) provider.em().createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
+    @Order(3)
+    public void delete_a_existing_client_using_native_query() {
 
-        provider.beginTransaction();
+        EntityManager em = provider.em();
 
-        provider.em().createNativeQuery("delete from client where id = 1").executeUpdate();
+        final Number before = (Number) em.createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
 
-        provider.commitTransaction();
+        em.getTransaction().begin();
+        em.createNativeQuery("delete from client where id = 1").executeUpdate();
+        em.getTransaction().commit();
 
-        final Number after = (Number) provider.em().createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
+        final Number after = (Number) em.createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
 
+        em.close();
 
         System.out.println("---" + before);
         System.out.println("---" + after);
-        Assert.assertThat(before.longValue(), is(not(Matchers.lessThan(after.longValue()))));
+        Assertions.assertFalse(before.longValue() < after.longValue());
     }
 
     @Test
-    public void e_ShouldDeleteUsingJpql() {
-        final Number before = (Number) provider.em().createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
+    @Order(4)
+    public void should_delete_using_jpql() {
+        final EntityManager em = provider.em();
 
-        provider.beginTransaction();
+        final Number before = (Number) em.createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
 
-        provider.em().createQuery("delete from Client where id = 3").executeUpdate();
+        em.getTransaction().begin();
 
-        provider.commitTransaction();
+        em.createQuery("delete from Client where id = 3").executeUpdate();
 
-        final Number after = (Number) provider.em().createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
+        em.getTransaction().commit();
 
+        final Number after = (Number) em.createNativeQuery("select count(t.id) from client_trace t").getSingleResult();
 
         System.out.println("---" + before);
         System.out.println("---" + after);
-        Assert.assertThat(before.longValue(), is(not(Matchers.lessThan(after.longValue()))));
+        Assertions.assertFalse(before.longValue() < after.longValue());
     }
 
     @Test
-    public void z_dropAll() {
-        provider.beginTransaction();
+    @Order(5)
+    public void drop_all() {
+        provider.doInTx(em -> {
+            em.createNativeQuery("delete from client_trace").executeUpdate();
+            em.createNativeQuery("delete from client").executeUpdate();
+        });
 
-        provider.em().createNativeQuery("delete from client_trace").executeUpdate();
-        provider.em().createNativeQuery("delete from client").executeUpdate();
-
-        provider.commitTransaction();
     }
 }

@@ -22,8 +22,8 @@ public class Client {
         this.name = name;
     }
 
-    public static Client createClient(final String nome) {
-        return new Client(nome);
+    public static Client createClient(final String name) {
+        return new Client(name);
     }
 
     @Override

@@ -3,25 +3,28 @@ package io.costax.fetchingentities;
 import io.costax.model.Client;
 import io.costax.model.Issue;
 import io.costax.model.Project;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+
+@JpaTest(persistenceUnit = "it")
 public class DirectFetchingTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DirectFetchingTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void direct_fetching() {
@@ -37,6 +40,8 @@ public class DirectFetchingTest {
          * The same can be achieved with the Hibernate native API:
          */
         final Project project2 = em.unwrap(Session.class).get(Project.class, 2L);
+
+        em.close();
     }
 
     @Test
@@ -59,6 +64,8 @@ public class DirectFetchingTest {
          * getTitle method, Hibernate executes the select query and, therefore, loads the entity prior to
          * returning the title attribute.
          */
+
+        em.close();
     }
 
     @Test
@@ -80,12 +87,14 @@ public class DirectFetchingTest {
 
         LOGGER.info("Loaded Project entity");
         LOGGER.info("The project title is '{}'", project3.getTitle());
+
+        em.close();
     }
 
     @Test
     public void populating_a_child_side_parent_association() {
         final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         final Project project1 = em.getReference(Project.class, 1L);
 
@@ -95,29 +104,37 @@ public class DirectFetchingTest {
 
         em.persist(newProject1Issue);
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Test
     public void natural_identifier_fetching() {
         final EntityManager em = provider.em();
+
         Session session = em.unwrap(Session.class);
         Client client = session.bySimpleNaturalId(Client.class).load("ptech");
 
-        Assert.assertThat(client, Matchers.notNullValue());
+        em.close();
+
+        assertNotNull(client);
     }
 
     @Test
     public void natural_identifier_proxy_fetching() {
         final EntityManager em = provider.em();
+
         Session session = em.unwrap(Session.class);
         var persistentInstanceOrProxy = session.bySimpleNaturalId(Client.class).getReference("feedit");
 
-        Assert.assertNotNull(persistentInstanceOrProxy);
+        assertNotNull(persistentInstanceOrProxy);
+
         final boolean initialized = Hibernate.isInitialized(persistentInstanceOrProxy);
         final boolean isAProxy = HibernateProxy.class.isAssignableFrom(persistentInstanceOrProxy.getClass());
 
         LOGGER.info("is initialized [{}]", initialized);
         LOGGER.info("is a proxy [{}]", isAProxy);
+
+        em.close();
     }
 }

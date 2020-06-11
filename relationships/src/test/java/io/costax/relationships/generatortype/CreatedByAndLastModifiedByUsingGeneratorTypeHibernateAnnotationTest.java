@@ -1,24 +1,24 @@
 package io.costax.relationships.generatortype;
 
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CreatedByAndLastModifiedByUsingGeneratorTypeHibernateAnnotationTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreatedByAndLastModifiedByUsingGeneratorTypeHibernateAnnotationTest.class);
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
 
     @Test
-    public void should_persiste_created_by_on_insert_and_update_by_on_update() {
+    public void should_persist_instance_checking_created_by_on_insert_and_update_by_on_update() {
 
         LoggedUserThreadLocal.logIn("Felix");
 
@@ -44,13 +44,11 @@ public class CreatedByAndLastModifiedByUsingGeneratorTypeHibernateAnnotationTest
 
         LoggedUserThreadLocal.logOut();
 
+        final Sensor ip = provider.doItWithReturn(em -> em.find(Sensor.class, 1));
 
-        final EntityManager em = provider.em();
-        final Sensor ip = em.find(Sensor.class, 1);
-
-        Assert.assertThat(ip, Matchers.notNullValue());
-        Assert.assertThat(ip.getValue(), Matchers.equalTo("10.10.0.1"));
-        Assert.assertThat(ip.getCreatedBy(), Matchers.equalTo("Felix"));
-        Assert.assertThat(ip.getUpdatedBy(), Matchers.equalTo("Archimedes"));
+        assertNotNull(ip);
+        assertEquals("10.10.0.1", ip.getValue());
+        assertEquals("Felix", ip.getCreatedBy());
+        assertEquals("Archimedes", ip.getUpdatedBy());
     }
 }

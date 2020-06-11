@@ -2,40 +2,40 @@ package io.costax.hibernatetunning.distincts;
 
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.jpa.QueryHints;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+import static io.github.jlmc.jpa.test.annotation.Sql.Phase.AFTER_TEST_METHOD;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@JpaTest(persistenceUnit = "it")
+@Sql(phase = AFTER_TEST_METHOD, statements = {"delete from issue", "delete from project"})
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class PassDistinctThroughHintTest {
 
     private static final int NUMBER_OF_ISSUES = 25;
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @After
-    public void cleanup() {
-        provider.beginTransaction();
 
-        provider.em().createQuery("delete from Issue ").executeUpdate();
-        provider.em().createQuery("delete from Project ").executeUpdate();
 
-        provider.commitTransaction();
-    }
-
-    @Before
+    @BeforeEach
     public void populate() {
-        provider.beginTransaction();
         final EntityManager em = provider.em();
+        final EntityTransaction tx = em.getTransaction();
+        tx.begin();
 
         em.createQuery("delete from Issue ").executeUpdate();
         em.createQuery("delete from Project ").executeUpdate();
@@ -56,11 +56,13 @@ public class PassDistinctThroughHintTest {
 
         em.persist(castingDates);
 
-        provider.commitTransaction();
+        tx.commit();
+        em.close();
     }
 
     @Test
-    public void t00_no_distinct() {
+    @Order(1)
+    public void execute_jpql_query_without_distinct() {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
@@ -71,8 +73,9 @@ public class PassDistinctThroughHintTest {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
         }
 
-        // We get NUMBER_OF_ISSUES projects instance but the data base contains only one project record
-        Assert.assertThat(projects, Matchers.hasSize(NUMBER_OF_ISSUES));
+        em.close();
+
+        assertEquals(projects.size(), NUMBER_OF_ISSUES);
     }
 
     /**
@@ -86,7 +89,8 @@ public class PassDistinctThroughHintTest {
      * </p>
      */
     @Test
-    public void t01_only_return_unique_results() {
+    @Order(2)
+    public void query_with_distinct_returning_unique_results() {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
@@ -97,7 +101,9 @@ public class PassDistinctThroughHintTest {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
         }
 
-        Assert.assertThat(projects, Matchers.hasSize(1));
+        em.close();
+
+        assertEquals(projects.size(), 1);
     }
 
     /**
@@ -110,27 +116,27 @@ public class PassDistinctThroughHintTest {
      * </p>
      */
     @Test
-    public void t02_pass_distinct_through_hint() {
-
+    @Order(3)
+    public void using_hibernate_HINT_PASS_DISTINCT_THROUGH_in_jpql_with_the_distinct_keyword() {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
                 "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
-
                 .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-
                 .getResultList();
 
         for (Project a : projects) {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
         }
 
-        Assert.assertThat(projects, Matchers.hasSize(1));
+        em.close();
+
+        assertEquals(projects.size(), 1);
     }
 
     @Test
-    public void t03_pass_distinct_through_hint_ignored_because_no_distinct_in_jpql_query() {
-
+    @Order(4)
+    public void using_hibernate_HINT_PASS_DISTINCT_THROUGH_in_jpql_query_without_the_distinct_keyword() {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
@@ -144,8 +150,11 @@ public class PassDistinctThroughHintTest {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
         }
 
+        em.close();
+
+
         // We get NUMBER_OF_ISSUES projects instance but the data base contains only one project record
-        Assert.assertThat(projects, Matchers.hasSize(NUMBER_OF_ISSUES));
+        assertEquals(projects.size(), NUMBER_OF_ISSUES);
     }
 }
 

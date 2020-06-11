@@ -2,49 +2,32 @@ package io.costax.hibernatetuning.howtos;
 
 import io.costax.hibernatetuning.howtos.book.Book;
 import io.costax.hibernatetuning.howtos.book.PK;
-import io.costax.rules.EntityManagerProvider;
-import org.hibernate.Session;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
-import java.sql.Statement;
+import javax.persistence.PersistenceContext;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * The Current Book IdClass(PK.class) mapping only works if all the generated values are sequences.
  * Otherwise we should use a @EmbeddedId mapping strategy.
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Sql(statements = "delete from public.book where true", phase = Sql.Phase.BEFORE_TEST_METHOD)
+@Sql(statements = "delete from public.book where true", phase = Sql.Phase.AFTER_TEST_METHOD)
 public class CompositeIdentifierAutomaticallyGeneratedValueIdClassTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    @After
-    @Before
-    public void before() {
-        provider.beginTransaction();
-        final Session session = provider.em().unwrap(Session.class);
-
-        session.doWork(connection -> {
-
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("delete from public.book");
-            } catch (Exception ignore) {
-            }
-        });
-
-
-        provider.commitTransaction();
-    }
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
-    public void t0_should_persist_entity_with_composed_generated_key() {
-
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+    public void should_persist_entity_with_composed_generated_key() {
+        em.getTransaction().begin();
 
         Book book = Book.of(1, "Building Microservices");
         em.persist(book);
@@ -53,7 +36,7 @@ public class CompositeIdentifierAutomaticallyGeneratedValueIdClassTest {
         em.persist(book2);
 
         em.flush();
-        provider.commitTransaction();
+        em.getTransaction().commit();
 
         PK key = new PK(book2.getRegistrationNumber(), 1);
         Book book2Fetched = em.find(Book.class, key);

@@ -1,34 +1,24 @@
 package io.costax.hibernatetunings.cache.queries;
 
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.Watcher;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
 import org.hibernate.Session;
 import org.hibernate.annotations.QueryHints;
-import org.junit.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.List;
 
+@JpaTest(persistenceUnit = "it")
 public class TestQueryCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestQueryCache.class);
 
-    private static EntityManagerFactory emf;
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @BeforeClass
-    public static void initEntityManagerFactory() {
-        emf = Persistence.createEntityManagerFactory("it");
-    }
-
-    @AfterClass
-    public static void closeEntityManagerFactory() {
-        emf.close();
-    }
+    @PersistenceUnit
+    public EntityManagerFactory emf;
 
     @Test
     public void testQueryCacheAdHocQuery() {
@@ -47,7 +37,8 @@ public class TestQueryCache {
         em.getTransaction().commit();
         em.close();
 
-        Assert.assertSame(firtsExecution, secoundExecution);
+
+        Assertions.assertTrue(firtsExecution == secoundExecution);
     }
 
     @Test
@@ -75,9 +66,9 @@ public class TestQueryCache {
         em.getTransaction().commit();
         em.close();
 
-        Assert.assertEquals(projects1.size(), projects2.size());
-        Assert.assertEquals(1, projects1.size());
-        Assert.assertEquals(projects1.get(0), projects2.get(0));
+        Assertions.assertEquals(projects1.size(), projects2.size());
+        Assertions.assertEquals(1, projects1.size());
+        Assertions.assertEquals(projects1.get(0), projects2.get(0));
     }
 
     @Test
@@ -98,14 +89,13 @@ public class TestQueryCache {
         em.getTransaction().commit();
         em.close();
 
-        Assert.assertNotNull(project2);
-        Assert.assertEquals("Effective java Third edition", project2.getTitle());
+        Assertions.assertNotNull(project2);
+        Assertions.assertEquals("Effective java Third edition", project2.getTitle());
     }
 
 
     @Test
     public void testQueryCacheWithDifferentParameter() {
-
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 

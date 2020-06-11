@@ -2,12 +2,14 @@ package io.costax.hibernatetuning.castoperator;
 
 import io.costax.hibernatetunig.model.Project;
 import io.costax.hibernatetunig.model.Project_;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -29,41 +31,39 @@ import java.util.stream.IntStream;
  *
  * @see io.costax.hibernatetunig.customdialects.CustomPostgreSqlDialect
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Sql(statements = {
+        "delete from Issue where true",
+        "delete from Project where true"
+}, phase = Sql.Phase.AFTER_TEST_METHOD)
 public class ReplaceFunctionTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @After
-    public void cleanup() {
-        provider.beginTransaction();
-        provider.em().createQuery("delete from Issue ").executeUpdate();
-        provider.em().createQuery("delete from Project ").executeUpdate();
-        provider.commitTransaction();
-    }
+    @PersistenceContext
+    EntityManager em;
 
-    @Before
+
+    @BeforeEach
     public void populate() {
-        provider.beginTransaction();
+        provider.doInTx(em -> {
 
-        provider.em().createQuery("delete from Issue ").executeUpdate();
-        provider.em().createQuery("delete from Project ").executeUpdate();
+        em.createQuery("delete from Issue ").executeUpdate();
+        em.createQuery("delete from Project ").executeUpdate();
 
         IntStream.rangeClosed(1, 5)
                 .unordered()
                 .mapToObj(i -> Project.of(String.format("U%d", i)))
-                .forEach(provider.em()::persist);
-
-        provider.commitTransaction();
+                .forEach(em::persist);
+        });
     }
 
     @Test
-    public void t0_using_replace_with_jpql() {
-        //@formatter:off
-
-        final EntityManager em = provider.em();
-
+    @Order(0)
+    public void using_replace_with_jpql() {
         /*
          *  If we need to use proprietary functions or even user functions in the query projections (between SELECT and FROM keywords)
          *  then those functions must be registered in the dialect that we intend to use.
@@ -75,22 +75,23 @@ public class ReplaceFunctionTest {
 
         //  select replace( trim(p.title), 'U', '') from project p  where cast( replace( trim(p.title), 'U', '') as int4) > 3 order by replace(p.title, 'U', '')
         final List<String> projectNamesWithoutSuffix = em.createQuery(
-                "select function('replace', trim( p.title ),  'U', '')" +
-                        "from Project p " +
-                        "where cast( function('replace', trim( p.title ),  'U', '') as int ) > :shortLimit " +
-                        "order by function('replace', p.title,  'U', '') ", String.class)
+                """
+                select function('replace', trim( p.title ),  'U', '')
+                from Project p 
+                where cast( function('replace', trim( p.title ),  'U', '') as int ) > :shortLimit 
+                order by function('replace', p.title,  'U', '') 
+                        """, String.class)
                 .setParameter("shortLimit", 3)
                 .getResultList();
 
-        Assert.assertThat(projectNamesWithoutSuffix, Matchers.hasSize(2));
-        Assert.assertThat(projectNamesWithoutSuffix, Matchers.contains("4", "5"));
+        Assertions.assertEquals(2, projectNamesWithoutSuffix.size());
+        Assertions.assertTrue(projectNamesWithoutSuffix.containsAll(List.of("4", "5")));
 
-        //@formatter:on
     }
 
     @Test
-    public void t1_using_replace_with_criteria() {
-        final EntityManager em = provider.em();
+    @Order(1)
+    public void using_replace_with_criteria() {
 
         final CriteriaBuilder cb = em.getCriteriaBuilder();
         final CriteriaQuery<String> cq = cb.createQuery(String.class);
@@ -119,7 +120,7 @@ public class ReplaceFunctionTest {
 
         //@formatter:on
 
-        Assert.assertThat(projectNamesWithoutSuffix, Matchers.hasSize(2));
-        Assert.assertThat(projectNamesWithoutSuffix, Matchers.contains("4", "5"));
+        Assertions.assertEquals(2, projectNamesWithoutSuffix.size());
+        Assertions.assertTrue(projectNamesWithoutSuffix.containsAll(List.of("4", "5")));
     }
 }

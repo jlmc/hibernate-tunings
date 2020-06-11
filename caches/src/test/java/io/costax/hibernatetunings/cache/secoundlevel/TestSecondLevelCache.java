@@ -2,35 +2,24 @@ package io.costax.hibernatetunings.cache.secoundlevel;
 
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.Watcher;
-import org.hamcrest.Matchers;
-import org.junit.*;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import java.util.stream.Collectors;
 
+@JpaTest(persistenceUnit = "it")
 public class TestSecondLevelCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestSecondLevelCache.class);
 
-    private static EntityManagerFactory emf;
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @BeforeClass
-    public static void initEntityManagerFactory() {
-        emf = Persistence.createEntityManagerFactory("it");
-    }
-
-    @AfterClass
-    public static void closeEntityManagerFactory() {
-        emf.close();
-    }
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Test
     public void test2TX() {
@@ -55,11 +44,11 @@ public class TestSecondLevelCache {
         em.getTransaction().commit();
         em.close();
 
-        Assert.assertNotNull(p1);
-        Assert.assertNotNull(p2);
-        Assert.assertThat(p1, Matchers.hasProperty("title", Matchers.equalTo("effective-java-3")));
-        Assert.assertThat(p2, Matchers.hasProperty("title", Matchers.equalTo("effective-java-3")));
-        Assert.assertThat(p2, Matchers.equalTo(p1));
+        Assertions.assertNotNull(p1);
+        Assertions.assertNotNull(p2);
+        Assertions.assertEquals("effective-java-3", p1.getTitle());
+        Assertions.assertEquals("effective-java-3", p2.getTitle());
+        Assertions.assertEquals(p2, p1);
     }
 
     @Test

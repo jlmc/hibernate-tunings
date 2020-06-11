@@ -1,64 +1,79 @@
 package io.costax.hibernatetunnig.overrideIdstrategy.overrideIdstrategy;
 
 import io.costax.hibernatetunnig.overrideIdstrategy.entity.ProgramingLanguage;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@JpaTest(persistenceUnit = "it")
 public class OverrideIdStrategyTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
+    @BeforeEach
     public void before() {
         final String[] programingLanguagesNames = {
                 "java", "javascript", "csharp", "sql"
         };
 
-        provider.beginTransaction();
+        provider.doInTx(em -> {
+            for (String pn : programingLanguagesNames) {
+                ProgramingLanguage programingLanguage = ProgramingLanguage.of(pn);
+                em.persist(programingLanguage);
+            }
 
-        for (String pn : programingLanguagesNames) {
-            ProgramingLanguage programingLanguage = ProgramingLanguage.of(pn);
-            provider.em().persist(programingLanguage);
-        }
-
-        provider.commitTransaction();
+            em.flush();
+        });
     }
 
-    @After
+    @AfterEach
     public void after() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
-        em.createQuery("select pl from ProgramingLanguage pl", ProgramingLanguage.class)
-                .getResultStream()
-                .forEach(em::remove);
-        provider.commitTransaction();
+        provider.doInTx(em -> {
+
+            em.createQuery("select pl from ProgramingLanguage pl", ProgramingLanguage.class)
+                    .getResultStream()
+                    .forEach(em::remove);
+
+            em.flush();
+        });
+
     }
 
     @Test
-    public void shoudlUseAsignedIds() {
-        provider.beginTransaction();
+    public void useAssignedIds() {
+        provider.doInTx(em -> {
+            em.merge(ProgramingLanguage.of(9001L, "python"));
+            em.merge(ProgramingLanguage.of(9002L, "scala"));
 
-        provider.em().merge(ProgramingLanguage.of(9001L, "python"));
-        provider.em().merge(ProgramingLanguage.of(9002L, "scala"));
+            em.flush();
+        });
 
-        provider.em().flush();
-        provider.commitTransaction();
+        final EntityManager em = provider.em();
 
-
-        final List<ProgramingLanguage> resultList = provider.em().createQuery("select pl from ProgramingLanguage  pl", ProgramingLanguage.class).getResultList();
-        Assert.assertEquals(6, resultList.size());
+        final List<ProgramingLanguage> resultList = em.createQuery("select pl from ProgramingLanguage  pl", ProgramingLanguage.class).getResultList();
+        assertEquals(6, resultList.size());
 
         final ProgramingLanguage python = resultList.stream().filter(pl -> pl.getId() == 9001L).findFirst().orElse(null);
         final ProgramingLanguage scala = resultList.stream().filter(pl -> pl.getId() == 9002L).findFirst().orElse(null);
 
-        Assert.assertEquals("python", python.getName());
-        Assert.assertEquals("scala", scala.getName());
+        em.close();
+
+        assertNotNull(python);
+        assertNotNull(scala);
+        assertEquals("python", python.getName());
+        assertEquals("scala", scala.getName());
+
     }
 
     @Test
@@ -68,17 +83,23 @@ public class OverrideIdStrategyTest {
         //Board b = unwrap.byNaturalId(Board.class).using(Board_.code, "t-bone").with(LockOptions.UPGRADE).load();
         //Board b = unwrap.bySimpleNaturalId(Board.class).with(LockOptions.UPGRADE).load("t-bone");
 
-        final Session unwrap = provider.em().unwrap(Session.class);
+        final ProgramingLanguage java = provider.doItWithReturn(em ->
+                em.unwrap(Session.class)
+                        .bySimpleNaturalId(ProgramingLanguage.class)
+                        .load("java"));
 
-        final ProgramingLanguage java = unwrap.bySimpleNaturalId(ProgramingLanguage.class).load("java");
-
-        Assert.assertNotNull(java);
+        assertNotNull(java);
     }
 
     @Test
     public void selectWithoutFetch() {
-        List resultList = provider.em().createQuery("select c from ProgramingLanguage c").getResultList();
-        resultList.forEach(System.out::println);
+
+        final List<ProgramingLanguage> programingLanguages = provider.doItWithReturn(
+                em -> em
+                        .createQuery("select c from ProgramingLanguage c", ProgramingLanguage.class)
+                        .getResultList());
+
+        programingLanguages.forEach(System.out::println);
     }
 
 }

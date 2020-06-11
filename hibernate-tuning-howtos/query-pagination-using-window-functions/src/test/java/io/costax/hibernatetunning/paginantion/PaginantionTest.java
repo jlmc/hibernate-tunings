@@ -2,31 +2,36 @@ package io.costax.hibernatetunning.paginantion;
 
 import io.costax.hibernatetunning.tasks.Todo;
 import io.costax.hibernatetunning.tasks.TodoSummary;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class PaginantionTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
-    public void a_populate() {
-        DataPopulator.with(provider).populate();
+    @PersistenceContext
+    EntityManager em;
+
+    @BeforeEach
+    void setUp() {
+        DataPopulate.executePopulate(provider.em());
     }
 
-    @After
-    public void z_remove_all_data() {
-        DataPopulator.with(provider).clean();
+    @AfterEach
+    void tearDown() {
+        DataPopulate.executeCleanUp(provider.em());
     }
 
     @Test
@@ -54,22 +59,26 @@ public class PaginantionTest {
 
     @Test
     public void shouldUseSetFirstResultAndSetMaxResultsJPQLToDTOProjection() {
-        List<TodoSummary> todos = provider.em()
-                .createQuery("select " +
-                        "new io.costax.hibernatetunning.tasks.TodoSummary(" +
-                        "   d.id, d.title, count (pl)" +
-                        ") " +
-                        "from Todo d left join d.comments pl " +
-                        "group by d.id, d.title order by d.id", TodoSummary.class)
+        List<TodoSummary> todos = em
+                .createQuery(
+                        """
+                                select 
+                                new io.costax.hibernatetunning.tasks.TodoSummary(
+                                   d.id, d.title, count (pl)
+                                ) 
+                                from Todo d left join d.comments pl
+                                group by d.id, d.title order by d.id
+                                """
+                        , TodoSummary.class)
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .getResultList();
 
         assertEquals(10, todos.size());
         assertEquals("todo-1", todos.get(0).getTitle());
-        assertThat(todos.get(0).getNumOfComments(), is(3L));
+        assertEquals(3L, todos.get(0).getNumOfComments());
         assertEquals("todo-10", todos.get(9).getTitle());
-        assertThat(todos.get(9).getNumOfComments(), is(0L));
+        assertEquals(0L, todos.get(9).getNumOfComments());
     }
 
     @Test

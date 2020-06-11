@@ -3,8 +3,12 @@ package io.costax.hibernatetunnig.graphs;
 import io.costax.hibernatetunnig.graphs.entity.Author;
 import io.costax.hibernatetunnig.graphs.entity.Book;
 import io.costax.hibernatetunnig.graphs.entity.Publisher;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.*;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
@@ -14,8 +18,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Example of how to use SubGraphs inside SubGraphs.
@@ -26,14 +30,15 @@ import static org.junit.Assert.assertNotNull;
  * The Definitions of the graph is independent of the Query and defines which associations
  * JPA should initialize before returning our query result
  */
+@JpaTest(persistenceUnit = "it")
 public class CreateAnEntityGraphWithMultipleSubGraphsTest {
 
     public static final long SARAMAGO_ID = 100L;
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         provider.doInTx(em -> {
             Author saramago = new Author(100L, "José de Sousa Saramago");
@@ -62,7 +67,7 @@ public class CreateAnEntityGraphWithMultipleSubGraphsTest {
         });
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         provider.doInTx(em -> {
             em.createNativeQuery("delete from BOOK_AUTHOR where true").executeUpdate();
@@ -75,7 +80,7 @@ public class CreateAnEntityGraphWithMultipleSubGraphsTest {
     @Test
     public void should_create_entity_graph_and_fetch_entity_using_entity_graph() {
         final Author saramago =
-                provider.doIt(em -> {
+                provider.doItWithReturn(em -> {
                     EntityGraph<?> graph = em.createEntityGraph("graph.AuthorBooksPublisherEmployee");
                     TypedQuery<Author> q = em.createQuery("SELECT a FROM Author a WHERE a.id = :authorId", Author.class);
                     q.setHint("javax.persistence.fetchgraph", graph);

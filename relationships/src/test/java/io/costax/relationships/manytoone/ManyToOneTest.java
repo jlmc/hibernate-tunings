@@ -2,24 +2,28 @@ package io.costax.relationships.manytoone;
 
 import io.costax.relationships.onetomany.Director;
 import io.costax.relationships.onetomany.Movie;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToOneTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void persistMovieWithAExistingDirector() {
+    public void persist_movie_with_a_existing_director() {
         provider.doInTx(em -> {
 
             final Director quentinTarantino = Director.of(1, "Quentin Tarantino");
@@ -31,18 +35,19 @@ public class ManyToOneTest {
         });
 
 
-        final EntityManager em = provider.em();
+        provider.doIt(em -> {
 
-        final EntityGraph<Movie> entityGraph = em.createEntityGraph(Movie.class);
-        entityGraph.addAttributeNodes("director");
+            final EntityGraph<Movie> entityGraph = em.createEntityGraph(Movie.class);
+            entityGraph.addAttributeNodes("director");
 
-        final Map<String, Object> hints = Map.of("javax.persistence.loadgraph", entityGraph);
+            final Map<String, Object> hints = Map.of("javax.persistence.loadgraph", entityGraph);
 
-        //  LockModeType.OPTIMISTIC_FORCE_INCREMENT
+            //  LockModeType.OPTIMISTIC_FORCE_INCREMENT
 
-        final Movie movie = em.find(Movie.class, 1, hints);
+            final Movie movie = em.find(Movie.class, 1, hints);
 
-        Assert.assertNotNull(movie);
-        Assert.assertThat(movie.getDirector(), is(Director.of(1, "Quentin Tarantino")));
+            assertNotNull(movie);
+            assertEquals(Director.of(1, "Quentin Tarantino"), movie.getDirector());
+        });
     }
 }

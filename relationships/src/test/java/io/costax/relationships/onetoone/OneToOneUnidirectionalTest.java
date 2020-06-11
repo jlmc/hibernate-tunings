@@ -1,23 +1,32 @@
 package io.costax.relationships.onetoone;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.Month;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToOneUnidirectionalTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OneToOneUnidirectionalTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    JpaProvider provider;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Test
-    public void testPeriste() {
+    public void test_persist() {
         provider.doInTx(em -> {
 
             final Person jc = new Person(11, "JC");
@@ -33,13 +42,15 @@ public class OneToOneUnidirectionalTest {
 
         LOGGER.info(" ***************** \n ***************** \n *****************");
 
-        final Person person = provider.em().find(Person.class, 11);
+        
+        
+        final Person person = em.find(Person.class, 11);
 
         LOGGER.info("*** Person [{}]", person);
 
         LOGGER.info(" ***************** \n ***************** \n *****************");
 
-        final PersonDetail personDetail = provider.em().find(PersonDetail.class, 11);
+        final PersonDetail personDetail = em.find(PersonDetail.class, 11);
 
         LOGGER.info("*** PersonDetail [{}]", personDetail);
 

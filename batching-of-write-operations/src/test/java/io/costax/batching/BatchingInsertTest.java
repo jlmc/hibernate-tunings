@@ -1,26 +1,20 @@
 package io.costax.batching;
 
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 
 /**
  * Test nº 1
  */
+@JpaTest(persistenceUnit = "it")
 public class BatchingInsertTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BatchingInsertTest.class);
-
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void testInsertActors() {

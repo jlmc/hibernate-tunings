@@ -5,12 +5,12 @@ import io.costax.hibernatetunnig.entities.Developer_;
 import io.costax.hibernatetunnig.entities.Machine;
 import io.costax.hibernatetunnig.entities.Machine_;
 import io.costax.hibernatetunnig.transformers.FactoryMethodTransformerAdapter;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.assertj.core.api.Assertions;
 import org.hibernate.query.Query;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,14 +18,15 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.Objects;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@JpaTest(persistenceUnit = "it")
 public class ResultTransformerInJPACriteriaQueriesTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void setMultiselectInCriteria() {
@@ -50,16 +51,25 @@ public class ResultTransformerInJPACriteriaQueriesTest {
                         .getResultList();
         //@formatter:on
 
-        Assert.assertNotNull(results);
-        assertThat(results, Matchers.hasSize(4));
+
+        assertThat(results)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(4);
+
         final SpotDeveloperMachine firstItem = results.get(0);
         final SpotDeveloperMachine lastItem = results.stream().reduce((first, second) -> second).orElse(null);
-        assertThat(firstItem, notNullValue());
-        assertThat(lastItem, notNullValue());
-        assertThat(firstItem.getScalarValue(), is(1L));
-        assertThat(lastItem.scalarValue, is(1L));
-        assertThat(firstItem.getDescription(), is("Spot of 'Ricardo' using the Machine [1 - mac] --> 1 Systems"));
-        assertThat(lastItem.getDescription(), is("Spot of 'Joana' using the Machine [4 - mac] --> 1 Systems"));
+
+
+        assertThat(firstItem)
+                .isNotNull();
+        assertThat(firstItem.getScalarValue()).isEqualTo(1L);
+        assertThat(lastItem)
+                .isNotNull();
+        assertThat(firstItem.getScalarValue()).
+                isEqualTo(1L);
+        assertThat(firstItem.getDescription()).isEqualTo("Spot of 'Ricardo' using the Machine [1 - mac] --> 1 Systems");
+        assertThat(lastItem.getDescription()).isEqualTo("Spot of 'Joana' using the Machine [4 - mac] --> 1 Systems");
     }
 
     @Test
@@ -84,13 +94,16 @@ public class ResultTransformerInJPACriteriaQueriesTest {
                     .getResultList();
         //@formatter:on
 
-        Assert.assertNotNull(results);
-        Assert.assertThat(results, containsInAnyOrder(
-                samePropertyValuesAs(Dto.of("mac", "Ricardo")),
-                samePropertyValuesAs(Dto.of("Lenovo", "Fabio")),
-                samePropertyValuesAs(Dto.of("Asus", "Ricardo")),
-                samePropertyValuesAs(Dto.of("mac", "Joana"))
-        ));
+        Assertions.assertThat(results).isNotNull().isNotEmpty();
+
+        Assertions.assertThat(results)
+                .contains(
+                        Dto.of("mac", "Ricardo"),
+                        Dto.of("Lenovo", "Fabio"),
+                        Dto.of("Asus", "Ricardo"),
+                        Dto.of("mac", "Joana")
+                );
+
     }
 
     private static class Dto {
@@ -104,6 +117,20 @@ public class ResultTransformerInJPACriteriaQueriesTest {
 
         public static Dto of(final String machineBrand, final String developerName) {
             return new Dto(machineBrand, developerName);
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            final Dto dto = (Dto) o;
+            return Objects.equals(machineBrand, dto.machineBrand) &&
+                    Objects.equals(developerName, dto.developerName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(machineBrand, developerName);
         }
     }
 

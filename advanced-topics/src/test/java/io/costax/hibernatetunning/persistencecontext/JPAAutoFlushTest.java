@@ -3,34 +3,34 @@ package io.costax.hibernatetunning.persistencecontext;
 import io.costax.hibernatetunings.entities.blog.Dashboard;
 import io.costax.hibernatetunings.entities.blog.Post;
 import io.costax.hibernatetunings.entities.blog.TopicStatistic;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Tuple;
 import java.math.BigInteger;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class JPAAutoFlushTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void a_testFlushAutoJPQL() {
-        provider.beginTransaction();
+    @Order(1)
+    public void flush_auto_jpql() {
         final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
         final Long jpqlCountResultBeforePersists = em.createQuery("select count(p) from Dashboard p", Long.class).getSingleResult();
-        assertThat(jpqlCountResultBeforePersists, is(0L));
+        assertEquals(0L, jpqlCountResultBeforePersists);
 
 
         Dashboard dashboard = Dashboard.of("Jpa-advanced-topic");
@@ -38,40 +38,42 @@ public class JPAAutoFlushTest {
 
 
         final Long jpqlCountResulAfterPersists = em.createQuery("select count(p) from Dashboard p", Long.class).getSingleResult();
-        assertThat(jpqlCountResulAfterPersists, is(1L));
+        assertEquals(1L, jpqlCountResulAfterPersists);
 
-        provider.rollbackTransaction();
+        em.getTransaction().rollback();
+        em.close();
     }
 
     @Test
-    public void b_testFlushAutoJPQLTableSpaceOverlap() {
-        provider.beginTransaction();
+    @Order(2)
+    public void flush_auto_jpql_tablespace_overlap() {
         final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
         final Long jpqlCountResultBeforePersists = em.createQuery("select count(p) from Post p", Long.class).getSingleResult();
-        assertThat(jpqlCountResultBeforePersists, is(0L));
+        assertEquals(0L, (long) jpqlCountResultBeforePersists);
 
         Dashboard dashboard = Dashboard.of("Jpa-advanced-topic");
         dashboard.addTopic(new Post("Jc", "flush-mode", "nothing waait a moment..."));
         em.persist(dashboard);
 
-
         final List<TopicStatistic> staticts = em.createQuery("select s from TopicStatistic s join fetch s.topic", TopicStatistic.class).getResultList();
 
 
         final Long jpqlCountResultAfterPersists = em.createQuery("select count(p) from Post p", Long.class).getSingleResult();
-        assertThat(jpqlCountResultAfterPersists, is(1L));
+        assertEquals(1L, (long) jpqlCountResultAfterPersists);
 
-        provider.rollbackTransaction();
+        em.getTransaction().rollback();
+        em.close();
     }
 
     @Test
     public void c_testFlushAutoNativeSQL() {
-        provider.beginTransaction();
         final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
         final Number jpqlCountResultBeforePersists = (Number) em.createNativeQuery("select count(p.id) from Post p").getSingleResult();
-        assertThat(jpqlCountResultBeforePersists, is(BigInteger.valueOf(0L)));
+        assertEquals(0L, jpqlCountResultBeforePersists.longValue());
 
         Dashboard dashboard = Dashboard.of("Jpa-advanced-topic");
         dashboard.addTopic(new Post("Jc", "flush-mode", "nothing waait a moment..."));
@@ -80,11 +82,12 @@ public class JPAAutoFlushTest {
 
         final List<Tuple> staticts = em.createNativeQuery("select s.* from topic_statistics s inner join topic t on s.topic_id = t.id", Tuple.class).getResultList();
 
-        assertThat(staticts, is(notNullValue()));
+        assertNotNull(staticts);
 
         final Number jpqlCountResultAfterPersists = (Number) em.createNativeQuery("select count(p.id) from Post p").getSingleResult();
-        assertThat(jpqlCountResultAfterPersists, is(BigInteger.valueOf(1L)));
+        assertEquals(1L, jpqlCountResultAfterPersists.longValue());
 
-        provider.rollbackTransaction();
+        em.getTransaction().rollback();
+        em.close();
     }
 }

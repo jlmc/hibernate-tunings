@@ -2,47 +2,33 @@ package io.costax.hibernatetuning.howtos;
 
 import io.costax.hibernatetuning.howtos.ibook.IBook;
 import io.costax.hibernatetuning.howtos.ibook.IBookKey;
-import io.costax.rules.EntityManagerProvider;
-import org.hibernate.Session;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
-import java.sql.Statement;
+import javax.persistence.PersistenceContext;
 
-import static org.junit.Assert.assertEquals;
 
 /**
  * This mapping is useful for databases that do not support sequences
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Sql(statements = "delete from public.book where true", phase = Sql.Phase.BEFORE_TEST_METHOD)
+@Sql(statements = "delete from public.book where true", phase = Sql.Phase.AFTER_TEST_METHOD)
 public class CompositeIdentifierAutomaticallyGeneratedValueEmbeddedIdTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
-    @After
-    @Before
-    public void before() {
-        provider.beginTransaction();
-        final Session session = provider.em().unwrap(Session.class);
-
-        session.doWork(connection -> {
-
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("delete from public.book");
-            } catch (Exception ignore) {
-            }
-        });
-
-        provider.commitTransaction();
-    }
 
     @Test
-    public void t0_should_persist_entity_with_composed_generated_key() {
+    public void should_persist_entity_with_composed_generated_key() {
 
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+        em.getTransaction().begin();
+
 
         IBook book = new IBook();
         book.setTitle("Composed Generated Id in Entity using EmbeddedId Annotation");
@@ -63,10 +49,11 @@ public class CompositeIdentifierAutomaticallyGeneratedValueEmbeddedIdTest {
         em.persist(iBook);
 
         em.flush();
-        provider.commitTransaction();
+
+        em.getTransaction().commit();
 
 
-        assertEquals(
+        Assertions.assertEquals(
                 "Composed Generated Id in Entity using EmbeddedId Annotation",
                 book.getTitle()
         );

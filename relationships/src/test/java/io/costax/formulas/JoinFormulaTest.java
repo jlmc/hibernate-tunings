@@ -1,26 +1,25 @@
 package io.costax.formulas;
 
 import io.costax.relationships.formulas.BankAccount;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.hamcrest.number.BigDecimalCloseTo;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class JoinFormulaTest {
 
     private static final Integer ROGER_ID = 1;
     private static final Integer SERENA_ID = 2;
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void should_generate_some_bank_accounts() {
@@ -56,12 +55,14 @@ public class JoinFormulaTest {
 
 
         // What the value of the account? And what is the last Movement?
-        final EntityManager em = provider.em();
-        final BankAccount bankAccount = em.find(BankAccount.class, ROGER_ID);
+        provider.doIt(em -> {
 
-        assertThat(bankAccount.getBalance(), Matchers.comparesEqualTo(new BigDecimal("19500.00")));
-        assertThat(bankAccount.getLastMovement(), notNullValue());
-        assertThat(bankAccount.getLastMovement().getValue().compareTo(new BigDecimal("-500")), is(0));
-        assertThat(bankAccount.getLastMovement().getValue(), is(BigDecimalCloseTo.closeTo(new BigDecimal("-500"), new BigDecimal("0.0001"))));
+            final BankAccount bankAccount = em.find(BankAccount.class, ROGER_ID);
+
+            Assertions.assertEquals(0, new BigDecimal("19500.00").compareTo(bankAccount.getBalance()));
+            Assertions.assertNotNull(bankAccount.getLastMovement());
+            Assertions.assertEquals(0, new BigDecimal("-500").compareTo(bankAccount.getLastMovement().getValue()));
+
+        });
     }
 }

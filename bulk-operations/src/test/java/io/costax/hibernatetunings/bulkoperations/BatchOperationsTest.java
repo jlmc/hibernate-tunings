@@ -2,42 +2,22 @@ package io.costax.hibernatetunings.bulkoperations;
 
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.Watcher;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class TestBatchOperations {
+@JpaTest(persistenceUnit = "it")
+public class BatchOperationsTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestBatchOperations.class);
-
-    private static EntityManagerFactory emf;
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @BeforeClass
-    public static void initEntityManagerFactory() {
-        emf = Persistence.createEntityManagerFactory("it");
-    }
-
-    @AfterClass
-    public static void closeEntityManagerFactory() {
-        emf.close();
-    }
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Test
     public void testInsertProjects() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = createEntityManager();
         em.getTransaction().begin();
 
         for (int i = 1; i <= 10; i++) {
@@ -54,9 +34,13 @@ public class TestBatchOperations {
         em.close();
     }
 
+    private EntityManager createEntityManager() {
+        return emf.createEntityManager();
+    }
+
     @Test
     public void testInsertProjectsWithIssues() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = this.createEntityManager();
         em.getTransaction().begin();
 
         for (int i = 0; i < 10; i++) {
@@ -79,7 +63,7 @@ public class TestBatchOperations {
 
     @Test
     public void testUpdateProjectsAndIssues() {
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = createEntityManager();
         em.getTransaction().begin();
 
         List<Project> projects = em.createQuery("SELECT a FROM Project a JOIN FETCH a.issues ", Project.class).getResultList();

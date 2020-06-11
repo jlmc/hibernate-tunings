@@ -2,38 +2,45 @@ package io.costax.concurrency.pessimistic.bank;
 
 import io.costax.concurrency.domain.bank.BankAccount;
 import io.costax.concurrency.domain.bank.Client;
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceUnit;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static io.costax.concurrency.pessimistic.bank.Utils.sleep;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static io.costax.concurrency.pessimistic.Utils.sleepMilliseconds;
+import static io.github.jlmc.jpa.test.annotation.Sql.Phase.AFTER_TEST_METHOD;
+import static io.github.jlmc.jpa.test.annotation.Sql.Phase.BEFORE_TEST_METHOD;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test case intended to show a concurrency Problem. Two thread trying to manipulate the same records.
  */
+@JpaTest(persistenceUnit = "it")
 public class PessimisticLockInRealUseCasesOfPessimisticReadTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PessimisticLockInRealUseCasesOfPessimisticReadTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceUnit
+    EntityManagerFactory emf;
 
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
+    @JpaContext
+    JpaProvider provider;
 
     /**
      * This test case intended to show a concurrency Problem. Two thread trying to manipulate the same records.
@@ -56,56 +63,69 @@ public class PessimisticLockInRealUseCasesOfPessimisticReadTest {
      * another process went to the database and removed the record. A record that should now be a foreign key.
      * </p>
      */
-    @Test(expected = org.hibernate.exception.ConstraintViolationException.class)
-    public void should_add_a_new_client_to_an_existing_bank_account() throws Throwable {
+    @Test
+    @Sql(statements = {"insert into bank.bank_account(code, number, amount) values (990, '2019', 123.0)"}, phase = BEFORE_TEST_METHOD)
+    @Sql(statements = {
+            "delete from bank.bank_account_client where bank_account_code = 990",
+            "delete from bank.client where name = 'MIKA-PROBLEM-990'",
+            "delete from bank.bank_account where code = 990"
+    },
+            phase = AFTER_TEST_METHOD)
+    @DisplayName("Show a concurrency Problem. Two thread trying to manipulate the same records")
+    public void showTheConcurrencyProblem_TwoThreadTryingToManipulateTheSameRecords() throws Throwable {
+
+        final Long bankAccountId = 990L;
+        final String newClientName = "MIKA-PROBLEM-990";
+
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        Future<?> submit1 = executorService.submit(this::updateBankAccount2WithNewClient);
-        Future<?> submit2 = executorService.submit(this::deleteBankAccountWithTheId2);
+
+        Future<?> executionAddNewClientToBanKAccount = executorService.submit(
+                () -> provider
+                        .doInTx(em -> {
+                            Client client = em.merge(Client.createClient(newClientName));
+                            em.flush();
+
+                            BankAccount bankAccount = em.find(BankAccount.class, bankAccountId);
+                            bankAccount.addClient(client);
+
+                            sleepMilliseconds(6_000L);
+
+                            em.flush();
+                        }));
+
+        Future<?> executionDeletingBanKAccountThatIsBlocked = executorService.submit(
+                () -> provider
+                        .doInTx(em -> {
+                            sleepMilliseconds(3_000L);
+
+                            em.createNativeQuery("delete from bank.bank_account where code = :code")
+                                    .setParameter("code", bankAccountId)
+                                    .executeUpdate();
+
+                            em.flush();
+                        }));
 
         try {
-
-            submit2.get();
-            submit1.get();
-
+            executionDeletingBanKAccountThatIsBlocked.get();
+            executionAddNewClientToBanKAccount.get();
         } catch (ExecutionException e) {
             PersistenceException persistenceException = (PersistenceException) e.getCause();
             org.hibernate.exception.ConstraintViolationException constraintViolationException = (ConstraintViolationException) persistenceException.getCause();
-            assertThat(constraintViolationException.getSQL(), is("insert into bank.bank_account_client (bank_account_code, client_code) values (?, ?)"));
-            assertThat(constraintViolationException.getConstraintName(), is("bank_account_client_bank_account_code_fkey"));
-            throw constraintViolationException;
+
+            assertEquals(
+                    "insert into bank.bank_account_client (bank_account_code, client_code) values (?, ?)",
+                    constraintViolationException.getSQL());
+
+            assertEquals(
+                    "bank_account_client_bank_account_code_fkey",
+                    constraintViolationException.getConstraintName());
+
+            return;
         }
 
-        Assert.fail("The runnable1#get method execution " +
+        fail("The runnable1#get method execution " +
                 "should throw a ExecutionException with " +
                 "javax.persistence.PersistenceException: org.hibernate.exception.ConstraintViolationException");
-    }
-
-    /**
-     * PESSIMISTIC_READ (for share)
-     * - any concurrent process can read the record, but can not do any write operation (update or delete)
-     * - because there is already other process (current thread) using the records in a write operation.
-     * - Any write operation must be locked until the current transaction ends
-     */
-    @Test
-    public void solutions_to_the_problem_with_PESSIMISTIC_READ() throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        Future<?> submit1 = executorService.submit(this::updateBankAccount2WithNewClientWithLockPessimisticRead);
-        Future<?> submit2 = executorService.submit(this::deleteBankAccountWithTheId2);
-
-        try {
-
-            submit2.get();
-            submit1.get();
-
-        } catch (ExecutionException e) {
-            PersistenceException persistenceException = (PersistenceException) e.getCause();
-            org.hibernate.exception.ConstraintViolationException constraintViolationException = (ConstraintViolationException) persistenceException.getCause();
-
-            //Assert.assertThat(constraintViolationException.getSQL(), Matchers.is("delete from bank.bank_account where code=?"));
-            assertThat(constraintViolationException.getConstraintName(), is("bank_account_client_bank_account_code_fkey"));
-            assertThat(constraintViolationException.getCause().getMessage(), is("ERROR: update or delete on table \"bank_account\" violates foreign key constraint \"bank_account_client_bank_account_code_fkey\" on table \"bank_account_client\"\n" +
-                    "  Detail: Key (code)=(2) is still referenced from table \"bank_account_client\"."));
-        }
     }
 
     /**
@@ -114,42 +134,74 @@ public class PessimisticLockInRealUseCasesOfPessimisticReadTest {
      * - because there is already other process using the records
      * - Any write operation must be locked until the current transaction ends
      */
-    public void updateBankAccount2WithNewClientWithLockPessimisticRead() {
-        provider.doInTx(em -> {
-            Client mika = em.merge(Client.createClient("Mika"));
-            em.flush();
+    @Test
+    @Sql(statements = {"insert into bank.bank_account(code, number, amount) values (991, '2020', 200.0)"}, phase = BEFORE_TEST_METHOD)
+    @Sql(statements = {
+            "delete from bank.bank_account_client where bank_account_code = 991",
+            "delete from bank.client where name = 'MIKA-SOLUTION-991'",
+            "delete from bank.bank_account where code = 991"
+    },
+            phase = AFTER_TEST_METHOD)
+    @DisplayName("Solution: The Tx-1 locks the record for any concurrent WRITE operation, READ operations are allow")
+    public void solutionWithLockTypePessimisticRead() throws InterruptedException {
 
-            BankAccount bankAccount = em.find(BankAccount.class, 2L, LockModeType.PESSIMISTIC_READ);
-            bankAccount.addClient(mika);
+        final Long bankAccountId = 991L;
+        final String newClientName = "MIKA-SOLUTION-991";
 
-            sleep(5_000);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-            em.flush();
-        });
+
+        Future<?> executionAddNewClientToBanKAccount = executorService.submit(() -> provider
+                .doInTx(em -> {
+                    LOGGER.info("TX1-Add_New_Client_To_Bank_Account {} -> create new Client", Thread.currentThread().getId());
+                    Client mika = em.merge(Client.createClient(newClientName));
+                    em.flush();
+
+                    LOGGER.info("TX1-Add_New_Client_To_Bank_Account {} -> find Bank Account {}", Thread.currentThread().getId(), bankAccountId);
+                    BankAccount bankAccount = em.find(BankAccount.class, bankAccountId, LockModeType.PESSIMISTIC_READ);
+                    bankAccount.addClient(mika);
+
+                    sleepMilliseconds(6_000L);
+
+                    LOGGER.info("TX1-Add_New_Client_To_Bank_Account {} -> Commit", Thread.currentThread().getId());
+                    em.flush();
+                }));
+
+
+        Future<?> executionDeletingBanKAccountThatIsBlocked = executorService.submit(() -> provider
+                .doInTx(em -> {
+                    LOGGER.info("TX2-Deleting_BanK_Account {} -> waiting", Thread.currentThread().getId());
+                    sleepMilliseconds(3_000L);
+
+                    LOGGER.info("TX2-Deleting_BanK_Account {} -> Can Find {}", Thread.currentThread().getId(), bankAccountId);
+                    final BankAccount bankAccount = em.find(BankAccount.class, bankAccountId);
+
+                    LOGGER.info("TX2-Deleting_BanK_Account {} -> Deleting Find {}", Thread.currentThread().getId(), bankAccountId);
+                    em.createNativeQuery("delete from bank.bank_account where code = :code")
+                            .setParameter("code", bankAccountId)
+                            .executeUpdate();
+
+                    LOGGER.info("TX2-Deleting_BanK_Account {} -> Try to commit, should fail", Thread.currentThread().getId());
+                    em.flush();
+                }));
+
+
+        try {
+
+            executionDeletingBanKAccountThatIsBlocked.get();
+            executionAddNewClientToBanKAccount.get();
+
+        } catch (ExecutionException e) {
+            PersistenceException persistenceException = (PersistenceException) e.getCause();
+            org.hibernate.exception.ConstraintViolationException constraintViolationException = (ConstraintViolationException) persistenceException.getCause();
+
+            assertEquals("bank_account_client_bank_account_code_fkey", constraintViolationException.getConstraintName());
+            assertEquals("ERROR: update or delete on table \"bank_account\" violates foreign key constraint \"bank_account_client_bank_account_code_fkey\" on table \"bank_account_client\"\n" +
+                    "  Detail: Key (code)=(" + bankAccountId + ") is still referenced from table \"bank_account_client\".", constraintViolationException.getCause().getMessage());
+
+            return;
+        }
+
+        Assertions.fail("expected exceptions");
     }
-
-    private void updateBankAccount2WithNewClient() {
-        provider.doInTx(em -> {
-            Client mika = em.merge(Client.createClient("Mika"));
-            em.flush();
-
-            BankAccount bankAccount = em.find(BankAccount.class, 2L);
-            bankAccount.addClient(mika);
-
-            sleep(6_000);
-
-            em.flush();
-        });
-    }
-
-    private void deleteBankAccountWithTheId2() {
-        provider.doInTx(em -> {
-            sleep(3_000L);
-
-            em.createNativeQuery("delete from bank.bank_account where code = :code").setParameter("code", 2L).executeUpdate();
-            em.flush();
-        });
-    }
-
-
 }

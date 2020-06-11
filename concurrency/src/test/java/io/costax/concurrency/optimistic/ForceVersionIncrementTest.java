@@ -1,30 +1,24 @@
 package io.costax.concurrency.optimistic;
 
 import io.costax.concurrency.domain.books.Author;
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
 import org.hibernate.jpa.QueryHints;
-import org.junit.Rule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
 
+
+@JpaTest(persistenceUnit = "it")
 public class ForceVersionIncrementTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForceVersionIncrementTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void updateUsingQuery() {
-        final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         Author a = em.createQuery(
                 "select distinct a from Author a left join fetch a.books where a.id = :id", Author.class)
@@ -36,18 +30,17 @@ public class ForceVersionIncrementTest {
 
         a.getBooks().forEach(b -> b.setTitle(b.getTitle() + " - 2nd Edition"));
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     @Test
     public void updateUsingFind() {
-        final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         Author a = em.find(Author.class, 2L, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
         a.getBooks().forEach(b -> b.setTitle(b.getTitle() + " - 2nd Edition"));
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 }

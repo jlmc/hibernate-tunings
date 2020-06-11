@@ -3,24 +3,26 @@ package io.costax.hibernatetunnig.mappings;
 import io.costax.hibernatetunnig.entities.Bicycle;
 import io.costax.hibernatetunnig.entities.Car;
 import io.costax.hibernatetunnig.entities.Garage;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.Test;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+@JpaTest(persistenceUnit = "it")
 public class JoinMultipleSubtypesTypesTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void mapping() {
         provider.doInTx(em -> {
-
             final Garage elephant = Garage.of(1, "Elephant");
             elephant.add(Car.of(1, "Ricardo", "Astra"));
             elephant.add(Car.of(2, "Fabio", "Mercedes Bez"));
@@ -34,23 +36,19 @@ public class JoinMultipleSubtypesTypesTest {
             em.persist(zebra);
 
             em.flush();
-
         });
 
 
         Garage elephant = provider.em().find(Garage.class, 1);
         final List<Car> cars = elephant.getCars();
         final List<Bicycle> bicycles = elephant.getBicycles();
-
-        Assert.assertThat(elephant.getVehicles(), Matchers.hasSize(4));
-        Assert.assertThat(cars, Matchers.hasSize(2));
-        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(1, p.getId())).findAny().orElse(null));
-        Assert.assertNotNull(cars.stream().filter(p -> Objects.equals(2, p.getId())).findAny().orElse(null));
-
-
-        Assert.assertThat(bicycles, Matchers.hasSize(2));
-        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(3, p.getId())).findAny().orElse(null));
-        Assert.assertNotNull(bicycles.stream().filter(p -> Objects.equals(8, p.getId())).findAny().orElse(null));
+        assertThat(elephant.getVehicles()).hasSize(4);
+        assertThat(cars).hasSize(2);
+        assertThat(cars.stream().filter(p -> Objects.equals(1, p.getId())).findAny().orElse(null)).isNotNull();
+        assertThat(cars.stream().filter(p -> Objects.equals(2, p.getId())).findAny().orElse(null)).isNotNull();
+        assertThat(bicycles).hasSize(2);
+        assertThat(bicycles.stream().filter(p -> Objects.equals(3, p.getId())).findAny().orElse(null)).isNotNull();
+        assertThat(bicycles.stream().filter(p -> Objects.equals(8, p.getId())).findAny().orElse(null)).isNotNull();
 
         provider.doInTx(em -> {
             final Garage elephant1 = em.find(Garage.class, 1);
@@ -59,26 +57,16 @@ public class JoinMultipleSubtypesTypesTest {
             final Bicycle bicycle = zebra1.getBicycles().get(0);
             elephant1.addBicycle(bicycle);
             em.flush();
-
         });
 
-        /*
-        provider.doIt(em -> {
 
-            final Garage garage1 = em.find(Garage.class, 1);
-            final List<Vehicle> vehicles1 = garage1.getVehicles();
-            final List<Bicycle> bicycles1 = garage1.getBicycles();
+        final EntityManager em = provider.em();
 
-            System.out.println("--- size of veh: " + vehicles1.size());
-            System.out.println("--- size of bic: " + bicycles1.size());
+        elephant = em.find(Garage.class, 1);
 
-        });
-         */
+        assertThat(elephant.getVehicles()).hasSize(5);
+        assertThat(elephant.getBicycles()).hasSize(3);
 
-        provider.em().clear();
-        elephant = provider.em().find(Garage.class, 1);
-
-        Assert.assertThat(elephant.getVehicles(), Matchers.hasSize(5));
-        Assert.assertThat(elephant.getBicycles(), Matchers.hasSize(3));
+        em.close();
     }
 }

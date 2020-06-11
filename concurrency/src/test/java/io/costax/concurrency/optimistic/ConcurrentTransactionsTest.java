@@ -1,36 +1,31 @@
 package io.costax.concurrency.optimistic;
 
 import io.costax.concurrency.domain.books.Author;
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
+import javax.persistence.*;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+@JpaTest(persistenceUnit = "it")
 public class ConcurrentTransactionsTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OptimisticLockTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
+    @PersistenceUnit
+    EntityManagerFactory emf;
 
     @Test
     public void testConcurrentUpdate() {
 
-        final EntityManager em1 = provider.createdEntityManagerUnRuled();
+        final EntityManager em1 = emf.createEntityManager();
 
         em1.getTransaction().begin();
 
-        EntityManager em2 = provider.createdEntityManagerUnRuled();
+        EntityManager em2 = emf.createEntityManager();
         em2.getTransaction().begin();
 
         Author a1 = em1.find(Author.class, 1L);
@@ -45,12 +40,12 @@ public class ConcurrentTransactionsTest {
         try {
             em2.getTransaction().commit();
 
-            Assert.fail("RollbackExecption expected");
+            fail("RollbackExecption expected");
         } catch (RollbackException e) {
             if (e.getCause() instanceof OptimisticLockException) {
-                LOGGER.info("{}", e.getCause());
+                LOGGER.info("{0}", e.getCause());
             } else {
-                Assert.fail("OptimisticLockException expected");
+                fail("OptimisticLockException expected");
             }
         }
 

@@ -1,43 +1,36 @@
 package io.costax.hibernatetunning.persistencecontext;
 
 import io.costax.hibernatetunings.entities.client.Client;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import javax.persistence.EntityManager;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(value = MethodOrderer.Alphanumeric.class)
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RefreshTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
 
-//    @Before
-//    public void setUp() throws Exception {
-//            final Session session = provider.em().unwrap(Session.class);
-//            session.doWork(connection -> {
-//                try (Statement statement = connection.createStatement()) {
-//                    statement.executeUpdate("delete from public.client");
-//                    //statement.executeUpdate("delete from public.article");
-//                } catch (Exception ignore) {
-//                }
-//            });
-//    }
+
 
     @Test
     public void a_createClient() {
-        provider.beginTransaction();
-
-        provider.em().createNativeQuery("delete from client c").executeUpdate();
-        provider.em().flush();
-
         final EntityManager em = provider.em();
+        em.getTransaction().begin();
+
+        em.createNativeQuery("delete from client c").executeUpdate();
+        em.flush();
+
 
         final Client client = new Client(1, "AJX", "Aura-juno-xax");
         em.persist(client);
@@ -46,47 +39,37 @@ public class RefreshTest {
         em.flush();
         assertNotNull(client.getCreatedOn());
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Test
     public void b_testUpdatedEntity() {
-        provider.beginTransaction();
-        final EntityManager entityManager = provider.em();
+        final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
-        Client post = entityManager.find(Client.class, 1);
+        Client post = em.find(Client.class, 1);
         assertEquals(0, post.getVersion());
 
-        entityManager.createQuery("update versioned Client set name = 'n/a' where slug = :slog")
+        em.createQuery("update versioned Client set name = 'n/a' where slug = :slog")
                 .setParameter("slog", "AJX")
                 .executeUpdate();
 
         assertEquals(0, post.getVersion());
         assertEquals("Aura-juno-xax", post.getName());
 
-        entityManager.refresh(post);
+        em.refresh(post);
 
         assertEquals(1, post.getVersion());
         assertEquals("n/a", post.getName());
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Test
     public void z_removeAll() {
-        provider.beginTransaction();
-        provider.em().createNativeQuery("delete from client").executeUpdate();
-        provider.commitTransaction();
+        provider.doInTx(em -> em.createNativeQuery("delete from client").executeUpdate());
     }
 
-//
-//
-//    @Test
-//    public void test() {
-//        doInJPA(entityManager -> {
-//            Post post = entityManager.find(Post.class, 1L);
-//            post.setTitle("JPA and Hibernate");
-//            entityManager.refresh(post);
-//        });
-//    }
 }

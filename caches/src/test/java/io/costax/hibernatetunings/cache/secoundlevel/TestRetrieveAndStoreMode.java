@@ -1,11 +1,8 @@
 package io.costax.hibernatetunings.cache.secoundlevel;
 
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.Watcher;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,24 +10,13 @@ import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@JpaTest(persistenceUnit = "it")
 public class TestRetrieveAndStoreMode {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRetrieveAndStoreMode.class);
 
-    private static EntityManagerFactory emf;
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @BeforeClass
-    public static void initEntityManagerFactory() {
-        emf = Persistence.createEntityManagerFactory("it");
-    }
-
-    @AfterClass
-    public static void closeEntityManagerFactory() {
-        emf.close();
-    }
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Test
     public void testRetrieveMode() {
@@ -64,7 +50,7 @@ public class TestRetrieveAndStoreMode {
         em.getTransaction().begin();
 
         // Read the author from the cache
-        props = new HashMap<String, Object>();
+        props = new HashMap<>();
         props.put("javax.persistence.cache.retrieveMode", CacheRetrieveMode.USE);
         a = em.find(Project.class, 1L, props);
         LOGGER.info("---- {} ", a);

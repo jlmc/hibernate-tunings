@@ -1,12 +1,15 @@
-package io.costax.model;
+package io.costax.blob_and_clob;
 
-import io.costax.files.FileContentReader;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
+import io.costax.files.FileSupport;
+import io.costax.model.ArticleClob;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.hibernate.engine.jdbc.ClobProxy;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,18 +20,19 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class ArticleClobTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArticleClobTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void persist_and_fetch_lob_entity() {
-        final String sourceContent = FileContentReader.readAllText("content_text.txt");
-        final byte[] sourceCover = FileContentReader.readAllBytes("cover.png");
+        final String sourceContent = FileSupport.readAllText("content_text.txt");
+        final byte[] sourceCover = FileSupport.readAllBytes("cover.png");
         //InputStream content = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
 
         provider.doInTx(em -> {
@@ -46,7 +50,7 @@ public class ArticleClobTest {
         // we can see that all properties are load
         // prevent: java.lang.IllegalStateException: org.postgresql.util.PSQLException: Large Objects may not be used in auto-commit mode.
         final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         final ArticleClob articleClob = em.find(ArticleClob.class, 1L);
 
@@ -61,12 +65,12 @@ public class ArticleClobTest {
         //InputStream binaryStream = b2.getCover().getBinaryStream();
 
         final String content = getContent(articleClob);
-        assertThat(content, Matchers.equalTo(sourceContent));
+        assertEquals(content, sourceContent);
 
         byte[] cover = getCover(articleClob);
         assertArrayEquals(cover, sourceCover);
 
-        provider.rollbackTransaction();
+        em.getTransaction().rollback();
     }
 
     private byte[] getCover(final ArticleClob articleClob) {

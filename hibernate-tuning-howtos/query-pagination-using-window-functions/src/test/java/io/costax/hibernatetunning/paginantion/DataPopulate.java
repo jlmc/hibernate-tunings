@@ -2,29 +2,45 @@ package io.costax.hibernatetunning.paginantion;
 
 import io.costax.hibernatetunning.tasks.Todo;
 import io.costax.hibernatetunning.tasks.TodoComment;
-import io.costax.rules.EntityManagerProvider;
 
 import javax.persistence.EntityManager;
-import java.util.Objects;
 
-class DataPopulator {
+class DataPopulate implements AutoCloseable {
 
-    private final EntityManagerProvider provider;
+    private final EntityManager em;
 
-    private DataPopulator(final EntityManagerProvider provider) {
-        this.provider = provider;
+    private DataPopulate(final EntityManager em) {
+        this.em = em;
     }
 
-    static DataPopulator with(final EntityManagerProvider provider) {
-        Objects.requireNonNull(provider);
-        return new DataPopulator(provider);
+    private static DataPopulate with(EntityManager em) {
+        return new DataPopulate(em);
     }
 
-    void populate() {
+    public static void executePopulate(EntityManager em) {
+        try (DataPopulate instance = with(em)) {
+            instance.populate();
+        }
+    }
+
+    public static void executeCleanUp(EntityManager em) {
+        try (DataPopulate instance = with(em)) {
+            instance.clean();
+        }
+    }
+
+    private void populate() {
         long commentsSeq = 1L;
 
-        final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
+
+        em.createQuery("delete from TodoComment" ).executeUpdate();
+        em.createQuery("delete from Todo " ).executeUpdate();
+        em.flush();
+
+        em.getTransaction().commit();
+        em.getTransaction().begin();
+
 
         for (int i = 1; i < 50; i++) {
             final Todo td = Todo.of((long) i, "todo-" + i);
@@ -65,13 +81,20 @@ class DataPopulator {
             em.persist(td);
         }
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
-    void clean() {
-        provider.beginTransaction();
-        provider.em().createQuery("delete from TodoComment ").executeUpdate();
-        provider.em().createQuery("delete from Todo ").executeUpdate();
-        provider.commitTransaction();
+    private void clean() {
+        em.getTransaction().begin();
+        em.createQuery("delete from TodoComment ").executeUpdate();
+        em.createQuery("delete from Todo ").executeUpdate();
+        em.getTransaction().commit();
+    }
+
+    @Override
+    public void close() {
+        if (this.em.isOpen()) {
+            em.close();
+        }
     }
 }

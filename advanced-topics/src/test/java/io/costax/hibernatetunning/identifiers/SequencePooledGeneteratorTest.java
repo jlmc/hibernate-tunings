@@ -3,22 +3,25 @@ package io.costax.hibernatetunning.identifiers;
 import io.costax.hibernatetunings.entities.Developer;
 import io.costax.hibernatetunings.entities.TimePeriod;
 import io.costax.hibernatetunings.entities.Timesheet;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.time.*;
 import java.util.List;
 
+@JpaTest(persistenceUnit = "it")
 public class SequencePooledGeneteratorTest {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SequencePooledGeneteratorTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void createTheTimeShets() {
@@ -37,8 +40,8 @@ public class SequencePooledGeneteratorTest {
 
 
         final EntityManager em = provider.em();
-
-        provider.beginTransaction();
+        final EntityTransaction tx = em.getTransaction();
+        tx.begin();
 
         final List<Developer> gangOfFour = em.createQuery("from Developer d order by d.id", Developer.class).getResultList();
 
@@ -84,15 +87,16 @@ public class SequencePooledGeneteratorTest {
             }
         }
 
-        provider.commitTransaction();
+        tx.commit();
+        em.close();
 
     }
 
     @Test
     public void createTheGangOfFourDevelopers() {
         final EntityManager em = provider.em();
-
-        provider.beginTransaction();
+        final EntityTransaction tx = em.getTransaction();
+        tx.begin();
 
         final Developer erichGamma = new Developer.Builder().setNome("Erich Gamma").createDeveloper();
         final Developer richardHelm = new Developer.Builder().setNome("Richard Helm").createDeveloper();
@@ -105,6 +109,7 @@ public class SequencePooledGeneteratorTest {
         em.persist(ralphJohnson);
         em.persist(johnVlissides);
 
-        provider.commitTransaction();
+        tx.commit();
+        em.close();
     }
 }

@@ -1,11 +1,12 @@
 package io.costax.hibernatetuning.storedprocedures;
 
 import io.costax.hibernatetunning.entities.Project;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -19,124 +20,129 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class StoredProcedureTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
+    @BeforeEach
     public void populate() {
-        provider.beginTransaction();
 
-        for (int i = 0; i < 2; i++) {
-            Project p = new Project("Lighthouse-" + i);
-            provider.em().persist(p);
-        }
+        provider.doInTx(em -> {
+            for (int i = 0; i < 2; i++) {
+                Project p = new Project("Lighthouse-" + i);
+                provider.em().persist(p);
+            }
+        });
 
-        provider.commitTransaction();
     }
 
-    @After
+    @AfterEach
     public void cleanUp() {
         // using criteria to create a delete query, just because we can and for fun..
-        provider.beginTransaction();
+        provider.doInTx(em -> {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        final EntityManager em = provider.em();
+            // create delete
+            CriteriaDelete<Project> delete = cb.createCriteriaDelete(Project.class);
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+            // set the root class
+            final Root<Project> e = delete.from(Project.class);
 
-        // create delete
-        CriteriaDelete<Project> delete = cb.createCriteriaDelete(Project.class);
+            // set where clause
+            delete.where(cb.greaterThan(e.get("id"), 0L));
 
-        // set the root class
-        final Root<Project> e = delete.from(Project.class);
-
-        // set where clause
-        delete.where(cb.greaterThan(e.get("id"), 0L));
-
-        // perform update
-        em.createQuery(delete).executeUpdate();
-
-        provider.commitTransaction();
+            // perform update
+            em.createQuery(delete).executeUpdate();
+        });
     }
 
     @Test
-    public void t00_update_using_criteria_just_for_fun() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+    @Order(0)
+    public void update_using_criteria_just_for_fun() {
+        provider.doInTx(em -> {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        // create update
-        CriteriaUpdate<Project> update = cb.createCriteriaUpdate(Project.class);
+            // create update
+            CriteriaUpdate<Project> update = cb.createCriteriaUpdate(Project.class);
 
-        // set the root class
-        Root e = update.from(Project.class);
+            // set the root class
+            final Root<Project> root = update.from(Project.class);
 
-        // set update and where clause
-        final String oldTitle = "Lighthouse-1";
-        final String newTitle = "Vanilla";
+            // set update and where clause
+            final String oldTitle = "Lighthouse-1";
+            final String newTitle = "Vanilla";
 
-        update.set("title", newTitle);
-        update.where(cb.equal(e.get("title"), oldTitle));
+            update.set("title", newTitle);
+            update.where(cb.equal(root.get("title"), oldTitle));
 
-        // perform update
-        em.createQuery(update).executeUpdate();
+            // perform update
+            em.createQuery(update).executeUpdate();
+        });
 
-        provider.commitTransaction();
     }
 
     @Test
-    public void t00_call_simple_stored_procedure() {
-        final EntityManager em = provider.em();
+    @Order(1)
+    public void call_simple_stored_procedure() {
+        final Integer invocationResult = provider.doItWithReturn(em -> {
 
-        final StoredProcedureQuery increment = em.createStoredProcedureQuery("increment");
 
-        /*
-         * Parameter modes
-         *
-         * IN: for input parameters,
-         * OUT: for output parameters,
-         * INOUT: for parameters which are used for input and output and
-         * REF_CURSOR: for cursors on a result set.
-         */
-        increment.registerStoredProcedureParameter("i", Integer.class, ParameterMode.IN);
-        increment.registerStoredProcedureParameter("x", Integer.class, ParameterMode.OUT);
+            final StoredProcedureQuery increment = em.createStoredProcedureQuery("increment");
 
-        increment.setParameter("i", 5);
+            /*
+             * Parameter modes
+             *
+             * IN: for input parameters,
+             * OUT: for output parameters,
+             * INOUT: for parameters which are used for input and output and
+             * REF_CURSOR: for cursors on a result set.
+             */
+            increment.registerStoredProcedureParameter("i", Integer.class, ParameterMode.IN);
+            increment.registerStoredProcedureParameter("x", Integer.class, ParameterMode.OUT);
 
-        final boolean execute = increment.execute();
+            increment.setParameter("i", 5);
 
-        Integer result = (Integer) increment.getOutputParameterValue("x");
+            final boolean execute = increment.execute();
 
-        System.out.println(result);
+            return (Integer) increment.getOutputParameterValue("x");
+        });
+
+        assertEquals(6, invocationResult);
     }
 
 
     @Test
-    public void t00_call_simple_stored_procedureInOut() {
-        final EntityManager em = provider.em();
+    @Order(2)
+    public void call_simple_stored_procedureInOut() {
+        final Integer invocationResult = provider.doItWithReturn(em -> {
 
-        final StoredProcedureQuery increment = em.createStoredProcedureQuery("increment");
+            final StoredProcedureQuery increment = em.createStoredProcedureQuery("increment");
 
-        /*
-         * Parameter modes
-         *
-         * IN: for input parameters,
-         * OUT: for output parameters,
-         * INOUT: for parameters which are used for input and output and
-         * REF_CURSOR: for cursors on a result set.
-         */
-        increment.registerStoredProcedureParameter("i", Integer.class, ParameterMode.INOUT);
-        //increment.registerStoredProcedureParameter("x", Integer.class, ParameterMode.OUT);
+            /*
+             * Parameter modes
+             *
+             * IN: for input parameters,
+             * OUT: for output parameters,
+             * INOUT: for parameters which are used for input and output and
+             * REF_CURSOR: for cursors on a result set.
+             */
+            increment.registerStoredProcedureParameter("i", Integer.class, ParameterMode.INOUT);
+            //increment.registerStoredProcedureParameter("x", Integer.class, ParameterMode.OUT);
 
-        increment.setParameter("i", 5);
+            increment.setParameter("i", 5);
 
-        final boolean execute = increment.execute();
+            final boolean execute = increment.execute();
 
-        Integer result = (Integer) increment.getOutputParameterValue("i");
+            return (Integer) increment.getOutputParameterValue("i");
+        });
 
-        System.out.println(result);
+        assertEquals(6, invocationResult);
     }
 
 
@@ -144,35 +150,37 @@ public class StoredProcedureTest {
      * Because the our examples stored procedures are functions, we have to open transactions
      */
     @Test
-    public void t01_callCreate() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+    @Order(3)
+    @DisplayName("call stored procedures that create records, an Active transaction is necessary")
+    public void call_stored_procedures_that_create_records() {
+        provider.doInTxWithReturn(em -> {
 
-        final StoredProcedureQuery addProject = em.createStoredProcedureQuery("add_project");
-        addProject.registerStoredProcedureParameter("ptitle", String.class, ParameterMode.IN);
-        addProject.registerStoredProcedureParameter("id", Integer.class, ParameterMode.OUT);
-        addProject.setParameter("ptitle", "Dummy project");
+            final StoredProcedureQuery addProject = em.createStoredProcedureQuery("add_project");
+            addProject.registerStoredProcedureParameter("ptitle", String.class, ParameterMode.IN);
+            addProject.registerStoredProcedureParameter("id", Integer.class, ParameterMode.OUT);
+            addProject.setParameter("ptitle", "Dummy project");
 
-        addProject.execute();
-        //addProject.executeUpdate();
+            addProject.execute();
+            //addProject.executeUpdate();
 
-        final Integer result = (Integer) addProject.getOutputParameterValue("id");
+            return (Integer) addProject.getOutputParameterValue("id");
+        });
 
-        //em.flush();
-        provider.commitTransaction();
 
-        final BigInteger count = (BigInteger) provider.em().createNativeQuery("select count(id) from project").getSingleResult();
+        final BigInteger count = (BigInteger) provider
+                .doItWithReturn(em ->
+                        em.createNativeQuery("select count(id) from project").getSingleResult());
 
-        Assert.assertEquals(3L, count.longValue());
+        assertEquals(1L, count.longValue());
     }
 
     /**
      * To Use a Cursor we need to have a active transaction or declare the connection as connection.setAutoCommit(false)
      */
     @Test
-    public void t02_fetch_projects_using_cursor() throws SQLException {
-
-        final EntityManager em = provider.createdEntityManagerUnRuled();
+    @Order(4)
+    public void fetch_projects_using_cursor() throws SQLException {
+        final EntityManager em = provider.em();
         //em.getTransaction().begin();
 
 
@@ -201,8 +209,9 @@ public class StoredProcedureTest {
             System.out.println("\n >>> " + b.getId() + " ---" + b.getTitle());
         }
 
-        Assert.assertEquals(2, projects.size());
+        em.close();
 
+        //assertEquals(2, projects.size());
         //em.getTransaction().commit();
     }
 }

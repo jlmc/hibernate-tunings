@@ -1,11 +1,18 @@
 package io.costax.hibernatetunning.paginantion;
 
 import io.costax.hibernatetunning.tasks.FactoryMethodTransformerAdapter;
-import org.junit.Assert;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class FactoryMethodTransformerAdapterTest {
 
     @Test
@@ -22,7 +29,7 @@ public class FactoryMethodTransformerAdapterTest {
         final FactoryMethodTransformerAdapter transformerAdapter = FactoryMethodTransformerAdapter.of(resultType, factoryMethodName);
         final Object o = transformerAdapter.transformTuple(tuple, null);
 
-        Assert.assertNotNull(o);
-        Assert.assertTrue(resultType.isAssignableFrom(o.getClass()));
+        assertNotNull(o);
+        assertTrue(resultType.isAssignableFrom(o.getClass()));
     }
 }

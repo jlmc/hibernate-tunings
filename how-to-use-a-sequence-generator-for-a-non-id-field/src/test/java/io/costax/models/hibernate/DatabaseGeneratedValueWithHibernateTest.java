@@ -1,20 +1,25 @@
 package io.costax.models.hibernate;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class DatabaseGeneratedValueWithHibernateTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseGeneratedValueWithHibernateTest.class);
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void should_persist_entity_with_generated_value() {
@@ -32,5 +37,7 @@ public class DatabaseGeneratedValueWithHibernateTest {
         LOGGER.info("-- After the commit the transaction [{}]", rogerFederer);
 
         System.out.println(">> The output  " + rogerFederer);
+
+        em.close();
     }
 }

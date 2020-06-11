@@ -1,14 +1,12 @@
 package io.costax.batching;
 
-import io.costax.rules.EntityManagerProvider;
-import io.costax.rules.Watcher;
-import org.hamcrest.Matchers;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
@@ -20,42 +18,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.costax.batching.Review.Rating;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@JpaTest(persistenceUnit = "it")
 public class CustomEnumMappingInQueryTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomEnumMappingInQueryTest.class);
-
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void filterCustomEnumInJPQL() {
-        final List<Review> reviews = provider.em().createQuery("select r from Review r where r.rating = :code", Review.class)
-                .setParameter("code", Review.Rating.TWO)
-                .getResultList();
+        final List<Review> reviews =
+                provider.doItWithReturn(em ->
+                        em.createQuery("select r from Review r where r.rating = :code", Review.class)
+                            .setParameter("code", Review.Rating.TWO)
+                            .getResultList());
 
-        assertThat(reviews, Matchers.hasSize(2));
+        assertThat(reviews).hasSize(2);
     }
 
     @Test
     public void filterCustomEnumInJPQLWithEnumInQuery() {
-        final List<Review> reviews = provider.em().createQuery("select r from Review r " +
+        final List<Review> reviews = provider.doItWithReturn(em ->
+                    em.createQuery("select r from Review r " +
                         "where r.rating = :code " +
                         "and r.rating <> " + Rating.THREE.getCode()
-                , Review.class)
-                .setParameter("code", Rating.TWO)
-                .getResultList();
+                    , Review.class)
+                    .setParameter("code", Rating.TWO)
+                    .getResultList());
 
-        assertThat(reviews, Matchers.hasSize(2));
+        assertThat(reviews).hasSize(2);
     }
 
     @Test
@@ -74,9 +66,11 @@ public class CustomEnumMappingInQueryTest {
         .getResultList();
         //@formatter:on
 
-        assertThat(reviews, Matchers.hasSize(3));
+        em.close();
+
+        assertThat(reviews).hasSize(3);
         final List<Integer> ids = reviews.stream().map(Review::getId).collect(Collectors.toList());
-        assertThat(ids, Matchers.contains(3, 2, 4));
+        assertThat(ids).contains(3, 2, 4);
     }
 
     @Test
@@ -96,9 +90,11 @@ public class CustomEnumMappingInQueryTest {
         .getResultList();
         //@formatter:on
 
-        assertThat(reviews, Matchers.hasSize(3));
+        em.close();
+
+        assertThat(reviews).hasSize(3);
         final List<Integer> ids = reviews.stream().map(Review::getId).collect(Collectors.toList());
-        assertThat(ids, Matchers.contains(3, 2, 4));
+        assertThat(ids).contains(3, 2, 4);
     }
 
     @Test
@@ -119,9 +115,11 @@ public class CustomEnumMappingInQueryTest {
         .getResultList();
         //@formatter:on
 
-        assertThat(reviews, Matchers.hasSize(3));
+        em.close();
+
+        assertThat(reviews).hasSize(3);
         final List<Integer> ids = reviews.stream().map(Review::getId).collect(Collectors.toList());
-        assertThat(ids, Matchers.contains(3, 2, 4));
+        assertThat(ids).contains(3, 2, 4);
     }
 
     @Test
@@ -147,9 +145,11 @@ public class CustomEnumMappingInQueryTest {
         .getResultList();
         //@formatter:on
 
-        assertThat(reports, Matchers.hasSize(2));
+        em.close();
+
+        assertThat(reports).hasSize(2);
         final List<Integer> ids = reports.stream().map(Review::getId).collect(Collectors.toList());
-        assertThat(ids, Matchers.contains(2, 4));
+        assertThat(ids).contains(2, 4);
     }
 
     @Test
@@ -177,33 +177,39 @@ public class CustomEnumMappingInQueryTest {
         .getResultList();
         //@formatter:on
 
-        assertThat(reports, Matchers.hasSize(2));
+        em.close();
+
+        assertThat(reports).hasSize(2);
         final List<Integer> ids = reports.stream().map(Review::getId).collect(Collectors.toList());
-        assertThat(ids, Matchers.contains(2, 4));
+        assertThat(ids).contains(2, 4);
     }
 
     // This test intends just to prove that the convert in also executed for null values
+    @DisplayName("Jpa Converter is also executed for Null values")
     @Test//(expected = java.lang.IllegalStateException.class)
-    @Ignore
+    @Sql(statements = "INSERT INTO multimedia.review (id, book_id, rating, comment, version) VALUES (5, 6, null, 'no status', 0)", phase = Sql.Phase.BEFORE_TEST_METHOD)
+    @Sql(statements = "DELETE FROM multimedia.review WHERE ID = 5", phase = Sql.Phase.AFTER_TEST_METHOD)
     public void converterInvokedOnNullValue() throws Throwable {
-
-
-        exception.expect(IllegalStateException.class);
-        exception.expectMessage("invalid rating with the code 'null'");
-
+        final EntityManager em = provider.em();
         try {
-            final EntityManager em = provider.em();
-            em.createQuery("select r from Review r where r.rating < :code or r.rating is null", Review.class)
+            final List<Review> code = em.createQuery("""
+                        select r 
+                        from Review r 
+                        where r.rating < :code or r.rating is null
+                    """, Review.class)
                     .setParameter("code", Rating.ONE)
                     .getResultList();
 
+            Assertions.fail("should faild in the converter");
+
         } catch (PersistenceException e) {
-            assertThat(e.getMessage(), containsString("Error attempting to apply AttributeConverter"));
 
-            assertThat(e.getCause(), notNullValue());
+            assertThat(e.getMessage()).contains("Error attempting to apply AttributeConverter");
+            assertThat(e).isNotNull().hasCauseExactlyInstanceOf(IllegalStateException.class);
+            assertThat(e.getCause().getMessage()).isEqualTo("invalid status with the code 'null'");
 
-            throw e.getCause();
+        }  finally {
+            em.close();
         }
-
     }
 }

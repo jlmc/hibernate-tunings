@@ -1,24 +1,27 @@
 package io.costax.models;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class TheBestWayToUseJavaRecordWithJPA {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider
-            .withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void usingJavaRecordToFetchData() {
+    public void using_Java_Record_To_Fetch_Data() {
 
         provider.doInTx(em -> {
 
@@ -55,10 +58,9 @@ public class TheBestWayToUseJavaRecordWithJPA {
 
         athleteInfos.forEach(System.out::println);
 
-        assertThat(athleteInfos.size(), is(3));
-        assertThat(athleteInfos.get(0).name(), is("Eusébio"));
-        assertThat(athleteInfos.get(1).name(), is("Federer"));
-        assertThat(athleteInfos.get(2).name(), is("Usain Bolt"));
-
+        assertEquals(3, athleteInfos.size());
+        assertEquals("Eusébio", athleteInfos.get(0).name());
+        assertEquals("Federer", athleteInfos.get(1).name());
+        assertEquals("Usain Bolt", athleteInfos.get(2).name());
     }
 }

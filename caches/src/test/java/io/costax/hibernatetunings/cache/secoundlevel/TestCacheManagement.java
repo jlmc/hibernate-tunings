@@ -2,36 +2,23 @@ package io.costax.hibernatetunings.cache.secoundlevel;
 
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.Watcher;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 
+@JpaTest(persistenceUnit = "it")
 public class TestCacheManagement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestRetrieveAndStoreMode.class);
 
-    private static EntityManagerFactory emf;
-    @Rule
-    public Watcher watcher = Watcher.timer(LOGGER);
-
-    @BeforeClass
-    public static void initEntityManagerFactory() {
-        emf = Persistence.createEntityManagerFactory("it");
-    }
-
-    @AfterClass
-    public static void closeEntityManagerFactory() {
-        emf.close();
-    }
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Test
     public void test2ndLevelCacheEviction() {

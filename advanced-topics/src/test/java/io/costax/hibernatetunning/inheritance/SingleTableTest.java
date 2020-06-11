@@ -4,16 +4,15 @@ import io.costax.hibernatetunings.entities.financial.Board;
 import io.costax.hibernatetunings.entities.financial.CreditNote;
 import io.costax.hibernatetunings.entities.financial.FinancialDocument;
 import io.costax.hibernatetunings.entities.financial.Invoice;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.RollbackException;
 import java.math.BigDecimal;
 import java.time.*;
@@ -22,28 +21,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class SingleTableTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void t00_shouldGetAllAllFinancialDocumentsUsingAPolymorphicJPQL() {
-        provider.em().createQuery("select fd from FinancialDocument fd",
-                FinancialDocument.class).getResultList();
+    @Order(0)
+    public void get_all_financial_documents_using_a_polymorphic_jpql() {
+        final EntityManager em = provider.em();
+
+        final List<FinancialDocument> financialDocuments =
+                em.createQuery("select fd from FinancialDocument fd", FinancialDocument.class)
+                        .getResultList();
+
+        em.close();
     }
 
     @Test
-    public void t01_shouldCreateABordWithFiancialDocuments() {
+    @Order(1)
+    public void create_a_board_with_financial_documents_1() {
         final ZoneOffset offset = OffsetDateTime.now().getOffset();
         final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
 
-        provider.beginTransaction();
         final EntityManager em = provider.em();
+        final EntityTransaction tx = em.getTransaction();
+        tx.begin();
 
         final Board teamBone = Board.of("t-Bone", "Team Bone");
         teamBone.add(Invoice.of(BigDecimal.valueOf(10), "Abc"));
@@ -52,160 +60,184 @@ public class SingleTableTest {
 
         em.persist(teamBone);
 
-        provider.commitTransaction();
+        tx.commit();
+        em.close();
     }
 
     @Test
-    public void t02_shouldCreateABordWithFinancialDocuments() {
-        //final ZoneOffset offset = OffsetDateTime.now().getOffset();
-        //final OffsetDateTime expirationOn = OffsetDateTime.of(LocalDate.of(2020, Month.JANUARY, 01), LocalTime.MIN, offset);
-
-        provider.beginTransaction();
+    @Order(2)
+    public void create_a_board_with_financial_documents_2() {
         final EntityManager em = provider.em();
+
+        final EntityTransaction tx = em.getTransaction();
+        tx.begin();
 
         final Board ptechAcademy = Board.of("PAcademy", "Ptech-Academy");
         ptechAcademy.add(Invoice.of(BigDecimal.valueOf(120), "idea"));
 
         em.persist(ptechAcademy);
 
-        provider.commitTransaction();
+        tx.commit();
+        em.close();
     }
 
     @Test
-    public void t03_should_get_all_the_financialDocuments_the_tbone_board() {
-        List<FinancialDocument> tboneFinancialDocuments =
-                provider.em()
-                        .createQuery("select fd from FinancialDocument fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
-                        .setParameter("code", "t-bone")
-                        .getResultList();
+    @Order(3)
+    public void get_all_the_financialDocuments_the_tbone_board() {
+        final EntityManager em = provider.em();
 
-        assertThat(tboneFinancialDocuments, hasSize(3));
+        List<FinancialDocument> tboneFinancialDocuments = em
+                .createQuery("select fd from FinancialDocument fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
+                .setParameter("code", "t-bone")
+                .getResultList();
+
+        assertEquals(3, tboneFinancialDocuments.size());
 
         final List<FinancialDocument> invoices = tboneFinancialDocuments.stream().filter(f -> f instanceof Invoice).collect(Collectors.toList());
         final List<FinancialDocument> creditNotes = tboneFinancialDocuments.stream().filter(f -> f instanceof CreditNote).collect(Collectors.toList());
 
-        assertThat(invoices, hasSize(2));
-        assertThat(creditNotes, hasSize(1));
+        em.close();
+
+        assertEquals(2, invoices.size());
+        assertEquals(1, creditNotes.size());
     }
 
     @Test
-    public void t04_should_find_only_the_invoices() {
+    @Order(4)
+    public void find_only_the_invoices() {
+
         List<FinancialDocument> tboneInvoices =
-                provider.em()
-                        .createQuery("select fd from Invoice fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
-                        .setParameter("code", "t-bone")
-                        .getResultList();
+                provider.doItWithReturn(em ->
+                        em.createQuery("select fd from Invoice fd join fetch fd.board b where b.code = lower(:code) order by fd.class", FinancialDocument.class)
+                                .setParameter("code", "t-bone")
+                                .getResultList()
+                );
 
-        assertThat(tboneInvoices, hasSize(2));
+        assertEquals(2, tboneInvoices.size());
     }
 
     @Test
-    public void t05_should_find_board_only_the_invoices() {
-        Board tbone =
-                provider.em()
-                        .createQuery("select b from Board b left join fetch b.financialDocuments fd " +
-                                "where b.code = lower(:code) and type (fd) = Invoice", Board.class)
-                        .setParameter("code", "t-bone")
-                        .getSingleResult();
+    @Order(5)
+    public void should_find_board_only_the_invoices() {
+        Board tbone = provider.doItWithReturn(em -> {
 
-        //Assert.assertThat(tboneInvoices, Matchers.hasSize(3));
+            return em.createQuery(
+                    """
+                            select b from Board b left join fetch b.financialDocuments fd 
+                            where b.code = lower(:code) and type (fd) = Invoice
+                            """, Board.class)
+                    .setParameter("code", "t-bone")
+                    .getSingleResult();
+        });
 
-        assertThat(tbone, notNullValue());
-        assertThat(tbone.getFinancialDocuments(), hasSize(2));
+        assertNotNull(tbone);
+        assertEquals(2, tbone.getFinancialDocuments().size());
     }
 
     //@Test(expected = org.hibernate.exception.ConstraintViolationException.class)
-    @Test(expected = javax.persistence.RollbackException.class)
-    public void t06_should_not_add_invoice_without_content() {
+    @Test//(expected = javax.persistence.RollbackException.class)
+    @Order(6)
+    public void should_not_add_invoice_without_content() {
+        final EntityManager em = provider.em();
         try {
-            provider.beginTransaction();
 
-            final Session unwrap = provider.em().unwrap(Session.class);
+            em.getTransaction().begin();
+
+            final Session unwrap = em.unwrap(Session.class);
             //final Board tbone = unwrap.byNaturalId(Board.class).using("code", "t-bone").getReference();
             //Board b = unwrap.byNaturalId(Board.class).using(Board_.code, "t-bone").load();
             //Board b = unwrap.byNaturalId(Board.class).using(Board_.code, "t-bone").with(LockOptions.UPGRADE).load();
             //Board b = unwrap.bySimpleNaturalId(Board.class).with(LockOptions.UPGRADE).load("t-bone");
             final Board tbone = unwrap.bySimpleNaturalId(Board.class).load("t-bone");
 
-            tbone.add(Invoice.of(BigDecimal.valueOf(92.9), null));
+            final Invoice invoiceWithoutContent = Invoice.of(BigDecimal.valueOf(92.9), null);
+            tbone.add(invoiceWithoutContent);
 
-            provider.commitTransaction();
+            em.getTransaction().commit();
+
+            //Assertions.fail("should not happen");
+
         } catch (RollbackException e) {
             final Throwable cause = e.getCause();
 
             if (!org.hibernate.exception.ConstraintViolationException.class.isAssignableFrom(cause.getCause().getClass())) {
-                Assert.fail("Wrong cause, different from: org.hibernate.exception.ConstraintViolationException");
+                Assertions.fail("Wrong cause, different from: org.hibernate.exception.ConstraintViolationException");
             }
 
-            throw e;
+            //throw e;
+
+        } finally {
+            em.close();
         }
     }
 
     @Test
-    public void t07_should_extract_DiscriminatorValue_annotation_value() {
+    @Order(7)
+    public void should_extract_discriminator_value_annotation_value() {
         // WARN - HHH90000017: Found use of deprecated entity-type selector syntax in HQL/JPQL query ['t.class']; use TYPE operator instead : type(t)
-        List<Object[]> resultList = provider.em().createQuery("SELECT t.class, t FROM FinancialDocument t", Object[].class).getResultList();
+        final EntityManager em = provider.em();
 
-        Assert.assertThat(resultList.size(), is(4));
-        Assert.assertThat(resultList.get(0).length, is(2));
+        List<Object[]> resultList = em.createQuery("SELECT t.class, t FROM FinancialDocument t", Object[].class).getResultList();
+
+        Assertions.assertEquals(4, resultList.size());
+        Assertions.assertEquals(2, resultList.get(0).length);
 
         final Object objects0 = resultList.get(0)[0];
         final Object objects1 = resultList.get(0)[1];
 
-        Assert.assertNotNull(objects0);
-        Assert.assertNotNull(objects1);
-        Assert.assertTrue(String.class.isAssignableFrom(objects0.getClass()));
-        Assert.assertFalse(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
+        assertNotNull(objects0);
+        assertNotNull(objects1);
+        assertTrue(String.class.isAssignableFrom(objects0.getClass()));
+        assertFalse(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
 
-        Assert.assertEquals("Invoice", objects0);
-        Assert.assertEquals(Invoice.class, objects1.getClass());
+        assertEquals("Invoice", objects0);
+        assertEquals(Invoice.class, objects1.getClass());
 
-        System.out.println(resultList);
+        em.close();
     }
 
     @Test
-    public void t08_should_extract_DiscriminatorValue_annotation_value_without_HHH90000017_warning() {
-        List<Object[]> resultList = provider.em().createQuery("SELECT type(t), t FROM FinancialDocument t", Object[].class).getResultList();
+    @Order(8)
+    public void should_extract_DiscriminatorValue_annotation_value_without_HHH90000017_warning() {
+        final EntityManager em = provider.em();
 
-        Assert.assertThat(resultList.size(), is(4));
-        Assert.assertThat(resultList.get(0).length, is(2));
+        List<Object[]> resultList = em.createQuery("SELECT type(t), t FROM FinancialDocument t", Object[].class).getResultList();
+
+        Assertions.assertEquals(4, resultList.size());
+        Assertions.assertEquals(2, resultList.get(0).length);
 
         final Object objects0 = resultList.get(0)[0];
         final Object objects1 = resultList.get(0)[1];
 
-        Assert.assertNotNull(objects0);
-        Assert.assertNotNull(objects1);
-        Assert.assertNotNull(Class.class.isAssignableFrom(objects0.getClass()));
-        Assert.assertNotNull(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
+        assertNotNull(objects0);
+        assertNotNull(objects1);
+        assertNotNull(Class.class.isAssignableFrom(objects0.getClass()));
+        assertNotNull(FinancialDocument.class.isAssignableFrom(objects0.getClass()));
 
-        Assert.assertEquals(Invoice.class, objects0);
-        Assert.assertEquals(Invoice.class, objects1.getClass());
-
-        //Class<? extends FinancialDocument> clazz = (Class<? extends FinancialDocument>) objects0;
-        //final DiscriminatorValue annotation = clazz.getAnnotation(DiscriminatorValue.class);
-        //final String value = annotation.value();
+        assertEquals(Invoice.class, objects0);
+        assertEquals(Invoice.class, objects1.getClass());
 
         final Map<String, ? extends List<? extends FinancialDocument>> collect = resultList.stream()
                 .map(obj -> {
                             return new AbstractMap.SimpleEntry<>(
-                                    ((DiscriminatorValue) ((Class<? extends FinancialDocument>) obj[0]).getAnnotation(DiscriminatorValue.class)).value(),
+                                    ((Class<? extends FinancialDocument>) obj[0]).getAnnotation(DiscriminatorValue.class).value(),
                                     ((Class<? extends FinancialDocument>) obj[0]).cast(obj[1])
                             );
                         }
                 ).collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
-        Assert.assertNotNull(collect);
+        assertNotNull(collect);
+
+        em.close();
     }
 
     @Test
     public void t99_should_delete_all_using_polymorphic_delete_jpql() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+        provider.doInTx(em -> {
 
-        em.createQuery("delete from FinancialDocument fd").executeUpdate();
+            em.createQuery("delete from FinancialDocument fd").executeUpdate();
+            em.createQuery("delete from Board ").executeUpdate();
 
-        em.createQuery("delete from Board ").executeUpdate();
-
-        provider.commitTransaction();
+        });
     }
 }

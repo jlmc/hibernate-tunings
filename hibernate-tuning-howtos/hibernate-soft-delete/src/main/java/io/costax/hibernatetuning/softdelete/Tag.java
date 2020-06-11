@@ -52,4 +52,12 @@ public class Tag extends BaseEntity {
     public int hashCode() {
         return 31;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

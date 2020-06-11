@@ -1,12 +1,13 @@
 package io.costax.hibernatetunning.persistencecontext;
 
 import io.costax.hibernatetunings.entities.exchange.Tread;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.jpa.QueryHints;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -20,11 +21,13 @@ import java.util.Random;
  * properties.put("hibernate.order_updates", "true");
  * properties.put("hibernate.jdbc.batch_versioned_data", "true");
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(value = MethodOrderer.Alphanumeric.class)
 public class BatchProcessingTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     /**
      * Although we could manually flush the Persistnece context,
@@ -112,5 +115,7 @@ public class BatchProcessingTest {
                 .getResultList();
 
         treads.forEach(System.out::println);
+
+        em.close();
     }
 }

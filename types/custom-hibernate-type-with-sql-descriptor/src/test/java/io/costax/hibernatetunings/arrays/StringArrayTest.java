@@ -1,125 +1,155 @@
 package io.costax.hibernatetunings.arrays;
 
 import io.costax.hibernatetunings.entities.Configuration;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.annotation.Sql;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+import static org.junit.jupiter.api.Assertions.*;
+
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@Sql(statements = "delete from configuration", phase = Sql.Phase.BEFORE_TEST_METHOD)
+@Sql(statements = "delete from configuration", phase = Sql.Phase.AFTER_TEST_METHOD)
 public class StringArrayTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
-    @After
-    public void cleanup() {
-        final EntityManager em = provider.createdEntityManagerUnRuled();
-        em.getTransaction().begin();
-
-        em.createNativeQuery("delete from configuration").executeUpdate();
-
-        em.getTransaction().commit();
+    private Configuration findConfigurationByNaturalId(final String naturalId) {
+        return provider
+                .doItWithReturn(em -> em
+                        .unwrap(Session.class)
+                        .bySimpleNaturalId(Configuration.class)
+                        .load(naturalId));
     }
 
     @Test
-    public void t00_should_persist() {
+    public void persist() {
+        final String tenant = "A-0";
+
         provider.doInTx(em -> {
-            final Configuration configuration = new Configuration("A-0", new String[]{"role1", "role2"});
+            final Configuration configuration = new Configuration(tenant, new String[]{"role1", "role2"});
             em.persist(configuration);
         });
 
-        final Session unwrap = provider.em().unwrap(Session.class);
-        final Configuration configuration = unwrap.bySimpleNaturalId(Configuration.class).load("A-0");
+        final Configuration configuration = findConfigurationByNaturalId(tenant);
 
-        Assert.assertNotNull(configuration);
-        Assert.assertNotNull(configuration.getRoles());
-        Assert.assertEquals(2, configuration.getRoles().length);
-        //Assert.assertTrue(Arrays.equals(a1.getRoles(), new String[]{"role1", "role2"}));
-        Assert.assertArrayEquals(configuration.getRoles(), new String[]{"role1", "role2"});
+        assertNotNull(configuration);
+        assertNotNull(configuration.getRoles());
+        assertEquals(2, configuration.getRoles().length);
+        assertArrayEquals(configuration.getRoles(), new String[]{"role1", "role2"});
     }
 
     @Test
-    public void t01_should_persist_null_array() {
+    public void persist_null_array() {
+        final String tenant = "A-1";
+
         provider.doInTx(em -> {
-            final Configuration configuration = new Configuration("A-1", null);
+            final Configuration configuration = new Configuration(tenant, null);
             em.persist(configuration);
         });
 
-        final Session unwrap = provider.em().unwrap(Session.class);
-        final Configuration a1 = unwrap.bySimpleNaturalId(Configuration.class).load("A-1");
+        final Configuration configuration = findConfigurationByNaturalId(tenant);
 
-        Assert.assertNotNull(a1);
-        Assert.assertNull(a1.getRoles());
+        assertNotNull(configuration);
+        assertNull(configuration.getRoles());
     }
 
     @Test
-    public void t02_should_persist_empty_array() {
+    public void persist_empty_array() {
+        final String tenant = "A-3";
+
         provider.doInTx(em -> {
-            final Configuration configuration = new Configuration("A-3", new String[]{});
+            final Configuration configuration = new Configuration(tenant, new String[]{});
             em.persist(configuration);
         });
 
-        final Session unwrap = provider.em().unwrap(Session.class);
-        final Configuration a1 = unwrap.bySimpleNaturalId(Configuration.class).load("A-3");
+        final Configuration configuration = findConfigurationByNaturalId(tenant);
 
-        Assert.assertNotNull(a1);
-        Assert.assertNotNull(a1.getRoles());
-        Assert.assertEquals(0, a1.getRoles().length);
+        assertNotNull(configuration);
+        assertNotNull(configuration.getRoles());
+        assertEquals(0, configuration.getRoles().length);
     }
 
     @Test
-    public void t03_should_update_existing_array() {
+    public void update_existing_array() {
         final String tenant = "A-4";
+
         provider.doInTx(em -> {
             final Configuration configuration = new Configuration(tenant, new String[]{"A1"});
             em.persist(configuration);
         });
 
         provider.doInTx(em -> {
-
             final Configuration configuration = em.unwrap(Session.class).bySimpleNaturalId(Configuration.class).load(tenant);
-
             final String[] roles = new String[]{"B1", "C1", "D1"};
-
             configuration.setRoles(roles);
         });
 
-        final Session unwrap = provider.em().unwrap(Session.class);
-        final Configuration a1 = unwrap.bySimpleNaturalId(Configuration.class).load(tenant);
+        final Configuration configuration = findConfigurationByNaturalId(tenant);
 
-        Assert.assertNotNull(a1);
-        Assert.assertNotNull(a1.getRoles());
-        Assert.assertEquals(3, a1.getRoles().length);
-        Assert.assertArrayEquals(new String[]{"B1", "C1", "D1"}, a1.getRoles());
+        assertNotNull(configuration);
+        assertNotNull(configuration.getRoles());
+        assertEquals(3, configuration.getRoles().length);
+        assertArrayEquals(new String[]{"B1", "C1", "D1"}, configuration.getRoles());
     }
 
     @Test
-    public void t04_test_equals_array_in_query() {
-        final String tenant = "A-5";
+    public void test_equals_array_in_query() {
+        final String tenant1 = "tenant-1";
+        final String tenant2 = "tenant-2";
+        final String tenant3 = "tenant-3";
+
         provider.doInTx(em -> {
-            final Configuration configuration1 = new Configuration(tenant + "-1", new String[]{"A1", "B1"});
+            final Configuration configuration1 = new Configuration(tenant1, new String[]{"A1", "B1"});
             em.persist(configuration1);
 
-            final Configuration configuration2 = new Configuration(tenant + "-2", new String[]{"A1", "B1", "C2"});
+            final Configuration configuration2 = new Configuration(tenant2, new String[]{"B1", "A1"});
             em.persist(configuration2);
+
+            final Configuration configuration3 = new Configuration(tenant3, new String[]{"A1", "B1", "C2"});
+            em.persist(configuration3);
         });
 
-        final List<Configuration> configurations1 = provider.em().createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
-                .setParameter("roles", new String[]{"A1", "B1"})
-                .getResultList();
+        final List<Configuration> configurations1 = provider.doItWithReturn(em ->
+                em.createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
+                        .setParameter("roles", new String[]{"A1", "B1"})
+                        .getResultList());
 
-        Assert.assertEquals(1, configurations1.size());
-        Assert.assertEquals("A-5-1", configurations1.get(0).getTenant());
 
-        final List<Configuration> configurations2 = provider.em().createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
-                .setParameter("roles", new String[]{"B1", "A1"})
-                .getResultList();
+        assertEquals(1, configurations1.size());
+        assertEquals(tenant1, configurations1.get(0).getTenant());
 
-        Assert.assertEquals(0, configurations2.size());
+
+        final List<Configuration> configurations2 = provider.doItWithReturn(em ->
+                em.createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
+                        .setParameter("roles", new String[]{"B1", "A1"})
+                        .getResultList());
+
+        assertEquals(1, configurations2.size());
+        assertEquals(tenant2, configurations2.get(0).getTenant());
+
+
+        final List<Configuration> configurations3 = provider.doItWithReturn(em ->
+                em.createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
+                        .setParameter("roles", new String[]{"A1", "B1", "C2"})
+                        .getResultList());
+        final List<Configuration> configurations3WithArrayInInverseOrder = provider.doItWithReturn(em ->
+                em.createQuery("select c from Configuration c where c.roles = :roles", Configuration.class)
+                        .setParameter("roles", new String[]{"A1", "C2", "B1"})
+                        .getResultList());
+
+
+        assertEquals(1, configurations3.size());
+        assertEquals(0, configurations3WithArrayInInverseOrder.size());
+        assertEquals(tenant3, configurations3.get(0).getTenant());
+        assertArrayEquals(new String[]{"A1", "B1", "C2"}, configurations3.get(0).getRoles());
     }
 }

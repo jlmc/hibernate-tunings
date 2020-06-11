@@ -31,4 +31,10 @@ public class StringArrayType
         ((StringArrayTypeDescriptor) getJavaTypeDescriptor())
                 .setParameterValues(parameters);
     }
+
+    @Override
+    public String toString(final String[] value) {
+        return super.toString(value);
+    }
+
 }

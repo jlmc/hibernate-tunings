@@ -1,48 +1,43 @@
 package io.costax.hibernatetunning.inheritance;
 
 import io.costax.hibernatetunings.entities.blog.*;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class JoinTableTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
     public void t01_get_all_post_wi_th_jpql() {
-        final List<Topic> topics = provider.em().createQuery("select t from Topic t", Topic.class).getResultList();
+        final List<Topic> topics = em.createQuery("select t from Topic t", Topic.class).getResultList();
     }
 
     @Test
     public void t02_should_create_a_dashboard() {
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
-        final EntityManager em = provider.em();
         final Dashboard jpa = Dashboard.of("JPA");
-
-        final Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now().plusMonths(1));
 
         final Post post = Topics.newPostWith("John Doe", "Inheritance", "Best practices");
         jpa.addTopic(post);
 
-
-        final Announcement announcement = Topics.newAnnouncementWith("John Doe", "Release x.y.z.Final", LocalDate.of(2019, 1, 31));
+        final Announcement announcement = Topics.newAnnouncementWith(
+                "John Doe", "Release x.y.z.Final", LocalDate.of(2019, 1, 31));
         jpa.addTopic(announcement);
         em.persist(jpa);
 
@@ -52,12 +47,11 @@ public class JoinTableTest {
         final TopicStatistic announcementTopicStatistic = Topics.topicStatistics(announcement);
         em.persist(announcementTopicStatistic);
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     @Test
     public void t03_should_get_topic_of_some_dashboard_with_a_polymorphic_query() {
-        final EntityManager em = provider.em();
 
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
                 .setParameter("name", "JPA")
@@ -72,8 +66,6 @@ public class JoinTableTest {
 
     @Test
     public void t04_should_get_posts_with_subclass_query() {
-        final EntityManager em = provider.em();
-
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
                 .setParameter("name", "JPA")
                 .getSingleResult();
@@ -92,12 +84,12 @@ public class JoinTableTest {
 
     @Test
     public void t05_should_fetch_topic_projection() {
-        final Dashboard dashboard = provider.em()
+        final Dashboard dashboard = em
                 .createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
                 .setParameter("name", "JPA")
                 .getSingleResult();
 
-        List<String> titles = provider.em()
+        List<String> titles = em
                 .createQuery("select t.title from Topic t where t.dashboard = :board", String.class)
                 .setParameter("board", dashboard)
                 .getResultList();
@@ -108,19 +100,20 @@ public class JoinTableTest {
     @Test
     //@Ignore
     public void t06_should_fetch_just_one_topic() {
-        final List<Long> allTopicsIds = provider.em().createQuery("select distinct id from Topic order by id desc", Long.class).getResultList();
+        final List<Long> allTopicsIds = em.createQuery("select distinct id from Topic order by id desc", Long.class).getResultList();
 
-        assertThat(allTopicsIds, not(empty()));
+
+        Assertions.assertFalse(allTopicsIds.isEmpty());
 
         final Long topicId = allTopicsIds.get(0);
 
-        final Topic topic = provider.em().find(Topic.class, topicId);
-        assertNotNull(topic);
+        final Topic topic = em.find(Topic.class, topicId);
+        Assertions.assertNotNull(topic);
     }
 
     @Test
     public void t07_fetch_dashboard_topics_eagerly() {
-        final List<Dashboard> dashboards = provider.em()
+        final List<Dashboard> dashboards = em
                 .createQuery(
                         "select distinct d from Dashboard d left join fetch d.topics where d.name = :name"
                         , Dashboard.class)
@@ -130,20 +123,18 @@ public class JoinTableTest {
         assertEquals(1, dashboards.size());
         final Dashboard dashboard = dashboards.get(0);
 
-        assertTrue(dashboard.getTopics().stream().anyMatch(t -> t instanceof Post));
-        assertTrue(dashboard.getTopics().stream().anyMatch(t -> t instanceof Announcement));
+        assertTrue(dashboard.getTopics().stream().anyMatch(Post.class::isInstance));
+        assertTrue(dashboard.getTopics().stream().anyMatch(Announcement.class::isInstance));
     }
 
     @Test
     public void t08_should_fetch_statistics() {
-        final List<TopicStatistic> topicStatistics = provider.em().createQuery("select s from TopicStatistic s", TopicStatistic.class).getResultList();
+        final List<TopicStatistic> topicStatistics = em.createQuery("select s from TopicStatistic s", TopicStatistic.class).getResultList();
         assertEquals(2, topicStatistics.size());
     }
 
     @Test
     public void t09_should_get_tuple_projection() {
-        final EntityManager em = provider.em();
-
         List<Tuple> results = em
                 .createQuery(
                         "select count(t), t.class " +
@@ -157,8 +148,6 @@ public class JoinTableTest {
 
     @Test
     public void t10_should_order_the_the_types() {
-        final EntityManager em = provider.em();
-
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
                 .setParameter("name", "JPA")
                 .getSingleResult();
@@ -183,9 +172,8 @@ public class JoinTableTest {
 
     @Test
     public void t11_select_using_all() {
-        final EntityManager em = provider.em();
-
-        final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
+        final Dashboard dashboard = em
+                .createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
                 .setParameter("name", "JPA")
                 .getSingleResult();
 
@@ -205,9 +193,7 @@ public class JoinTableTest {
 
     @Test
     public void t12_remove_all() {
-        provider.beginTransaction();
-
-        final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
         final List<Dashboard> dashboards = em.createQuery("select distinct d from Dashboard d", Dashboard.class).getResultList();
 
@@ -216,13 +202,18 @@ public class JoinTableTest {
             final List<Topic> topics = dashboard.getTopics();
 
             for (Topic topic : topics) {
-                final List<TopicStatistic> topicStatistics = em.createQuery("select s from TopicStatistic s where topic = :topic", TopicStatistic.class).setParameter("topic", topic).getResultList();
+
+                final List<TopicStatistic> topicStatistics = em
+                        .createQuery("select s from TopicStatistic s where topic = :topic", TopicStatistic.class)
+                        .setParameter("topic", topic)
+                        .getResultList();
+
                 topicStatistics.forEach(em::remove);
             }
 
             em.remove(dashboard);
         }
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 }

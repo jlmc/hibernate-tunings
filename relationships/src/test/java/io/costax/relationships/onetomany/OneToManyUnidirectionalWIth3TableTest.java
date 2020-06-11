@@ -1,45 +1,47 @@
 package io.costax.relationships.onetomany;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyUnidirectionalWIth3TableTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-
-    //Logger logger = LoggerFactory.getLogger(this.getClass());
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
-    public void t00__testPersistOneToManyUnidirectionalWIth3Table() {
-        final EntityManager em = provider.em();
+    @Order(0)
+    public void test_persist_one_to_many_unidirectional_with_3_tables() {
+        provider.doInTx(em -> {
 
-        provider.beginTransaction();
+            final TvChannel rtp1 = TvChannel.of("RTP-1", "RPT-1");
 
-        final TvChannel rtp1 = TvChannel.of("RTP-1", "RPT-1");
-
-        rtp1.addProgram(TvProgram.of(LocalTime.of(14, 10), LocalTime.of(14, 5), "Voz do Cidadão"));
-        rtp1.addProgram(TvProgram.of(LocalTime.of(14, 40), LocalTime.of(19, 58), "Portugal no Mundo"));
-        rtp1.addProgram(TvProgram.of(LocalTime.of(19, 59), LocalTime.of(21, 00), "Telejornal"));
+            rtp1.addProgram(TvProgram.of(LocalTime.of(14, 10), LocalTime.of(14, 5), "Voz do Cidadão"));
+            rtp1.addProgram(TvProgram.of(LocalTime.of(14, 40), LocalTime.of(19, 58), "Portugal no Mundo"));
+            rtp1.addProgram(TvProgram.of(LocalTime.of(19, 59), LocalTime.of(21, 0), "Telejornal"));
 
 
-        final TvChannel rtp2 = TvChannel.of("RTP-2", "RTP-2");
-        rtp2.addProgram(TvProgram.of(LocalTime.of(14, 25), LocalTime.of(15, 0), "Os Segredos do Super Heróis"));
+            final TvChannel rtp2 = TvChannel.of("RTP-2", "RTP-2");
+            rtp2.addProgram(TvProgram.of(LocalTime.of(14, 25), LocalTime.of(15, 0), "Os Segredos do Super Heróis"));
 
-        em.persist(rtp1);
-        em.persist(rtp2);
+            em.persist(rtp1);
+            em.persist(rtp2);
 
-        provider.commitTransaction();
+        });
     }
 
     @Test
-    public void t01__testRemovePrograms() {
+    @Order(1)
+    public void test_remove_programs() {
         provider.doInTx(em -> {
 
             final TvChannel eurosport1 = em.find(TvChannel.class, "EUROSPORT1");
@@ -54,7 +56,8 @@ public class OneToManyUnidirectionalWIth3TableTest {
     }
 
     @Test
-    public void t02__testRemoveTvChannelAndCascadeHimPrograms() {
+    @Order(3)
+    public void test_remove_tv_channel_and_cascade_him_programs() {
         provider.doInTx(em -> {
             final TvChannel eurosport1 = em.find(TvChannel.class, "EUROSPORT1");
 

@@ -1,21 +1,23 @@
 package io.costax.relationships.onetomany;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class OneToManyBidirectionalTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
     public void test() {
 
-        final EntityManager em = provider.em();
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
         final Director quentinTarantino = Director.of(1, "Quentin Tarantino");
         em.persist(quentinTarantino);
@@ -29,7 +31,7 @@ public class OneToManyBidirectionalTest {
 
         pulpFiction.addReview("I know that's what I always say. I'm always right, too.");
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
 
     }
 }

@@ -1,27 +1,35 @@
 package io.costax.hibernatetunning.connections;
 
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@JpaTest(persistenceUnit = "it")
 public class ResourceLocalDelayConnectionAcquisitionTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
+    /**
+     * The most interesting results can be found in the logger StatisticsReport.
+     * That intends to show how to extends the hibernate.stats.factory default beaver!
+     */
     @Test
+    @DisplayName("Resource Local Delay Connection Acquisition, See the Logger to find the custom StatisticsReport")
     public void test() {
 
-        // we should swith on and o
+        em.getTransaction().begin();
 
-        provider.beginTransaction();
+        List<Developer> resultList = em
+                .createQuery("select d from Developer d order by d.id ", Developer.class)
+                .getResultList();
 
-        List<Developer> resultList = provider.em().createQuery("select d from Developer d order by d.id ", Developer.class).getResultList();
+        resultList.forEach(System.out::println);
 
-        resultList.stream().forEach(System.out::println);
-
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 }

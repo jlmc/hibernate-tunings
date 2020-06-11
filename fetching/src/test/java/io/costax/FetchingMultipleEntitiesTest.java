@@ -1,27 +1,27 @@
 package io.costax;
 
 import io.costax.model.Project;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+@JpaTest(persistenceUnit = "it")
 public class FetchingMultipleEntitiesTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
     public void fetchMultipleEntities() {
 
-        final EntityManager em = provider.em();
-
-        final List<Project> projects = em.createQuery("select p from Project p where p.id in ( :id )", Project.class)
+        final List<Project> projects = em
+                .createQuery("select p from Project p where p.id in ( :id )", Project.class)
                 .setParameter("id", List.of(1L, 2L, 3L))
                 .getResultList();
 
-        projects.stream().forEach(System.out::println);
+        projects.forEach(System.out::println);
     }
 }

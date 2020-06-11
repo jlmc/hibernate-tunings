@@ -2,30 +2,31 @@ package io.costax.relationships.manytoone;
 
 import io.costax.relationships.manytomany.Developer;
 import io.costax.relationships.manytomany.Project;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
+
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyUnidirectionalTest {
-
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
 
     private static final int STEVE_WOZNIAK_ID = 1;
     private static final int BILL_GATES_ID = 2;
     private static final int LARRY_PAGE_ID = 3;
     private static final int LINUS_TORVALDS_ID = 4;
     private static final int LARRY_ELLISON_ID = 5;
-
     private static final Developer STEVE_WOZNIAK = Developer.of(STEVE_WOZNIAK_ID, "Steve Wozniak");
     private static final Developer BILL_GATES = Developer.of(BILL_GATES_ID, "Bill Gates");
     private static final Developer LARRY_PAGE = Developer.of(LARRY_PAGE_ID, "Larry Page");
     private static final Developer LINUS_TORVALDS = Developer.of(LINUS_TORVALDS_ID, "Linus Torvalds");
     private static final Developer LARRY_ELLISON = Developer.of(LARRY_ELLISON_ID, "Larry Ellison");
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void should_create_and_manager_project_developers() {
@@ -78,19 +79,20 @@ public class ManyToManyUnidirectionalTest {
 
 
         // How many developers have the project?
-        final EntityManager em = provider.em();
+        provider.doIt(em -> {
 
-        final Project osMainX = em.find(Project.class, 1);
+            final Project osMainX = em.find(Project.class, 1);
 
-        osMainX.getTeamSize();
+            osMainX.getTeamSize();
 
-        Assert.assertThat(osMainX.getTeamSize(), Matchers.is(4));
-        Assert.assertThat(osMainX.getDevelopers(), Matchers.containsInAnyOrder(
-                STEVE_WOZNIAK,
-                LARRY_PAGE,
-                LINUS_TORVALDS,
-                Developer.of(91, "Steve JObs")
-        ));
+            Assertions.assertEquals(4, osMainX.getTeamSize());
+            Assertions.assertTrue(osMainX.getDevelopers().containsAll(
+                    List.of(
+                            STEVE_WOZNIAK,
+                            LARRY_PAGE,
+                            LINUS_TORVALDS,
+                            Developer.of(91, "Steve JObs"))));
+        });
 
     }
 }

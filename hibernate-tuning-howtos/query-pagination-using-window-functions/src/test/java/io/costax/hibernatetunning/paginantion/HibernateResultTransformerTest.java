@@ -1,45 +1,54 @@
 package io.costax.hibernatetunning.paginantion;
 
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class HibernateResultTransformerTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @Before
+    @PersistenceContext
+    EntityManager em;
+
+    @BeforeEach
     public void populate() {
-        DataPopulator.with(provider).populate();
+        DataPopulate.executePopulate(provider.em());
     }
 
-    @After
+    @AfterEach
     public void clean() {
-        DataPopulator.with(provider).clean();
+        DataPopulate.executeCleanUp(provider.em());
     }
 
     @Test
-    public void usingAliasToBeanResultTransformer() {
-        final Session session = provider.em().unwrap(Session.class);
+    public void using_Alias_To_Bean_Result_Transformer() {
+        final Session session = em.unwrap(Session.class);
 
         List<MySummaryUsingGetterAndSetters> todos = session.createSQLQuery(
-                "select d.id, d.title, count(pl.id) as total " +
-                        "from tasks.todo d " +
-                        "left join tasks.todo_comment pl on pl.todo_id = d.id " +
-                        "group by d.id, d.title order by d.id")
+                """
+                select d.id, d.title, count(pl.id) as total
+                from tasks.todo d 
+                left join tasks.todo_comment pl on pl.todo_id = d.id
+                group by d.id, d.title order by d.id
+                """
+                )
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .setResultTransformer(new AliasToBeanResultTransformer(MySummaryUsingGetterAndSetters.class))
@@ -48,9 +57,9 @@ public class HibernateResultTransformerTest {
 
         assertEquals(10, todos.size());
         assertEquals("todo-1", todos.get(0).getTitle());
-        assertThat(todos.get(0).getTotal(), is(BigInteger.valueOf(3L)));
+        assertTrue(BigInteger.valueOf(3L).compareTo(todos.get(0).getTotal()) == 0);
         assertEquals("todo-10", todos.get(9).getTitle());
-        assertThat(todos.get(9).getTotal(), is(BigInteger.valueOf(0L)));
+        assertTrue(todos.get(9).getTotal().compareTo(BigInteger.valueOf(0L)) == 0);
     }
 
     @Test
@@ -63,21 +72,24 @@ public class HibernateResultTransformerTest {
                 BigInteger.class);
 
         List<MySummaryWithConstructor> todos = session.createSQLQuery(
-                "select d.id, d.title, count(pl.id) as total " +
-                        "from tasks.todo d " +
-                        "left join tasks.todo_comment pl on pl.todo_id = d.id " +
-                        "group by d.id, d.title order by d.id")
+                """
+                select d.id, d.title, count(pl.id) as total
+                from tasks.todo d
+                  left join tasks.todo_comment pl on pl.todo_id = d.id
+                group by d.id, d.title order by d.id
+                """)
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .setResultTransformer(
                         new AliasToBeanConstructorResultTransformer(constructor)
                 ).list();
 
+
         assertEquals(10, todos.size());
         assertEquals("todo-1", todos.get(0).getTitle());
-        assertThat(todos.get(0).getTotal(), is(BigInteger.valueOf(3L)));
+        assertEquals(0, BigInteger.valueOf(3L).compareTo(todos.get(0).getTotal()));
         assertEquals("todo-10", todos.get(9).getTitle());
-        assertThat(todos.get(9).getTotal(), is(BigInteger.valueOf(0L)));
+        assertEquals(0, todos.get(9).getTotal().compareTo(BigInteger.valueOf(0L)));
     }
 
 

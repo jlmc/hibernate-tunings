@@ -2,16 +2,15 @@ package io.costax.queryhintfetchsize;
 
 import io.costax.model.Project;
 import io.costax.model.ProjectSummary;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
 import org.hibernate.Session;
 import org.hibernate.jpa.QueryHints;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -26,30 +25,35 @@ import java.util.List;
  * In the context of pagination, the ORDER BY clause needs to be applied on a column
  * or a set of columns that are guarded by a unique constraint.
  */
+@JpaTest(persistenceUnit = "it")
 public class DTOProjectionPaginationTest {
 
     private static final int PAGE_START = 5;
     private static final int PAGE_SIZE = 5;
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     @Test
     public void projection_with_jpql() {
-        List<ProjectSummary> pageOfSecondFive = provider.em().createQuery("select new io.costax.model.ProjectSummary(p.id, p.title) from Project p order by p.id desc ", ProjectSummary.class)
+        List<ProjectSummary> pageOfSecondFive = em
+                .createQuery("""
+                        select new io.costax.model.ProjectSummary(p.id, p.title) 
+                        from Project p 
+                        order by p.id desc
+                        """, ProjectSummary.class)
                 .setMaxResults(PAGE_SIZE)
                 .setFirstResult(PAGE_START)
                 .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
-        Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
-        Assert.assertThat(pageOfSecondFive.get(0).getId(), Matchers.is(50L));
-        Assert.assertThat(pageOfSecondFive.get(4).getId(), Matchers.is(46L));
+        Assertions.assertEquals(5, pageOfSecondFive.size());
+        Assertions.assertEquals(50L, pageOfSecondFive.get(0).getId());
+        Assertions.assertEquals(46L, pageOfSecondFive.get(4).getId());
     }
 
     @Test
     public void projection_with_criteria() {
-        final EntityManager em = provider.em();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<ProjectSummary> cq = cb.createQuery(ProjectSummary.class);
 
@@ -64,59 +68,68 @@ public class DTOProjectionPaginationTest {
                 .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
                 .getResultList();
 
-        Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
-        Assert.assertThat(pageOfSecondFive.get(0).getId(), Matchers.is(50L));
-        Assert.assertThat(pageOfSecondFive.get(4).getId(), Matchers.is(46L));
+        Assertions.assertEquals(5, pageOfSecondFive.size());
+        Assertions.assertEquals(50L, pageOfSecondFive.get(0).getId());
+        Assertions.assertEquals(46L, pageOfSecondFive.get(4).getId());
     }
 
     @Test
     public void projection_with_native() {
-        final EntityManager em = provider.em();
-        List<ProjectSummary> pageOfSecondsFive = em.createNativeQuery("select p.id as id, p.title as title from project p order by p.id desc", "ProjectSummaryMapper")
-                .setMaxResults(PAGE_SIZE)
-                .setFirstResult(PAGE_START)
-                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
-                .getResultList();
+        List<ProjectSummary> pageOfSecondFive =
+                em.createNativeQuery(
+                        """ 
+                                select p.id as id, p.title as title 
+                                from project p 
+                                order by p.id desc
+                                 """,
+                        "ProjectSummaryMapper")
+                        .setMaxResults(PAGE_SIZE)
+                        .setFirstResult(PAGE_START)
+                        .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
+                        .getResultList();
 
-        Assert.assertThat(pageOfSecondsFive, Matchers.hasSize(5));
-        Assert.assertThat(pageOfSecondsFive.get(0).getId(), Matchers.is(50L));
-        Assert.assertThat(pageOfSecondsFive.get(4).getId(), Matchers.is(46L));
+        Assertions.assertEquals(5, pageOfSecondFive.size());
+        Assertions.assertEquals(50L, pageOfSecondFive.get(0).getId());
+        Assertions.assertEquals(46L, pageOfSecondFive.get(4).getId());
     }
 
     @Test
     public void projection_with_named_native() {
-        final EntityManager em = provider.em();
-        List<ProjectSummary> pageOfSecondFive = em.createNamedQuery("ProjectSummaryQuery", ProjectSummary.class)
-                .setMaxResults(PAGE_SIZE)
-                .setFirstResult(PAGE_START)
-                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
-                .getResultList();
+        List<ProjectSummary> pageOfSecondFive =
+                em.createNamedQuery("ProjectSummaryQuery", ProjectSummary.class)
+                        .setMaxResults(PAGE_SIZE)
+                        .setFirstResult(PAGE_START)
+                        .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
+                        .getResultList();
 
-        Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
-        Assert.assertThat(pageOfSecondFive.get(0).getId(), Matchers.is(50L));
-        Assert.assertThat(pageOfSecondFive.get(4).getId(), Matchers.is(46L));
+        Assertions.assertEquals(5, pageOfSecondFive.size());
+        Assertions.assertEquals(50L, pageOfSecondFive.get(0).getId());
+        Assertions.assertEquals(46L, pageOfSecondFive.get(4).getId());
     }
 
     @Test
     public void projection_with_native_using_AliasToBeanResultTransformer() {
-        /**
+        /*
          * A much simpler alternative is to use the Hibernate-native API which allows transforming the
          * ResultSet to a DTO through Java Reflection:
          */
-        final Session session = provider.em().unwrap(Session.class);
+        final Session session = em.unwrap(Session.class);
 
-        List<ProjectSummary> pageOfSecondFive = session.createSQLQuery(
-                "select p.id as id, p.title as title from project p order by p.id desc")
-                .setMaxResults(PAGE_SIZE)
-                .setFirstResult(PAGE_START)
-                .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
-                .setResultTransformer(
-                        new AliasToBeanResultTransformer(ProjectSummary.class))
-                .list();
+        List<ProjectSummary> pageOfSecondFive =
+                session.createSQLQuery(
+                        """
+                                select p.id as id, p.title as title from project p order by p.id desc
+                                """)
+                        .setMaxResults(PAGE_SIZE)
+                        .setFirstResult(PAGE_START)
+                        .setHint(QueryHints.HINT_FETCH_SIZE, PAGE_SIZE)
+                        .setResultTransformer(
+                                new AliasToBeanResultTransformer(ProjectSummary.class))
+                        .list();
 
-        Assert.assertThat(pageOfSecondFive, Matchers.hasSize(5));
-        Assert.assertThat(pageOfSecondFive.get(0).getId(), Matchers.is(50L));
-        Assert.assertThat(pageOfSecondFive.get(4).getId(), Matchers.is(46L));
+        Assertions.assertEquals(5, pageOfSecondFive.size());
+        Assertions.assertEquals(50L, pageOfSecondFive.get(0).getId());
+        Assertions.assertEquals(46L, pageOfSecondFive.get(4).getId());
 
         /**
          * Although JPA 2.1 supports Constructor Expressions for JPQL queries as previously

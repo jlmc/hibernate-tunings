@@ -53,4 +53,19 @@ public abstract class Topic {
     public int hashCode() {
         return 31;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    @Transient
+    public abstract String toDescription();
 }

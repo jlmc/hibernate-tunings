@@ -2,20 +2,25 @@ package io.costax.hibernatetunning.relationships;
 
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import org.hibernate.TransientPropertyValueException;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 5.2 - one-to-many-and-many-to-one
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class OneToManyAndManyToOneTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @PersistenceContext
+    public EntityManager em;
 
     /**
      * 1
@@ -24,9 +29,9 @@ public class OneToManyAndManyToOneTest {
     public void t00_create_a_new_project() {
         Project project = Project.of("soteria");
 
-        provider.beginTransaction();
-        provider.em().persist(project);
-        provider.commitTransaction();
+        em.getTransaction().begin();
+        em.persist(project);
+        em.getTransaction().commit();
     }
 
     /**
@@ -34,9 +39,7 @@ public class OneToManyAndManyToOneTest {
      */
     @Test
     public void t01_add_and_remove_issue() {
-        provider.beginTransaction();
-
-        final EntityManager em = provider.em();
+        em.getTransaction().begin();
 
         final Project soteria = em.createQuery("from Project p where p.title = :title", Project.class)
                 .setParameter("title", "soteria")
@@ -52,13 +55,12 @@ public class OneToManyAndManyToOneTest {
         em.persist(todo2);
         em.persist(todo3);
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     @Test
     public void t02_add_Issue_to_project_and_then_remove() {
-        provider.beginTransaction();
-        final EntityManager em = provider.em();
+        em.getTransaction().begin();
         final Project soteria = em.createQuery("from Project p where p.title = :title", Project.class)
                 .setParameter("title", "soteria")
                 .getSingleResult();
@@ -69,7 +71,7 @@ public class OneToManyAndManyToOneTest {
         em.remove(soteria);
         em.flush();
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     /*
@@ -88,28 +90,43 @@ public class OneToManyAndManyToOneTest {
      * 3
      * create project when create issue
      */
-    @Test(expected = IllegalStateException.class)
+    @Test//(expected = IllegalStateException.class)
     //@Ignore
     public void t03_should_not_create_project_when_create_issue() {
         Project jcache = Project.of("jcache");
 
-        provider.beginTransaction();
-        final Issue todo1 = Issue.of(jcache, "jcache:: todo1");
 
-        try {
-            provider.em().persist(todo1);
+        final IllegalStateException illegalStateException = Assertions.assertThrows(IllegalStateException.class, () -> {
 
-            provider.em().flush();
+            em.getTransaction().begin();
+            final Issue todo1 = Issue.of(jcache, "jcache:: todo1");
 
-            provider.commitTransaction();
+            try {
+                em.persist(todo1);
 
-            Assert.fail("should faild because jcache is transient reference");
-        } catch (IllegalStateException e) {
-            // Caused by: java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: Not-null property references a transient value - transient instance must be saved before current operation : Issue.project -> Project
-            provider.rollbackTransaction();
+                em.flush();
 
-            throw e;
-        }
+                em.getTransaction().commit();
+
+                fail("should fail because jcache is transient reference");
+            } catch (IllegalStateException e) {
+                // Caused by: java.lang.IllegalStateException: org.hibernate.TransientPropertyValueException: Not-null property references a transient value - transient instance must be saved before current operation : Issue.project -> Project
+                em.getTransaction().rollback();
+
+                throw e;
+            }
+
+        });
+
+        assertNotNull(illegalStateException.getCause());
+        assertTrue( org.hibernate.TransientPropertyValueException.class
+                .isAssignableFrom(illegalStateException.getCause().getClass()));
+        assertTrue(illegalStateException.getMessage().contains("Not-null property references a transient value - transient instance must be saved before current operation"));
+        org.hibernate.TransientPropertyValueException cause = (TransientPropertyValueException) illegalStateException.getCause();
+        assertEquals("project", cause.getPropertyName());
+        assertEquals(Project.class.getName(), cause.getTransientEntityName());
+        assertEquals(Issue.class.getName(), cause.getPropertyOwnerEntityName());
+        assertTrue( cause.getMessage().contains("Not-null property references a transient value - transient instance must be saved before current operation"));
     }
 
     /**
@@ -117,39 +134,39 @@ public class OneToManyAndManyToOneTest {
      * update project when create issue
      */
     @Test
-    @Ignore
+    @Disabled
     public void t04_update_project_when_create_issue() {
         Project jcache = Project.of("jcache2");
 
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
-        final Issue issue = provider.em().createQuery("from Issue i where i.title = :t", Issue.class).setParameter("t", "jcache:: todo1").getSingleResult();
+        final Issue issue = em.createQuery("from Issue i where i.title = :t", Issue.class)
+                .setParameter("t", "jcache:: todo1")
+                .getSingleResult();
 
         issue.changeProject(jcache, "jcahes updated");
 
-        //provider.em().persist(todo1);
-
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void t05_delete() {
-        provider.beginTransaction();
-        final Issue issue = provider.em().find(Issue.class, 5L);
+        em.getTransaction().begin();
+        final Issue issue = em.find(Issue.class, 5L);
 
-        provider.em().remove(issue);
+        em.remove(issue);
 
-        provider.commitTransaction();
+        em.getTransaction().commit();
     }
 
     @Test
     public void t06_delete_all_data() {
-        provider.beginTransaction();
+        em.getTransaction().begin();
 
-        provider.em().createQuery("delete from Issue ").executeUpdate();
-        provider.em().createQuery("delete from Project ").executeUpdate();
+        em.createQuery("delete from Issue ").executeUpdate();
+        em.createQuery("delete from Project ").executeUpdate();
 
-        provider.commitTransaction();
+        em.getTransaction().rollback();
     }
 }

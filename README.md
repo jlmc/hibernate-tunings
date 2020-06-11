@@ -208,3 +208,10 @@ mvn clean install -pl helpers && mvn clean package
     - [How to map generated values](how-to-use-a-sequence-generator-for-a-non-id-field)
     - [When and why JPA entities should implement the Serializable interface](docs/When-entities-should-implement-theSerializable-interface.md)
     - [The best way to use Java Records With JPA](the-best-way-to-use-java-records-with-jpa)
+    - [How to Handle NULL Values while Ordering Query Results in JPQL (NULLS FIRST or NULLS LAST)](fetching/src/test/java/io/costax/orderbynulls/OrderByNullTest.java)    
+    - [How to Implements business Custom Identifier Generator](hibernate-tuning-howtos/custom-identifiers-generator)
+    - [How to override @GeneratedValue strategy with @GenericGenerator annotation](hibernate-tuning-howtos/override-generator-strategy)
+       - The defined business id it is used instead, instead of the value provides by @GeneratedValue.
+       - The @GeneratedValue implementation should not be executed if the business identifier has already defined.
+    - [How to Map properties with database transformations using @ColumnTransformer hibernate annotation](relationships/src/main/java/io/costax/relationships/columntransformer/Document.java)
+       

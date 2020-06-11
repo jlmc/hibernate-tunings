@@ -2,7 +2,7 @@ package io.costax.logging;
 
 import io.costax.hibernatetuning.p6syp.entities.HumanResource;
 import org.hibernate.cfg.Environment;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,7 +18,7 @@ public class P6SypExample {
 
     // @Rule
     // public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
-    @BeforeClass
+    @BeforeAll
     public static void initEntityManagerFactory() {
         final Map<String, String> settings = new HashMap<>();
 
@@ -32,32 +32,29 @@ public class P6SypExample {
         EMF = Persistence.createEntityManagerFactory("it", settings);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         EMF.close();
     }
 
-    @Before
+    @BeforeEach
     public void openEm() {
         this.em = EMF.createEntityManager();
     }
 
-    @After
+    @AfterEach
     public void closeEm() {
         this.em.clear();
         this.em.close();
     }
 
-
     @Test
     public void shouldLogInsertStatement() {
-
-
         List<HumanResource> rhs = em
                 .createQuery("select hr from HumanResource hr", HumanResource.class)
                 .getResultList();
 
-        rhs.stream().forEach(System.out::println);
+        rhs.forEach(System.out::println);
     }
 
     @Test

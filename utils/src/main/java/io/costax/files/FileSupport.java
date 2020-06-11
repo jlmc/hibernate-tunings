@@ -1,25 +1,24 @@
-package io.costax.hibernatetunning;
+package io.costax.files;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * File Content Reader.
  * Read a file Content of a existing file in the classpath
  */
-public final class FileContentReader {
+public final class FileSupport {
 
-    private FileContentReader() {
+    private FileSupport() {
     }
 
     public static String readAllText(String resourcePath) {
         try {
             //String resourcePath = "payloads/example.json";
-            ClassLoader classLoader = FileContentReader.class.getClassLoader();
+            ClassLoader classLoader = FileSupport.class.getClassLoader();
             File file = new File(Objects.requireNonNull(classLoader.getResource(resourcePath)).getFile());
 
             //Read File Content
@@ -32,7 +31,7 @@ public final class FileContentReader {
     public static byte[] readAllBytes(String resourcePath) {
         try {
             //String resourcePath = "payloads/example.json";
-            ClassLoader classLoader = FileContentReader.class.getClassLoader();
+            ClassLoader classLoader = FileSupport.class.getClassLoader();
             File file = new File(Objects.requireNonNull(classLoader.getResource(resourcePath)).getFile());
 
             //Read File Content
@@ -41,10 +40,6 @@ public final class FileContentReader {
             throw new UncheckedIOException(e);
         }
     }
-
-
-    public static void main(String[] args) {
-        final UUID uuid = UUID.randomUUID();
-        System.out.println(uuid);
-    }
 }
+
+

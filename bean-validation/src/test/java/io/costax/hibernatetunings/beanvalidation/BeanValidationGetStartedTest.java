@@ -1,30 +1,34 @@
 package io.costax.hibernatetunings.beanvalidation;
 
 import io.costax.hibernatetunings.entities.Video;
-import io.costax.rules.EntityManagerProvider;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import static org.junit.jupiter.api.Assertions.*;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@JpaTest(persistenceUnit = "it")
 public class BeanValidationGetStartedTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void t00__bean_validation_startup() {
+    @Order(0)
+    @DisplayName("Simple Validation In Persist")
+    public void beanValidationValidationInPersist() {
         provider.doInTx(em -> {
             final Video bv = Video.of(1, "how to start-up bean validation with hibernate", "Entities annotated with constraints");
             em.persist(bv);
@@ -32,70 +36,101 @@ public class BeanValidationGetStartedTest {
     }
 
 
-    @Test(expected = javax.validation.ConstraintViolationException.class)
-    public void t01__beanvalidation_validate_before_any_sql_statement() {
-        provider.beginTransaction();
-
-        final Video bv = Video.of(1, "how to start-up bean validation with hibernate", null);
+    @Test
+    @Order(1)
+    @DisplayName("Bean Validation validates Before Any Sql Statement execution")
+    public void beanValidationValidatesBeforeAnySqlStatementExecution() {
 
         final EntityManager em = provider.em();
-        em.persist(bv);
-        em.flush();
-        //provider.commitTransaction();
-    }
-
-    @Test
-    public void t02__beanvalidation_validate_before_any_sql_statement() {
-        provider.beginTransaction();
-
         try {
+            em.getTransaction().begin();
 
-            final Video bv = Video.of(1, "how to start-up bean validation with hibernate", null);
+            final Video bv = Video.of(1,
+                    "how to start-up bean validation with hibernate",
+                    null);
 
-            final EntityManager em = provider.em();
             em.persist(bv);
             em.flush();
 
-            Assert.fail("should not execute, because the video.description should be validate by the Bean validation");
+            fail("The flush method execution should throw one Validation exception!!!!");
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+
+            Assertions.assertTrue(e instanceof javax.validation.ConstraintViolationException);
+
+        } finally {
+            em.close();
+        }
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Bean Validation Validates Before Sql Statement execution")
+    public void beanValidationValidatesBeforeAnySqlStatement() {
+        final EntityManager em = provider.em();
+
+        try {
+
+            em.getTransaction().begin();
+
+            final Video bv = Video.of(1, "how to start-up bean validation with hibernate", null);
+
+            em.persist(bv);
+            em.flush();
+
+            fail("should not execute, because the video.description should be validate by the Bean validation");
+
+            em.getTransaction().commit();
+
         } catch (javax.validation.ConstraintViolationException e) {
 
             logger.info("--" + e.getMessage());
             logger.info("--" + e.getLocalizedMessage());
 
-            provider.rollbackTransaction();
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
     }
 
     @Test
-    public void t03__fields_without_beam_validation_always_execute_sql_statement() {
-        provider.beginTransaction();
+    @Order(3)
+    @DisplayName("Fields without Bean validation Annotation always execute sl statement")
+    public void fieldsWithoutBeanValidationAlwaysExecuteSqlStatement() {
+        final EntityManager em = provider.em();
 
         try {
+            em.getTransaction().begin();
 
             final Video bv = Video.of(1, null, "abc");
 
-            final EntityManager em = provider.em();
             em.persist(bv);
 
-            provider.commitTransaction();
+            em.getTransaction().commit();
 
-            Assert.fail();
+            fail("Should throw one exception in the commit method execution!!!");
 
         } catch (Exception e) {
 
-            Assert.assertTrue(e instanceof javax.persistence.RollbackException);
+            assertTrue(e instanceof javax.persistence.RollbackException);
             final Throwable cause = e.getCause();
-            Assert.assertTrue(cause instanceof PersistenceException);
+            assertTrue(cause instanceof PersistenceException);
             PersistenceException pe = (PersistenceException) e.getCause();
-            Assert.assertTrue(pe.getCause() instanceof ConstraintViolationException);
+            assertTrue(pe.getCause() instanceof ConstraintViolationException);
 
-            provider.rollbackTransaction();
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
     }
 
     @Test
-    public void t04__perform_different_validation_group_in_persist_and_update() {
-
+    @Order(4)
+    @DisplayName("Using different validation groups in persist and update operations")
+    public void performDifferentValidationGroupsInPersistAndUpdate() {
         // persist the example video
         provider.doInTx(em -> {
 
@@ -106,7 +141,6 @@ public class BeanValidationGetStartedTest {
         });
 
         // update the example video
-
         provider.doInTx(em -> {
 
             Video livVsNor = em.find(Video.class, 20191);
@@ -118,7 +152,9 @@ public class BeanValidationGetStartedTest {
     }
 
     @Test
-    public void t05__perform_different_validation_group_in_persist_and_update_with_constraint_violation() {
+    @Order(5)
+    @DisplayName("Using Different Validation Groups in Persist And Update with constraint violations")
+    public void performDifferentValidationGroupInPersistAndUpdateWithConstraintViolation() {
 
         // persist the example video
         provider.doInTx(em -> {
@@ -139,7 +175,8 @@ public class BeanValidationGetStartedTest {
 
             });
 
-            Assert.fail();
+            fail("The Update transaction should throw one exception!!!");
+
         } catch (javax.validation.ConstraintViolationException e) {
             //System.out.println(e);
         }

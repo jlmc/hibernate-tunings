@@ -3,29 +3,32 @@ package io.costax.hibernatetunning.customtypes;
 import io.costax.hibernatetunings.customtype.IPv4;
 import io.costax.hibernatetunings.customtype.MacAddr;
 import io.costax.hibernatetunings.entities.Machine;
-import io.costax.rules.EntityManagerProvider;
-import org.junit.*;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
 import java.time.Month;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@JpaTest(persistenceUnit = "it")
+@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class CustomTypesTest {
 
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+    @JpaContext
+    public JpaProvider provider;
 
-    @After
+    @AfterEach
     public void after() {
-        provider.doInTx(em -> {
-           em.createQuery("delete from Machine ").executeUpdate();
-        });
+        provider.doInTx(em -> em.createQuery("delete from Machine ").executeUpdate());
     }
 
-    @Before
+    @BeforeEach
     public void before() {
-        provider.doInTx(em -> {
-            em.createQuery("delete from Machine ").executeUpdate();
-        });
+        provider.doInTx(em -> em.createQuery("delete from Machine").executeUpdate());
     }
 
     @Test
@@ -50,8 +53,7 @@ public class CustomTypesTest {
                     .setParameter("mac", macAddr)
                     .getSingleResult();
 
-            Assert.assertNotNull(machine.getLastKnowIp());
-            //Assert.assertNotNull(machine.getLastKnowIp());
+            assertNotNull(machine.getLastKnowIp());
         });
     }
 

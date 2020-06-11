@@ -2,15 +2,19 @@ package io.costax.relationships.manytoone;
 
 import io.costax.relationships.manytomany.Post;
 import io.costax.relationships.manytomany.Tag;
-import io.costax.rules.EntityManagerProvider;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.jlmc.jpa.test.annotation.JpaContext;
+import io.github.jlmc.jpa.test.annotation.JpaTest;
+import io.github.jlmc.jpa.test.junit.JpaProvider;
+import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ManyToManyBidirectionalTest {
 
     private static final int JAVA_EE_ID = 1;
@@ -23,8 +27,9 @@ public class ManyToManyBidirectionalTest {
     private static final Tag HIBERNATE = Tag.of(HIBENATE_ID, "Hibernate");
     private static final Tag MANEGMENT = Tag.of(MANEGMENT_ID, "MANEGMENT");
     private static final Tag IT = Tag.of(IT_ID, "IT");
-    @Rule
-    public EntityManagerProvider provider = EntityManagerProvider.withPersistenceUnit("it");
+
+    @JpaContext
+    public JpaProvider provider;
 
     @Test
     public void should_create_and_manager_post_tags() {
@@ -74,14 +79,19 @@ public class ManyToManyBidirectionalTest {
         });
 
         // How many Tags have the post1?
-        final EntityManager em = provider.em();
-        final Post post1 = em.find(Post.class, 1);
+        provider.doIt(em -> {
 
-        assertThat(post1.getTags(), Matchers.hasSize(3));
-        assertThat(post1.getTags(), Matchers.containsInAnyOrder(IT, JAVA_EE, HIBERNATE));
+            final Post post1 = em.find(Post.class, 1);
 
-        // how many post have the Tag Java EE
-        final Tag javaEE = em.find(Tag.class, JAVA_EE_ID);
-        assertThat(javaEE.getPosts(), Matchers.hasSize(2));
+            assertEquals(3, post1.getTags().size());
+            assertTrue(post1.getTags().containsAll(List.of(IT, JAVA_EE, HIBERNATE)));
+
+            // how many post have the Tag Java EE
+            final Tag javaEE = em.find(Tag.class, JAVA_EE_ID);
+            assertEquals(2, javaEE.getPosts().size());
+
+        });
+
+
     }
 }
