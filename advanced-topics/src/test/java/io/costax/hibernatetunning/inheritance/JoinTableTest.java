@@ -4,7 +4,6 @@ import io.costax.hibernatetunings.entities.blog.*;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.hibernate.LazyInitializationException;
 import org.hibernate.jpa.QueryHints;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;

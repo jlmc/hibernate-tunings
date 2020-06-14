@@ -17,6 +17,30 @@ public class Machine {
     private Integer id;
     private String brand;
 
+    /**
+     * NOTE: The use of annotation {@link NotFound} may have the consequence the following warning:
+     * <p>
+     * - {@code WARN  [org.hibernate.cfg.AnnotationBinder] - HHH000491: The [developer] association in the [Machine] entity uses both @NotFound(action = NotFoundAction.IGNORE) and FetchType.LAZY.
+     * The NotFoundAction.IGNORE @ManyToOne and @OneToOne associations are always fetched eagerly.}
+     * </p>
+     *
+     * <p>
+     * <p>
+     * by default if the ManyToOne is not fetch=Lazy, two queries are performed.
+     * // The NotFoundAction.IGNORE @ManyToOne and @OneToOne associations are always fetched eagerly.
+     * // 1. select * from Machine m left join Developer d on d.id=m.developer_id where m.id = 5
+     * // 2 select * from Developer where id = 8
+     * </p>
+     * <p>
+     * We can use make use of the hibernate-enhance-maven to tuning this issue, in this case the mapping should be:
+     * <br>
+     * {@code
+     *     @NotFound(action = NotFoundAction.IGNORE)
+     *     @ManyToOne(fetch = FetchType.LAZY) @LazyToOne(LazyToOneOption.NO_PROXY)
+     *     @JoinColumn(name = "developer_id", referencedColumnName = "id")
+     *     private Developer developer;
+     * }
+     */
     @NotFound(action = NotFoundAction.IGNORE)
     @ManyToOne
     @JoinColumn(
@@ -26,7 +50,7 @@ public class Machine {
     )
     private Developer developer;
 
-    Machine() {
+    protected Machine() {
     }
 
     private Machine(final Integer id, final String brand, final Developer developer) {
