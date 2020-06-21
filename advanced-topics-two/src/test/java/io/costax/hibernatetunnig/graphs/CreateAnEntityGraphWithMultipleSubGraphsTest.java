@@ -6,9 +6,7 @@ import io.costax.hibernatetunnig.graphs.entity.Publisher;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.TypedQuery;
@@ -31,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * JPA should initialize before returning our query result
  */
 @JpaTest(persistenceUnit = "it")
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 public class CreateAnEntityGraphWithMultipleSubGraphsTest {
 
     public static final long SARAMAGO_ID = 100L;
@@ -78,7 +77,7 @@ public class CreateAnEntityGraphWithMultipleSubGraphsTest {
     }
 
     @Test
-    public void should_create_entity_graph_and_fetch_entity_using_entity_graph() {
+    public void create_entity_graph_and_fetch_entity_using_entity_graph() {
         final Author saramago =
                 provider.doItWithReturn(em -> {
                     EntityGraph<?> graph = em.createEntityGraph("graph.AuthorBooksPublisherEmployee");

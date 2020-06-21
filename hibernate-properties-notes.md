@@ -20,12 +20,14 @@ Hibernate that the underlying JDBC Connection(s) already disabled the auto-commi
 
 # enable statistics
 
+the best way to use this feature is via system property, we can off curse use it in the persistence.xml file
+
 ```xml
 <property name="hibernate.generate_statistics" value="true"/>
 
 ```
 
-and off curse enable the loggin 
+And ofcourse enable the logging
 
 ```properties
 org.hibernate.stat = DEBUG

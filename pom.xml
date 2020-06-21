@@ -55,6 +55,7 @@
         <module>xa-transactions-2-phase-commit</module>
         <module>how-to-use-a-sequence-generator-for-a-non-id-field</module>
         <module>the-best-way-to-use-java-records-with-jpa</module>
+        <module>how-bootstrap-jpa-programmatically</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -101,8 +102,10 @@
         <!--flyway.version>3.2.1</flyway.version-->
         <aspectj.version>1.8.7</aspectj.version>
         <h2.version>1.4.200</h2.version>
+        <hsqldb.version>2.4.0</hsqldb.version>
 
         <junit5.version>5.6.2</junit5.version>
+        <lombok.version>1.18.12</lombok.version>
 
         <hibernate-types-52.version>2.9.9</hibernate-types-52.version>
         <surefire-failsafe.version>3.0.0-M4</surefire-failsafe.version>
@@ -202,6 +205,12 @@
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -227,6 +236,12 @@
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
                 <version>3.0.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
             <dependency>
