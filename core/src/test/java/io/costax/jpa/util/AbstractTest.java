@@ -122,10 +122,8 @@ public abstract class AbstractTest {
 
     protected abstract Database database();
 
-
     protected void additionalProperties(Properties properties) {
     }
-
 
     protected <T> T doInJPA(JPATransactionFunction<T> function) {
         T result = null;
