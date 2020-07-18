@@ -205,7 +205,11 @@ public abstract class AbstractTest {
         }
     }
 
-    private EntityManagerFactory entityManagerFactory() {
+    protected EntityManagerFactory entityManagerFactory() {
         return emf;
+    }
+
+    protected EntityManager entityManager() {
+        return this.entityManagerFactory().createEntityManager();
     }
 }

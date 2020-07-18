@@ -214,4 +214,6 @@ mvn clean install -pl helpers && mvn clean package
        - The defined business id it is used instead, instead of the value provides by @GeneratedValue.
        - The @GeneratedValue implementation should not be executed if the business identifier has already defined.
     - [How to Map properties with database transformations using @ColumnTransformer hibernate annotation](relationships/src/main/java/io/costax/relationships/columntransformer/Document.java)
-       
+    
+    - [How to fix MultipleBagFetchException](docs/FixingMultipleBagFetchException.md)
+        - [FixingMultipleBagFetchException](core/src/test/java/io/costax/jpa/fetching/FixingMultipleBagFetchException.java)
