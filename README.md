@@ -217,3 +217,6 @@ mvn clean install -pl helpers && mvn clean package
     
     - [How to fix MultipleBagFetchException](docs/FixingMultipleBagFetchException.md)
         - [FixingMultipleBagFetchException](core/src/test/java/io/costax/jpa/fetching/FixingMultipleBagFetchException.java)
+        
+    - Hibernate SortNatural and SortComparator annotations 
+        - [HibernateSortingTest](core/src/test/java/io/costax/jpa/sorting/HibernateSortingTest.java)
