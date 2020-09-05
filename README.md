@@ -220,3 +220,5 @@ mvn clean install -pl helpers && mvn clean package
         
     - Hibernate SortNatural and SortComparator annotations 
         - [HibernateSortingTest](core/src/test/java/io/costax/jpa/sorting/HibernateSortingTest.java)
+
+    - [Batch Processing Best Practices With Jpa And Hibernate](batch-processing-best-practices-with-jpa-and-hibernate/README.md)

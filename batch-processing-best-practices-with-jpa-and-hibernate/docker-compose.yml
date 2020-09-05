@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  pgdb:
+    image: postgres:12.2-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - batching-demo
+    volumes:
+      - .volumes/postgres-db:/var/lib/postgresql/data
+
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+#    networks:
+#      - hibernate-tunings
+#    depends_on:
+#      - postgres-db
+
+networks:
+  batching-demo:
+    driver: bridge

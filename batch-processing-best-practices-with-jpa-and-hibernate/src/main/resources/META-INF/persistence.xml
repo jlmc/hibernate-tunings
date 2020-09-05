@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+
+    <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
+        <description>JPA Batch</description>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <!-- Validation modes: AUTO, CALLBACK, NONE -->
+        <validation-mode>AUTO</validation-mode>
+
+        <properties>
+
+            <!--
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/db"/>
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="postgres"/>
+            -->
+
+<!--            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>-->
+<!--            <property name="javax.persistence.jdbc.driver" value="com.p6spy.engine.spy.P6SpyDriver"/>-->
+
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+
+
+            <property name="hibernate.jdbc.batch_size" value="10"/>
+            <property name="hibernate.order_inserts" value="true"/>
+            <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
+
+
+            <!--Hibernate Optimizations for sql statements execution plan cache -->
+            <!-- auto, bind, inline -->
+            <property name="hibernate.criteria.literal_handling_mode" value="bind" />
+            <property name="hibernate.query.in_clause_parameter_padding" value="true" />
+            <!--  -->
+
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+            <!--property name="hibernate.show_sql" value="true"/-->
+            <property name="hibernate.format_sql" value="true"/>
+            <!--property name="hibernate.use_sql_comments" value="true"/-->
+            <property name="hibernate.generate_statistics" value="true"/>
+            
+            <property name="hibernate.session.events.log.LOG_QUERIES_SLOWER_THAN_MS" value="5"/>
+
+            <!-- Hibernate 5.2.10, introduced the:
+                hibernate.connection.provider_disables_autocommit
+                configuration property which tells Hibernate that
+                the underlying JDBC Connection(s) already disabled the auto-commit mode.
+             -->
+            <property name="hibernate.connection.provider_disables_autocommit" value="false"/>
+
+
+            <!-- Connection Pool hikaricp -->
+            <!-- https://docs.jboss.org/hibernate/orm/5.4/userguide/html_single/Hibernate_User_Guide.html#database-connectionprovider-hikari -->
+            <property name="hibernate.connection.provider_class"  value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider"/>
+            <!--property name="hibernate.hikari.minimumPoolSize" value="1"/-->
+            <property name="hibernate.hikari.maximumPoolSize" value="2"/>
+            <property name="hibernate.hikari.minimumIdle" value="1"/>
+            <property name="hibernate.hikari.connectionTimeout" value="30000"/>
+
+            <!--property name="hibernate.hikari.driverClassName" value="org.postgresql.Driver"/-->
+            <property name="hibernate.hikari.driverClassName" value="com.p6spy.engine.spy.P6SpyDriver"/>
+            <property name="hibernate.hikari.jdbcUrl" value="jdbc:p6spy:postgresql://localhost:5432/db"/>
+            <property name="hibernate.hikari.dataSource.user" value="postgres"/>
+            <property name="hibernate.hikari.dataSource.password" value="postgres"/>
+            <property name="hibernate.hikari.autoCommit" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.foo.Bar" level="trace">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="ALL">
+            <AppenderRef ref="Console"/>
+        </Root>
+        <Logger name="io.github.jlmc.books" level="DEBUG"/>
+
+        <Logger name="org.hibernate" level="INFO"/>
+        <Logger name="org.hibernate.SQL" level="DEBUG"/>
+        <Logger name="org.hibernate.type.descriptor.sql" level="trace"/>
+        <Logger name="org.hibernate.stat" level="all"/>
+        <Logger name="org.hibernate.engine.transaction" level="DEBUG"/>
+        <Logger name="org.hibernate.cache" level="debug"/>
+
+
+        <Logger name="com.zaxxer.hikari" level="ALL"/>
+    </Loggers>
+</Configuration>
