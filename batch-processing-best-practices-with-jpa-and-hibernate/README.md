@@ -1,100 +1,92 @@
 # Batch Processing Best Practices With JPA And Hibernate
 
+- Context
+  - JDBC Statement batching
+    - what is
+    - example
+    - Advantages
+  - Hibernate automatic JDBC batching
+    - Enable JDBC Batching in hibernate
+        - SessionFactory Level
+        - Session Level
+    - Identify columns and JDBC Batching
+    - Cascading Parent-child entity state transition
+      - hibernate.order_inserts
+      - hibernate.order_updates
+    - Batching versioned data
+      - hibernate.jdbc.batch_versioned_data
+    - Batching JPA merge method vs hibernate update method
+  - Optimizations
+    - Criteria API literal handling
+    
 
-## How to show queries log in PostgreSQL?
-
-You have to config the PostgreSQL configuration file postgresql.conf.
-
-On Debian-based systems it’s located in `/etc/postgresql/9.3/main/` (replace 9.3 with your version of PostgreSQL)
-
-On Red Hat-based systems in `/var/lib/pgsql/data/`.
-If you still can’t find it, then just type `$locate postgresql.conf` in terminal, or execute the following SQL query:
-
-```
-SHOW config_file;
-```
-
-1. Then you need to alter these parameters inside PostgreSQL configuration file.
-```
-log_statement = 'all'
-log_directory = 'pg_log'
-log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
-logging_collector = on
-log_min_error_statement = error
-
-```
-
-On older versions of PostgreSQL prior to 8.0, replace 'all' with 'true' for the log_statement:
-
-`log_statement = 'true'`
-
-2. Then restart the server
-
-Run this command:
-
-`sudo /etc/init.d/postgresql restart`
-
-or this
-
-`sudo service postgresql restart`
-
-The content of all queries to the server should now appear in the log.
-
-3. See the log
-
-The location of the log file will depend on the configuration.
-
-On Debian-based systems the default is `/var/log/postgresql/postgresql-9.3-main.log` (replace 9.3 with your version of PostgreSQL).
-On Red Hat-based systems it is located in `/var/lib/pgsql/data/pg_log/`.
-Using TablePlus, you can enable the console log via the GUI and see all the queries.
-
-To do that, click on the console log button near the top right panel, or use the shortcut key Cmd + Shift + C.
 
 
 ## JDBC Statement batching
 
-- Oracle implements JDBC API, but only for the prepared Statement.
-- For `Statement` and `CallableStatement`, the Oracle JDBC Driver doesn't actually support Batching, each statement is being executed separately.
-- Basically oracle driver will send one statement after the other.
+- Batch Processing allows you to group related SQL statements into a batch and submit them with one call to the database.
+- When you send several SQL statements to the database at once, you reduce the amount of communication overhead, thereby improving performance.
 
-- By default, the MySQL JDBC Driver doesn't send the batched statement in a single request.
-- The `rewriteBatchedStatements` connection property includes all batched statements into a single StringBuffer.
+> Note That:
+>> DBC drivers are not required to support this feature.  
+>> You should use the `DatabaseMetaData.supportsBatchUpdates()` method to determine if the target database supports batch update processing. The method returns `true` if your JDBC driver supports this feature.  
+>
+>> The `addBatch()` method of Statement, `PreparedStatement`, and `CallableStatement` is used to add individual statements to the batch. The `executeBatch()` is used to start the execution of all the statements grouped together. 
+>
+>> The `executeBatch()` returns an array of integers, and each element of the array represents the update `count` for the respective update statement.
+>  
+>>  Just as you can add statements to a batch for processing, you can remove them with the `clearBatch()` method. This method removes all the statements you added with the `addBatch()` method. However, you cannot selectively choose which statement to remove.
+>
 
 
-#### Example 
+#### Some JDBC provider notes:
+
+  - Oracle implements JDBC API, but only for the prepared Statement.
+  - For `Statement` and `CallableStatement`, the Oracle JDBC Driver doesn't actually support Batching, each statement is being executed separately.
+  - Basically oracle driver will send one statement after the other.
+  - By default, the MySQL JDBC Driver doesn't send the batched statement in a single request.
+  - The `rewriteBatchedStatements` connection property includes all batched statements into a single StringBuffer.
+
+
+### Example Of JDBC Batching 
 ```java
-        try (PreparedStatement matchStatement = connection.prepareStatement("""
-                insert into matches (id, at, hometeam, awayteam, version) 
-                values (?, ?, ?, ?, ?)
-                """)) {
 
-            matchStatement.setInt(1, 1);
-            matchStatement.setDate(2, java.sql.Date.valueOf(LocalDate.parse("2020-01-15")));
-            matchStatement.setString(3, "Benfica");
-            matchStatement.setString(4, "Gil Vicente");
-            matchStatement.setInt(5, 0);
-            matchStatement.addBatch();
+try (PreparedStatement matchStatement = connection.prepareStatement(
+    """
+    insert into matches (id, at, hometeam, awayteam, version) 
+    values (?, ?, ?, ?, ?)
+    """)) {
 
-            matchStatement.setInt(1, 2);
-            matchStatement.setDate(2, java.sql.Date.valueOf(LocalDate.parse("2020-01-20")));
-            matchStatement.setString(3, "Benfica");
-            matchStatement.setString(4, "Real Madrid");
-            matchStatement.setInt(5, 0);
-            matchStatement.addBatch();
+        matchStatement.setInt(1, 1);
+        matchStatement.setDate(2, java.sql.Date.valueOf(LocalDate.parse("2020-01-15")));
+        matchStatement.setString(3, "Benfica");
+        matchStatement.setString(4, "Gil Vicente");
+        matchStatement.setInt(5, 0);
+        matchStatement.addBatch();
 
-            final int[] updateCounts = matchStatement.executeBatch();
+        matchStatement.setInt(1, 2);
+        matchStatement.setDate(2, java.sql.Date.valueOf(LocalDate.parse("2020-01-20")));
+        matchStatement.setString(3, "Benfica");
+        matchStatement.setString(4, "Real Madrid");
+        matchStatement.setInt(5, 0);
+        matchStatement.addBatch();
 
-            connection.commit();
+        final int[] updateCounts = matchStatement.executeBatch();
 
-        } catch (SQLException e) {
-            connection.rollback();
-        }
+        connection.commit();
+
+} catch (SQLException e) {
+    connection.rollback();
+}
 ```
+
+
+### Disadvantages of JDBC Batch
 
 - The JDBC API is not very popular, because it is very verbose.
 - It is not very developer friendly.
 
-### Advantages
+### Advantages of JDBC Batch
 
 - SQL Injection prevention
 - Better performance
@@ -103,41 +95,37 @@ To do that, click on the console log button near the top right panel, or use the
 
 ## Hibernate automatic JDBC batching
 
-- SessionFactory level
+- Hibernate allows you to switch automatically from non-batching to batching `PreparedStatement`(s) without no data access code changes.
+
+### SessionFactory level
 
 ```xml
 <property name="hibernate.jdbc.batch_size" value="10"/>
 ```
 
-
-- Session level
+### Session level
 
 ```java
 EntityManager em = ...
 em.unwrap(Session.class).setJdbcBatchSize(1234);
 ```
 
-
-- Hibernate allows you to switch automatically from non-batching to batching `PreparedStatement`(s) without no data access code changes.
-
 - Many other data access frameworks require you to change the access code in order to enable JDBC batching.
+
 
 
 ## Identify columns and JDBC Batching
 
 - If the primary key table use Identity columns (serial), then hibernate would disable batched inserts.
-
-- Once an entity becomes managed, the Persistence context needs to know the entity identifier to construct the first level cache entry key, and, for the identity columns the only way to find the primary key value is to execute the insert statement!!!
-
+  - Once an entity becomes managed, the Persistence context needs to know the entity identifier to construct the first level cache entry key, and, for the identity columns the only way to find the primary key value is to execute the insert statement (flush)!!!
 - This restriction does not apply to update and delete statements witch can still benefit from JDBC batching even if the entity uses the identity strategy.
 
 ---
 
 ## Cascading Parent-child entity state transition
 
-Please see the test example `CascadingParentChildEntityStateTransitions` class.
-
-Even if we have batching activated in Hibernate, but we are using the cascading flush strategy like for example the following example:
+- Please see the test example `CascadingParentChildEntityStateTransitions` class.
+- Even if we have batching activated in Hibernate, but we are using the cascading flush strategy like for example the following example:
 
 ```java
 package io.github.jlmc.batching;
@@ -215,35 +203,36 @@ public class MatchEvent {
 ```
 
 - The `Match` entity is the parent entity, the aggregate root. Witch was a child collection `events`. This is a very common pattern is the real world.
-- This pattern makes very since, because it allows us to:
+- this pattern is used a lot because it allows us to:
   - Save the Match instance and automatically also save all the child MatchEvent.
   - Update the Match will update also the child MatchEvents
   - Remove/Delete a Match will also Remove/Delete the associated MatchEvent. 
 
 
+ ### Demonstration the default hibernate behavior
+ 
 - If we execute the following code snippet:
 
-```
-    @Test
-    void createMatchWithEvents() {
+```java
+@Test
+void createMatchWithEvents() {
 
-        context.doInTx(em -> {
+    context.doInTx(em -> {
 
-            for (int i = 1; i <= 3; i++) {
+        for (int i = 1; i <= 3; i++) {
 
-                final Match match =
-                        Match.of(LocalDate.parse("2020-08-10"), "home-" + i, "away-" + i)
-                                .addEvent(MatchEvent.of(1, "Start Match : " + i));
+            Match match = Match.of(LocalDate.parse("2020-08-10"), "home-" + i, "away-" + i)
+                               .addEvent(MatchEvent.of(1, "Start Match : " + i));
 
-                em.persist(match);
-            }
-        });
+            em.persist(match);
+        }
+    });
 
-    }
+}
 ``` 
 
-
 - The default hibernate behavior will be:
+
 ```sql
 insert into matches (at, awayTeam, homeTeam, version, id) values ('2020-08-10T00:00:00.000+0100', 'away-1', 'home-1', 0, 10)
 insert into match_events (description, match_id, minute, id) values ('Start Match : 1', 10, 1, 100)
@@ -291,8 +280,7 @@ insert into match_events (description, match_id, minute, id) values ('Start Matc
 - Prior to **Hibernate 5**, JDBC batching was disabled for versioned entities (e.g., `@Version`) during `update` and `delete` operations. This limitation was due to some JDBC Driver inability of correctly return the update count of the affected table rows when using JDBC batching.
 - No matter if you enable the `hibernate.jdbc.batch_versioned_data configuration` to the value of `true` because hibernate will ignore that configuration and will disable.
 
-- **If the JDBC Driver supports mixing optimistic locking with JDBC batching**, then you can should set the `hibernate.jdbc.batch_versioned_data configuration` to the value of `true`.
-
+- **If the JDBC Driver supports mixing optimistic locking with JDBC batching**, then you can/should set the `hibernate.jdbc.batch_versioned_data configuration` to the value of `true`.
 
 > Now days
 
@@ -368,31 +356,31 @@ private List<MatchEvent> events = new ArrayList<>();
 ```
 
 ```java
-    @Test
-    void cascading_DELETE_statements_Workaround_2() {
-        cx.doInTx(em -> {
+@Test
+void cascading_DELETE_statements_Workaround_2() {
+    cx.doInTx(em -> {
 
-            final List<Match> matches =
+        List<Match> matches =
                     em.createQuery(
-                            """
-                            select m from Match m
-                           """, Match.class)
-                            .getResultList();
+                        """
+                        select m from Match m
+                        """, Match.class)
+                       .getResultList();
 
-           em.createQuery(
-                   """
-                   delete from MatchEvent me
-                   where me.match in :matches
-                   """
-               )
-               .setParameter("matches", matches)
-               .executeUpdate();
+        em.createQuery(
+            """
+            delete from MatchEvent me
+            where me.match in :matches
+            """
+            )
+            .setParameter("matches", matches)
+            .executeUpdate();
 
-            em.flush();
+        em.flush();
 
-            matches.forEach(em::remove);
-        });
-    }
+        matches.forEach(em::remove);
+    });
+}
 ```
 
 #### Cascading DELETE statements – Workaround 3
@@ -467,9 +455,9 @@ public class HandlingJDBCBatchFailuresTest {
 
         try (PreparedStatement st = connection.prepareStatement(
                 """
-                        insert into matches (id, at, hometeam, awayteam, version) 
-                        values (?, ?, ?, ?, ?)
-                        """)) {
+                insert into matches (id, at, hometeam, awayteam, version) 
+                values (?, ?, ?, ?, ?)
+                """)) {
 
             for (int i = 1; i <= 3; i++) {
 
@@ -497,59 +485,59 @@ public class HandlingJDBCBatchFailuresTest {
 - The `BatchUpdateException#getUpdateCounts()` give us the number of batch parameters that have been successfully processed.
 
 
-## Batching merge vs. update – saving entity changes
+---
 
-- Basically we have two options.
+## Batching JPA merge method vs Hibernate update method – saving entity changes
 
-Option-1: To save detached entity state, we can either use the JPA EntityManager merge method:
-    ```
-    for (Match match : matchs) {
-        entityManager.merge(match);
-    }
-    ```
+**1 - To save detached entity state, we can either use the JPA `EntityManager#merge` method:**
+  ```java
+  for (Match match : matches) {
+    entityManager.merge(match);
+  }
+  ```
   - For each item may be executed two queries, 
-    - 1 select, if the entity instance is detached.
-    - 1 update to statement, if and only if any entity property value the has changes (is dirty)
+    - One select, if the entity instance is detached.
+    - One update to statement, if and only if any entity property value the has changes (is dirty)
   - So, we may have lots of selects, witch is not a god idea.
+  ```
+  select m.id, m.name from matches m where m.id = ?
+  update matches m set m.name = ? where m.id = ?
+  ```
+  
 
-
-Option-2: Or the Hibernate Session update method:
-
-```
-Session session = entityManager.unwrap(Session.class);
-for (Match match : matchs) {
+**2 - Use the Hibernate `Session#update` method:**
+  ```java
+  Session session = entityManager.unwrap(Session.class);
+  for (Match match : matchs) {
     session.update(match);
-}
-```
-
+  }
+  ```
   - For each item one queries:
-    - Only 1 update to statement, even if the entity has not changed (is dirty), it is a force update
-
+    - Only *1* update to statement, even if the entity has not changed (is dirty), it is a force update
+  ```
+  update matches m set m.name = ? where m.id = ?
+  ```
 
 ---
 
-## PostgreSQL batch statements
-
-- even if we activate the sql logs in postgres we will see that postgres still loggin one statement after the other event if the statement is the same:
-
-```
-log_statement = 'all
-```
-
-There is an optimisation.
-```
-PGSimpleDataSource dataSource = (PGSimpleDataSource) super.dataSource();
-dataSource.setReWriteBatchedInserts(true);
-```
-
-This way, only one statement will logged and all values will be logged as one
-
+# Statement caching
 
 ## Criteria API literal handling
 
 If we execute the test class `CriteriaAPILiteralHandlingTest` and consult the logs we will see that for the:
 
-String values
+**String values**
+
+for the next Jpa Criteria
+
+```java
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<Match> cq = cb.createQuery(Match.class);
+Root<Match> matches = cq.from(Match.class);
+cq.where(cb.equal(matches.get("awayTeam"), "SLB"));
+
+List<Match> allMatches = em.createQuery(cq).getResultList();
+```
 
 - The generated sql is:
 ```sql
@@ -565,36 +553,137 @@ String values
         match0_.awayTeam=?
 ```
 
-Numeric values
+**However for Numeric parameter values**
+
+```java
+CriteriaBuilder cb = em.getCriteriaBuilder();
+CriteriaQuery<Match> cq = cb.createQuery(Match.class);
+Root<Match> matches = cq.from(Match.class);
+cq.where(cb.equal(matches.get("version"), 1));
+
+List<Match> allMatches = em.createQuery(cq).getResultList();
+```
+
 
 - The generated sql is:
 ```sql
-    select
-        match0_.id as id1_2_,
-        match0_.at as at2_2_,
-        match0_.awayTeam as awayteam3_2_,
-        match0_.homeTeam as hometeam4_2_,
-        match0_.version as version5_2_ 
-    from
-        matches match0_ 
-    where
-        match0_.version=1
+select
+  match0_.id as id1_2_,
+  match0_.at as at2_2_,
+  match0_.awayTeam as awayteam3_2_,
+  match0_.homeTeam as hometeam4_2_,
+  match0_.version as version5_2_ 
+from
+  matches match0_ 
+where
+  match0_.version=1
 ```
 
 The default value is auto, but the behavior can be changed by using the following configuration:
-```
+
+- **auto**: the String parameters will use bind, preventing the sql injection, however the numeric parameters will use inline.
+```xml
 <property name="hibernate.criteria.literal_handling_mode" value="auto"/>
+```
 
+- **bind**: all the parameters will be bind, it is a better option for Query plan cache, we will not have no similar query plan for different parameters.
+```xml
 <property name="hibernate.criteria.literal_handling_mode" value="bind" />
+```
 
+**inline**: any parameter type will use inline strategy.
+```xml
 <property name="hibernate.criteria.literal_handling_mode" value="inline" />
 ```
 
+---
 
 ## IN query default parameter handling
+
+```java
+List<Match> getMatchByIds(EntityManager em, Integer... ids) {
+    return em.createQuery("""
+                select p
+                from Match p
+                where p.id in :ids
+                """, Match.class)
+             .setParameter("ids", Arrays.asList(ids))
+             .getResultList();
+}
+```
+The execution of the following code snipped: 
+```java
+assertEquals(3, getMatchByIds(em, 1, 2, 3).size());
+```
+will generate:
+```
+SELECT match0_.id as id1_2_, match0_.at as at2_2_, match0_.awayTeam as awayteam3_2_, match0_.homeTeam as hometeam4_2_, match0_.version as version5_2_ 
+FROM matches match0_
+WHERE match0_.id IN (?, ?, ?)
+```
+
+The execution of the following code snipped: 
+```java
+assertEquals(4, getMatchByIds(em, 1, 2, 3, 4).size());
+```
+will generate:
+```
+SELECT match0_.id as id1_2_, match0_.at as at2_2_, match0_.awayTeam as awayteam3_2_, match0_.homeTeam as hometeam4_2_, match0_.version as version5_2_ 
+FROM matches match0_
+WHERE match0_.id IN (?, ?, ?, ?)
+```
+
+- Each invocation generates a new SQL statement because the IN query clause requires a different number of bind parameters.
+
+- However, if the underlying relational database provides an Execution Plan cache, these 2 SQL queries will generate 2 different Execution Plans.
+
+- Therefore, in order to reuse an already generated Execution Plan, we need to use the same SQL statement String value for multiple combinations of IN clause bind parameters.
+
+
+Hibernate provide us an optimization for this use cases:
+
+### IN query parameter padding optimization
+
+If you enable the `hibernate.query.in_clause_parameter_padding` Hibernate
+
 ```xml
 <property name="hibernate.query.in_clause_parameter_padding" value="true" />
 ```
+
+The execution Plan
+```
+SELECT *
+FROM matches match0_
+WHERE match0_.id IN (?, ?, ?, ?) -- Params: (1, 2, 3, 3)
+```
+
+```
+SELECT *
+FROM matches match0_
+WHERE match0_.id IN (?, ?, ?, ?) -- Params: (1, 2, 3, 4)
+```
+
+- This time, only 1 Execution Plans are needed since both the first two queries and the last two ones have the same number of bind parameter values.
+
+- This is possible because Hibernate is now padding parameters until the next power of 2 number. So, for 3 and 4 parameters, 4 bind parameters are being used.
+
+---
+
+## PostgreSQL batch statements
+
+- even if we activate the sql logs in postgres we will see that postgres still loggin one statement after the other event if the statement is the same:
+
+```
+log_statement = 'all
+```
+
+There is an optimisation.
+```java
+PGSimpleDataSource dataSource = (PGSimpleDataSource) super.dataSource();
+dataSource.setReWriteBatchedInserts(true);
+```
+
+This way, only one statement will logged and all values will be logged as one
 
 ---
 
@@ -639,3 +728,56 @@ Towards the end of the Persistence Context flush, when all EntityAction(s) are i
 6. `CollectionRecreateAction` - element collection or ToMany insert statements
 7. `EntityDeleteAction` - delete statements, this can cause lots of issues
 
+
+
+---
+
+
+# How to show queries log in PostgreSQL?
+
+You have to config the PostgreSQL configuration file postgresql.conf.
+
+On Debian-based systems it’s located in `/etc/postgresql/9.3/main/` (replace 9.3 with your version of PostgreSQL)
+
+On Red Hat-based systems in `/var/lib/pgsql/data/`.
+If you still can’t find it, then just type `$locate postgresql.conf` in terminal, or execute the following SQL query:
+
+```
+SHOW config_file;
+```
+
+1. Then you need to alter these parameters inside PostgreSQL configuration file.
+```
+log_statement = 'all'
+log_directory = 'pg_log'
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+logging_collector = on
+log_min_error_statement = error
+
+```
+
+On older versions of PostgreSQL prior to 8.0, replace 'all' with 'true' for the log_statement:
+
+`log_statement = 'true'`
+
+2. Then restart the server
+
+Run this command:
+
+`sudo /etc/init.d/postgresql restart`
+
+or this
+
+`sudo service postgresql restart`
+
+The content of all queries to the server should now appear in the log.
+
+3. See the log
+
+The location of the log file will depend on the configuration.
+
+On Debian-based systems the default is `/var/log/postgresql/postgresql-9.3-main.log` (replace 9.3 with your version of PostgreSQL).
+On Red Hat-based systems it is located in `/var/lib/pgsql/data/pg_log/`.
+Using TablePlus, you can enable the console log via the GUI and see all the queries.
+
+To do that, click on the console log button near the top right panel, or use the shortcut key Cmd + Shift + C.
