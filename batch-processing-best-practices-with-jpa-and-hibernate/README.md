@@ -318,8 +318,8 @@ Example:
                            """, Match.class)
                             .getResultList();
 
-            for (Match post : matches) {
-                for (Iterator<MatchEvent> eventIterator = post.getEvents().iterator(); eventIterator.hasNext(); ) {
+            for (Match match : matches) {
+                for (Iterator<MatchEvent> eventIterator = match.getEvents().iterator(); eventIterator.hasNext(); ) {
                     MatchEvent event = eventIterator.next();
                     event.setMatch(null);
                     eventIterator.remove();
