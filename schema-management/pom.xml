@@ -109,7 +109,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <logback.version>1.1.2</logback.version>
+        <logback.version>1.2.0</logback.version>
         <commons-lang.version>3.3.2</commons-lang.version>
     </properties>
     <build>
