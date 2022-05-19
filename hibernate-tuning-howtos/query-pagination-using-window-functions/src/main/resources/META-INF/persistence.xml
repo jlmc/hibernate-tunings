@@ -25,7 +25,6 @@
              If this property is not provided, no schema will be created.
 
              none, create, drop-and-create, drop
-
              -->
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
 
@@ -34,7 +33,7 @@
             < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
             -->
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL10Dialect"/>
+            <!--   <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>  -->
             <!--property name="hibernate.show_sql" value="true"/-->
             <property name="hibernate.format_sql" value="true"/>
             <!--property name="hibernate.use_sql_comments" value="true"/-->

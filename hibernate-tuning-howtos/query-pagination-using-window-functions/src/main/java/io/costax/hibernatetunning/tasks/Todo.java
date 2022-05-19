@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.tasks;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -103,4 +103,3 @@ public class Todo {
 
 
 }
-

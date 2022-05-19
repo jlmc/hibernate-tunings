@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.tasks;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "tasks", name = "todo_comment")
@@ -54,4 +54,3 @@ public class TodoComment {
         this.todo = todo;
     }
 }
-

@@ -1,4 +1,4 @@
-package io.costax.hibernatetunning.paginantion;
+package io.costax.hibernatetunning.paginantion.hibernate6;
 
 import io.costax.hibernatetunning.tasks.DistinctDetachTodoResultTransformer;
 import io.costax.hibernatetunning.tasks.Todo;
@@ -7,12 +7,19 @@ import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.annotation.Sql;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.HibernateException;
 import org.hibernate.query.NativeQuery;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
@@ -170,7 +177,8 @@ public class PaginationOneToManyWithLazyFieldTest {
                 .unwrap(NativeQuery.class)
                 //.addEntity( "td", Todo.class )
                 //.addEntity( "tdc", TodoComment.class )
-                .setResultTransformer(new DistinctDetachTodoResultTransformer(em))
+                //.setResultTransformer(new DistinctDetachTodoResultTransformer(em))
+                .setResultListTransformer(new DistinctDetachTodoResultTransformer(em))
                 .getResultList();
 
         return todos;
@@ -190,10 +198,12 @@ public class PaginationOneToManyWithLazyFieldTest {
                 .findFirst()
                 .orElse(null);
         assertNotNull(todo1);
+
         final TodoComment todoComment = todo1.getComments()
                 .stream().filter(tdc -> tdc.getId() == 2L)
                 .findFirst()
                 .orElse(null);
+
         assertNotNull(todoComment);
 
         final HibernateException hibernateException = assertThrows(HibernateException.class, todoComment::getAttachment);

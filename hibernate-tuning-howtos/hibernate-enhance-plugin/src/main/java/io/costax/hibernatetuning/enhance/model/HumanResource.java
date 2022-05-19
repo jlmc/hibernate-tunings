@@ -1,6 +1,6 @@
 package io.costax.hibernatetuning.enhance.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "nplusonetoone", name = "humanresource")

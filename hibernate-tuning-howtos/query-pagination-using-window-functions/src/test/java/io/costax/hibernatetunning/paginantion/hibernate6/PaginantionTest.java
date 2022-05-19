@@ -1,15 +1,20 @@
-package io.costax.hibernatetunning.paginantion;
+package io.costax.hibernatetunning.paginantion.hibernate6;
 
+import io.costax.hibernatetunning.paginantion.data.DataPopulate;
 import io.costax.hibernatetunning.tasks.Todo;
 import io.costax.hibernatetunning.tasks.TodoSummary;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Tuple;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,13 +90,13 @@ public class PaginantionTest {
     public void usingNativeQuery() {
 
         List<Tuple> todos = provider.em()
-                .createNativeQuery(
+                                    .createNativeQuery(
                         "select d.* from tasks.todo d order by d.id", Tuple.class)
-                .setFirstResult(0)
-                .setMaxResults(10)
-                .getResultList();
+                                    .setFirstResult(0)
+                                    .setMaxResults(10)
+                                    .getResultList();
 
-        // Note That we can use also the Entity unsted of a Tuple
+        // Note That we can use also the Entity instead of a Tuple
 
         assertEquals(10, todos.size());
         assertEquals("todo-1", todos.get(0).get("title", String.class));
@@ -133,4 +138,3 @@ public class PaginantionTest {
     }
 
 }
-
