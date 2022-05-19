@@ -1,11 +1,11 @@
-package io.costax.hibernatetunning.paginantion;
+package io.costax.hibernatetunning.paginantion.data;
 
 import io.costax.hibernatetunning.tasks.Todo;
 import io.costax.hibernatetunning.tasks.TodoComment;
+import jakarta.persistence.EntityManager;
 
-import javax.persistence.EntityManager;
 
-class DataPopulate implements AutoCloseable {
+public class DataPopulate implements AutoCloseable {
 
     private final EntityManager em;
 

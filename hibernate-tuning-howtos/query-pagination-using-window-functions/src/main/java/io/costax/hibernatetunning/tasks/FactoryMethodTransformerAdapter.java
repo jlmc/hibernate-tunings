@@ -1,13 +1,14 @@
 package io.costax.hibernatetunning.tasks;
 
-import org.hibernate.transform.BasicTransformerAdapter;
+
+import org.hibernate.transform.ResultTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
+public class FactoryMethodTransformerAdapter implements ResultTransformer {
 
     private final Method factoryMethod;
 

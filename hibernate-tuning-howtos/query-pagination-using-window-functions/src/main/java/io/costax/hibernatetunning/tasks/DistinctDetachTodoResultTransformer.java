@@ -1,15 +1,15 @@
 package io.costax.hibernatetunning.tasks;
 
-import org.hibernate.transform.BasicTransformerAdapter;
+import jakarta.persistence.EntityManager;
+import org.hibernate.query.ResultListTransformer;
 
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DistinctDetachTodoResultTransformer extends BasicTransformerAdapter {
+public class DistinctDetachTodoResultTransformer implements ResultListTransformer<Todo> {
 
     private final EntityManager entityManager;
 
@@ -18,8 +18,8 @@ public class DistinctDetachTodoResultTransformer extends BasicTransformerAdapter
     }
 
     @Override
-    public List transformList(List list) {
-        Map<Serializable, Object> identifiableMap = new LinkedHashMap<>(list.size());
+    public List<Todo> transformList(List<Todo> list) {
+        Map<Serializable, Todo> identifiableMap = new LinkedHashMap<>(list.size());
         for (Object entityArray : list) {
             if (Object[].class.isAssignableFrom(entityArray.getClass())) {
                 Todo todo = null;

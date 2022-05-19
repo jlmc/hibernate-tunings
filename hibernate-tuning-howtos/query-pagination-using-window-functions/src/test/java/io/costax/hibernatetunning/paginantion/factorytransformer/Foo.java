@@ -1,10 +1,11 @@
-package io.costax.hibernatetunning.paginantion;
+package io.costax.hibernatetunning.paginantion.factorytransformer;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class Foo implements Serializable {
-
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Integer dendenciaId;
@@ -18,5 +19,13 @@ public class Foo implements Serializable {
     public static Foo of(final Integer id,
                          final BigDecimal value) {
         return new Foo(id, value);
+    }
+
+    @Override
+    public String toString() {
+        return "Foo{" +
+                "dendenciaId=" + dendenciaId +
+                ", value=" + value +
+                '}';
     }
 }
