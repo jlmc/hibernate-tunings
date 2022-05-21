@@ -6,7 +6,7 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import java.io.Serializable;
 
 /**
- * This is class is use to combine an identity column with the assigned identifier strategy.
+ * This is class is used to combine an identity column with the assigned identifier strategy.
  * We need to this Strategy when for example we need to define the Id in the business implementation.
  * <p/>
  * <b>WE MUST KEEP IN MIND THE FOLLOWING REQUIREMENTS</b>
@@ -60,13 +60,13 @@ public class AssignedSequenceStyleGenerator extends SequenceStyleGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor session, Object obj) {
-        if (obj instanceof Identifiable) {
-            Identifiable identifiable = (Identifiable) obj;
+        if (obj instanceof Identifiable identifiable) {
             Serializable id = identifiable.getId();
             if (id != null) {
                 return id;
             }
         }
-        return super.generate(session, obj);
+        Object generate = super.generate(session, obj);
+        return (Serializable) generate;
     }
 }

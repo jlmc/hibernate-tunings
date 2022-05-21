@@ -52,14 +52,15 @@ public class AssignedIdentityGenerator extends IdentityGenerator {
 
     @Override
     public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object object) {
-        if (object instanceof Identifiable) {
-            Identifiable identifiable = (Identifiable) object;
-
+        if (object instanceof Identifiable identifiable) {
             Serializable id = identifiable.getId();
             if (id != null) {
                 return id;
             }
         }
-        return super.generate(sharedSessionContractImplementor, object);
+
+        Object generate = super.generate(sharedSessionContractImplementor, object);
+
+        return (Serializable) generate;
     }
 }
