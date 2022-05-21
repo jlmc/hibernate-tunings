@@ -1,27 +1,46 @@
 package io.costax.hibernatetuning.softdelete;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Loader;
+import org.hibernate.annotations.NamedNativeQuery;
 import org.hibernate.annotations.ResultCheckStyle;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
- * The Todo entity being the root of our entity aggergate, it has relationships to TodoDetails, TodoComment, and Tag:
+ * The Todo entity being the root of our entity aggregate, it has relationships to TodoDetails, TodoComment, and Tag:
  */
 @Entity(name = "Todo")
-@Table(name = "todo", schema = "tasks")
+@Table(name = "t_todo")
 
 // The @SqlDelete annotation allows you to override the default DELETE statement executed by Hibernate,
 // so we substitute an UPDATE statement instead. Therefore, removing an entity will end up updating the deleted column to true.
-@SQLDelete(sql = "UPDATE tasks.todo SET deleted = true WHERE id = ?", check = ResultCheckStyle.COUNT)
+@SQLDelete(sql = "UPDATE t_todo SET deleted = true WHERE id = ?", check = ResultCheckStyle.COUNT)
 
 // The @Loader annotation allows us to customize the SELECT query used to load an entity by its identifier.
 // Hence, we want to filter every record whose deleted column is set to true.
 @Loader(namedQuery = "findTodoById")
-@NamedQuery(name = "findTodoById", query = "select t from Todo t where t.deleted = false and t.id = ?1")
+
+@NamedNativeQuery(
+        name = "findTodoById",
+        resultClass = Todo.class,
+        query = "select * from t_todo t where t.deleted = false and t.id = ?1"
+)
 
 // The @Where clause is used for entity queries, and we want to provide it so that Hibernate can append the deleted column filtering condition to hide deleted rows.
 // Prior to Hibernate 5.2, it was sufficient to provide the @Where clause annotation, in Hibernate 5.2, it’s important to provide a custom @Loader as well so that the direct fetching works as well.
@@ -35,7 +54,8 @@ public class Todo extends BaseEntity {
     @OneToMany(
             mappedBy = "todo",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private List<TodoComment> comments = new ArrayList<>();
 
@@ -51,7 +71,7 @@ public class Todo extends BaseEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "todo_tag", schema = "tasks",
+            name = "t_todo_tag",
             joinColumns = @JoinColumn(name = "todo_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )

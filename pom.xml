@@ -115,6 +115,7 @@
 
         <hibernate-types-52.version>2.9.9</hibernate-types-52.version>
         <surefire-failsafe.version>3.0.0-M4</surefire-failsafe.version>
+        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
     </properties>
 
     <dependencyManagement>
@@ -127,11 +128,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>javax.persistence-api</artifactId>
-                <version>2.2</version>
-            </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
