@@ -5,7 +5,7 @@ import io.costax.hibernatetunnig.overrideIdstrategy.generators.Identifiable;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "programing_language")
