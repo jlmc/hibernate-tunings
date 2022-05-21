@@ -1,20 +1,20 @@
 package io.costax.rules;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Persistence;
 import org.hibernate.Session;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import java.sql.Connection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class EntityManagerProvider implements TestRule {
-    private EntityManagerFactory emf;
+    private final EntityManagerFactory emf;
     private final EntityManager em;
     private final EntityTransaction tx;
 
@@ -85,35 +85,26 @@ public class EntityManagerProvider implements TestRule {
     }
 
     public void doIt(Consumer<EntityManager> consumer) {
-        final EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
 
             consumer.accept(em);
 
         } catch (Exception e) {
             throw e;
-        } finally {
-            em.close();
         }
     }
 
     public <T> T doIt(Function<EntityManager, T> function) {
-        final EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
 
             return function.apply(em);
 
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            em.close();
         }
     }
 
     public void doInTx(Consumer<EntityManager> consumer) {
-        final EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = null;
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
+            EntityTransaction tx;
             tx = em.getTransaction();
             tx.begin();
 
@@ -126,22 +117,14 @@ public class EntityManagerProvider implements TestRule {
                 tx.rollback();
             }
             throw e;
-        } finally {
-            em.close();
         }
     }
 
     public <T> T doJDBCReturningWork(Function<Connection, T> function) {
-        final EntityManager em = emf.createEntityManager();
-        try {
+        try (EntityManager em = emf.createEntityManager()) {
 
             return em.unwrap(Session.class).doReturningWork(function::apply);
 
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            em.close();
         }
     }
 }
-

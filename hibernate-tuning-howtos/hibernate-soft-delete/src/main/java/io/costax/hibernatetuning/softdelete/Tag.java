@@ -1,25 +1,24 @@
 package io.costax.hibernatetuning.softdelete;
 
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Loader;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity(name = "Tag")
-@Table(name = "tag", schema = "tasks")
-@SQLDelete(sql =
-        "UPDATE tasks.tag " +
-                "SET deleted = true " +
-                "WHERE id = ?")
+@Table(name = "t_tag")
+@SQLDelete(
+        sql = "UPDATE t_tag SET deleted = true WHERE id = ?")
 @Loader(namedQuery = "findTagById")
-@NamedQuery(name = "findTagById", query =
-        "select t from Tag t where t.deleted = false and t.id = ?1")
+@NamedQuery(
+        name = "findTagById",
+        query = "select t from Tag t where t.deleted = false and t.id = ?1"
+)
 @Where(clause = "deleted = false")
 public class Tag extends BaseEntity {
 

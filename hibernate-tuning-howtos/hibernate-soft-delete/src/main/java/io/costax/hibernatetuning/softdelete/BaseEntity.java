@@ -1,6 +1,6 @@
 package io.costax.hibernatetuning.softdelete;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public class BaseEntity {
