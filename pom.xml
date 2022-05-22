@@ -113,9 +113,10 @@
         <lombok.version>1.18.24</lombok.version>
         <!--lombok.version>1.18.12</lombok.version-->
 
-        <hibernate-types-52.version>2.9.9</hibernate-types-52.version>
+        <hibernate-types-60.version>2.9.9</hibernate-types-60.version>
         <surefire-failsafe.version>3.0.0-M4</surefire-failsafe.version>
-        <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
+        <jakarta.persistence-api.version>3.0.0</jakarta.persistence-api.version>
+        <jpa-junit5-extension.version>2.0.0-SNAPSHOT</jpa-junit5-extension.version>
     </properties>
 
     <dependencyManagement>
@@ -124,7 +125,7 @@
             <dependency>
                 <groupId>io.github.jlmc</groupId>
                 <artifactId>jpa-junit5-extension</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>${jpa-junit5-extension.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -179,21 +180,20 @@
                 <version>${hibernate.version}</version>
             </dependency>
 
-            <!-- For hibernate-types-52 we need also to use the jackson dependency -->
+
+            <!-- https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-60 -->
             <dependency>
                 <groupId>com.vladmihalcea</groupId>
-                <artifactId>hibernate-types-52</artifactId>
-                <version>${hibernate-types-52.version}</version>
+                <artifactId>hibernate-types-60</artifactId>
+                <version>2.16.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson.version}</version> <!-- TODO Upgrade -->
                 <scope>provided</scope>
                 <optional>true</optional>
             </dependency>
-            <!-- -->
-
             <dependency>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-core</artifactId>
@@ -204,7 +204,6 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
@@ -221,7 +220,6 @@
                 <version>${hsqldb.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -247,20 +245,17 @@
                 <artifactId>p6spy</artifactId>
                 <version>3.0.0</version>
             </dependency>
-
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>3.16.1</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>io.costax</groupId>
                 <artifactId>helpers</artifactId>
@@ -271,14 +266,6 @@
                 <groupId>io.costax</groupId>
                 <artifactId>utils</artifactId>
                 <version>${project.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-
-            <dependency>
-                <groupId>io.github.jlmc</groupId>
-                <artifactId>jpa-junit5-extension</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

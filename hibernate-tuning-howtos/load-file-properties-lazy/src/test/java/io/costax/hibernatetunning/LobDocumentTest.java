@@ -1,18 +1,26 @@
 package io.costax.hibernatetunning;
 
-import io.costax.files.FileSupport;
 import io.costax.hibernatetunning.entities.Image;
 import io.costax.hibernatetunning.entities.Message;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import io.github.jlmc.jpa.test.support.ClasspathFiles;
 import org.hibernate.LazyInitializationException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @JpaTest(persistenceUnit = "it")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -33,7 +41,7 @@ public class LobDocumentTest {
 
             em.persist(message);
 
-            final Image png = Image.png(FileSupport.readAllBytes("example.png"));
+            final Image png = Image.png(ClasspathFiles.readAllBytes("example.png"));
 
             message.addImage(png);
         });
@@ -54,26 +62,22 @@ public class LobDocumentTest {
     @Order(0)
     public void read() {
         // To load the file array a transaction must be active
-        // because the collumn is defined as
-        // @Lob
-        // @Basic(fetch = FetchType.LAZY)
-        // @Column(name = "file", columnDefinition = "oid")
-
         provider.doInTx(em -> {
+            final List<Image> images =
+                    em.createQuery("select i from Image i", Image.class).getResultList();
 
+            assertFalse(images.isEmpty());
 
-            final List<Image> images = em.createQuery("select i from Image i", Image.class).getResultList();
+            Image image = images.get(0);
 
-            Assertions.assertFalse(images.isEmpty());
-            final Image image = images.get(0);
-            Assertions.assertNotNull(image);
-            Assertions.assertSame(image.getType(), Image.Type.PNG);
+            assertNotNull(image);
+            assertSame(image.getType(), Image.Type.PNG);
 
             final byte[] file = image.getFile();
-            Assertions.assertNotNull(file);
+            assertNotNull(file);
 
             System.out.println(Arrays.toString(file));
-            Assertions.assertNotNull(file);
+            assertNotNull(file);
             Assertions.assertTrue(file.length > 0);
         });
 
@@ -88,10 +92,10 @@ public class LobDocumentTest {
 
                     final List<Image> images = em.createQuery("select i from Image i", Image.class).getResultList();
 
-                    Assertions.assertFalse(images.isEmpty());
+                    assertFalse(images.isEmpty());
                     final Image image = images.get(0);
-                    Assertions.assertNotNull(image);
-                    Assertions.assertSame(Image.Type.PNG, image.getType());
+                    assertNotNull(image);
+                    assertSame(Image.Type.PNG, image.getType());
 
                     System.out.println(image.getType());
 
