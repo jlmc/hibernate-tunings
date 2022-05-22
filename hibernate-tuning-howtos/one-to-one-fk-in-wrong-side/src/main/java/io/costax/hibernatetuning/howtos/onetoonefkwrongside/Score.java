@@ -1,6 +1,7 @@
 package io.costax.hibernatetuning.howtos.onetoonefkwrongside;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.util.Objects;
 
