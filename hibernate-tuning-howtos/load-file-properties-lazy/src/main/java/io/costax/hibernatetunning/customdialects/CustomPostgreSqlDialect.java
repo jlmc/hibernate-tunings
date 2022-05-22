@@ -1,17 +1,16 @@
 package io.costax.hibernatetunning.customdialects;
 
-import java.sql.Types;
 import java.util.List;
 
 /**
  * An SQL dialect for Postgres 10.0 and later, adds support for PG-UUID data type in Native Queries.
  */
-public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL10Dialect {
+public class CustomPostgreSqlDialect extends org.hibernate.dialect.PostgreSQL95Dialect {
 
     public CustomPostgreSqlDialect() {
         super();
-        
-        registerHibernateType(Types.OTHER, "pg-uuid");
+
+        //registerHibernateType(Types.OTHER, "pg-uuid");
 
         // registe function to use in JPQL
         /*

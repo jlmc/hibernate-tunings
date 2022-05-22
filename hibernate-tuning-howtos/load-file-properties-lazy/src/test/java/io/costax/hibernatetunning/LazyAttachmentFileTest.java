@@ -1,17 +1,25 @@
 package io.costax.hibernatetunning;
 
-import io.costax.files.FileSupport;
 import io.costax.hibernatetunning.entities.Attachment;
 import io.costax.hibernatetunning.entities.Message;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import io.github.jlmc.jpa.test.support.ClasspathFiles;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.hibernate.stat.Statistics;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +57,8 @@ public class LazyAttachmentFileTest {
                     message,
                     "JPA-States-Diagram",
                     "JPA-States-Diagram with all Jpa trasiction status",
-                    FileSupport.readAllBytes("example.png")));
+                    ClasspathFiles.readAllBytes("example.png"))
+            );
 
             message.addAttachment(attachment);
 
@@ -59,7 +68,8 @@ public class LazyAttachmentFileTest {
                     message,
                     "Original Use Case",
                     "Original Use Case from the Ivar Jacobson 'Object-oriented Software Engineering: A Use Case Driven Approach'",
-                    FileSupport.readAllBytes("example.png")));
+                    ClasspathFiles.readAllBytes("example.png"))
+            );
 
             //em.persist(originalUseCase);
             message.addAttachment(originalUseCase);
@@ -73,8 +83,8 @@ public class LazyAttachmentFileTest {
 
         final Attachment attachment =
                 em.createQuery("select a from Attachment a where a.fileName = :fileName", Attachment.class)
-                        .setParameter("fileName", "JPA-States-Diagram")
-                        .getSingleResult();
+                  .setParameter("fileName", "JPA-States-Diagram")
+                  .getSingleResult();
 
         Assertions.assertNotNull(attachment);
         Assertions.assertEquals("JPA-States-Diagram", attachment.getFileName());
@@ -96,7 +106,7 @@ public class LazyAttachmentFileTest {
     public void load_all_file() {
         final List<Attachment> attachments =
                 em.createQuery("select a from Attachment a", Attachment.class)
-                        .getResultList();
+                  .getResultList();
 
         Assertions.assertEquals(2, attachments.size());
     }

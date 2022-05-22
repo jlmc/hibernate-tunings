@@ -21,7 +21,7 @@ This is a open source project that provide some custom User Types implementation
 Depending on the Hibernate version employed in our project, we need to match the rigth hibernate -types dependency.
 
 
-* For the Hibernate 5.2: we should use the **hibernate-types-52**
+* For the Hibernate 5.2: we should use the **hibernate-types-60**
 
 * For the Hibernate 5 and 5.1: **hibernate-types-5**   
 
@@ -51,4 +51,3 @@ Older version of Hibernate are not supported... :(
 * JavaTypeDescriptor is responsible for wrapping the Object coming from the JDBC ResultSet or for unwrapping the java Object so that it can be bound as a JDBC PreparedStatement parameter.
 
 * SqlTypeDescriptor is responsible for binding the unwrapped Object as a JDBC PreparedStatement parameter or for fetching the JSON object from the underlying JDBC ResultSet.
-
