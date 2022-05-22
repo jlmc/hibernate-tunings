@@ -3,14 +3,13 @@ package io.costax.hibernatetunings.cache.secoundlevel;
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.Cache;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.Cache;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 @JpaTest(persistenceUnit = "it")
 public class TestCacheManagement {

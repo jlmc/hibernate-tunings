@@ -2,6 +2,11 @@ package io.costax.hibernatetunings.cache.queries;
 
 import io.costax.hibernatetunings.entities.project.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.hibernate.Session;
 import org.hibernate.annotations.QueryHints;
 import org.junit.jupiter.api.Assertions;
@@ -9,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
 import java.util.List;
 
 @JpaTest(persistenceUnit = "it")
@@ -58,8 +62,11 @@ public class TestQueryCache {
         em.getTransaction().begin();
 
         final TypedQuery<Project> query2 = em.createQuery("select p from Project p where id = :id", Project.class)
-                .setParameter("id", 1L);
+                                             .setParameter("id", 1L);
         //.setHint(QueryHints.CACHEABLE, true)
+
+
+
         ((org.hibernate.query.Query) query2).setCacheable(true);
         final List<Project> projects2 = query2.getResultList();
 

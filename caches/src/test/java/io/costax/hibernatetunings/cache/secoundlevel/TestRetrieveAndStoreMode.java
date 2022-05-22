@@ -2,11 +2,15 @@ package io.costax.hibernatetunings.cache.secoundlevel;
 
 import io.costax.hibernatetunings.entities.project.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.CacheRetrieveMode;
+import jakarta.persistence.CacheStoreMode;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
