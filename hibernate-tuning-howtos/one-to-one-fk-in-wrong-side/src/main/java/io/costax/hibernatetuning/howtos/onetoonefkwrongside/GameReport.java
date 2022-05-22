@@ -1,8 +1,17 @@
 package io.costax.hibernatetuning.howtos.onetoonefkwrongside;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,8 +27,8 @@ public class GameReport {
     private LocalDateTime resisted;
 
     @Embedded
-    @AttributeOverride(name="home",  column= @Column(name="score_home", columnDefinition = ""))
-    @AttributeOverride(name="visitor",  column= @Column(name="score_visitor"))
+    @AttributeOverride(name = "home", column = @Column(name = "score_home", columnDefinition = ""))
+    @AttributeOverride(name = "visitor", column = @Column(name = "score_visitor"))
     private Score score = new Score();
 
 

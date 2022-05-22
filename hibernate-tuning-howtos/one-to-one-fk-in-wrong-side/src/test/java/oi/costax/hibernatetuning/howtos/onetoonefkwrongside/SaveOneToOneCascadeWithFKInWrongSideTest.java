@@ -30,18 +30,6 @@ public class SaveOneToOneCascadeWithFKInWrongSideTest {
         cleanData();
     }
 
-/*    @BeforeEach
-    public void remove() {
-        provider.doInTx(em -> {
-
-
-            final List<Game> games = em.createQuery("select g from Game g", Game.class).getResultList();
-            for (Game game : games) {
-                 game.setReport(null);
-            }
-        });
-    }*/
-
     private void cleanData() {
         provider.doInTx(em -> {
 
