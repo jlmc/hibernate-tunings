@@ -1,1 +1,1 @@
-io.costax.hibernatetuning.hibernate.listener.ReplicationEventListenerIntegrator
+io.github.jlmc.spi.ReplicationEventListenerIntegrator
