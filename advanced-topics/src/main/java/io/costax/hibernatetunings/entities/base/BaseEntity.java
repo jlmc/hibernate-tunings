@@ -1,6 +1,6 @@
 package io.costax.hibernatetunings.entities.base;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @MappedSuperclass
 public class BaseEntity {

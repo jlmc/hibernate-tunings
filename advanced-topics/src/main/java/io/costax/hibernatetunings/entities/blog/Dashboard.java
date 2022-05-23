@@ -1,6 +1,6 @@
 package io.costax.hibernatetunings.entities.blog;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

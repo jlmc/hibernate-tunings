@@ -6,7 +6,7 @@ import io.costax.hibernatetunings.customtype.MacAddr;
 import io.costax.hibernatetunings.customtype.MacAddrType;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 

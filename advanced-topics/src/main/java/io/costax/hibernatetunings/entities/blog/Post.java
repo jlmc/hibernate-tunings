@@ -1,7 +1,7 @@
 package io.costax.hibernatetunings.entities.blog;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;

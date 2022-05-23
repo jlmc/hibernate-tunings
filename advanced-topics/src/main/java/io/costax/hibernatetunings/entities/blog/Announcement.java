@@ -1,6 +1,6 @@
 package io.costax.hibernatetunings.entities.blog;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;

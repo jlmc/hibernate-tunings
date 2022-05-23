@@ -2,7 +2,7 @@ package io.costax.hibernatetunings.entities.blog;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
