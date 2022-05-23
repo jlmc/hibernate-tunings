@@ -197,28 +197,21 @@
                 <artifactId>javax.el</artifactId>
                 <version>3.0.1-b09</version>
             </dependency>
-
-            <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>4.0.0</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>4.0.0-M4</version>
             </dependency>
-
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-hikaricp</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
-
-
-            <!-- https://mvnrepository.com/artifact/com.vladmihalcea/hibernate-types-60 -->
             <dependency>
                 <groupId>com.vladmihalcea</groupId>
                 <artifactId>hibernate-types-60</artifactId>
