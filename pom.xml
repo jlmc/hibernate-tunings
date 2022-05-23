@@ -107,7 +107,8 @@
         <!--flyway.version>5.2.4</flyway.version-->
         <!--flyway.version>3.2.1</flyway.version-->
         <aspectj.version>1.8.7</aspectj.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>2.1.212</h2.version>
+        <!--<h2.version>1.4.200</h2.version>-->
         <hsqldb.version>2.4.0</hsqldb.version>
 
         <junit5.version>5.6.2</junit5.version>
@@ -193,9 +194,14 @@
                 <version>${hibernate-validator.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>5.0.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>3.0.1-b09</version>
+                <artifactId>jakarta.el</artifactId>
+                <version>5.0.0-M1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>

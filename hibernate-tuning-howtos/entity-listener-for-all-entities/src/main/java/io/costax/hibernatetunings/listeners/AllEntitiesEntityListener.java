@@ -1,9 +1,15 @@
 package io.costax.hibernatetunings.listeners;
 
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
+import jakarta.persistence.PreUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
- * All Entities EntityListener, handler all javax.persistence events for all entities in the persistence Factory.
+ * All Entities EntityListener, handler all jakarta.persistence events for all entities in the persistence Factory.
  * PostLoad
  * PostPersist
  * PostRemove
