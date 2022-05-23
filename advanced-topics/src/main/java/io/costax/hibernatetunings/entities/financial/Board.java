@@ -2,7 +2,7 @@ package io.costax.hibernatetunings.entities.financial;
 
 import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

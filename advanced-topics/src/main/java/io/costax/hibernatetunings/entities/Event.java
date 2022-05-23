@@ -3,7 +3,7 @@ package io.costax.hibernatetunings.entities;
 import io.costax.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

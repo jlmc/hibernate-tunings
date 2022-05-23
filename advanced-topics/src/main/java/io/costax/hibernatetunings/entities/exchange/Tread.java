@@ -1,6 +1,6 @@
 package io.costax.hibernatetunings.entities.exchange;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(schema = "exchange", name = "tread")

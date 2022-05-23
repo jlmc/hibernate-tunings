@@ -85,25 +85,32 @@ public class EntityManagerProvider implements TestRule {
     }
 
     public void doIt(Consumer<EntityManager> consumer) {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
 
             consumer.accept(em);
 
         } catch (Exception e) {
             throw e;
+        } finally {
+            em.close();
         }
     }
 
     public <T> T doIt(Function<EntityManager, T> function) {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
 
             return function.apply(em);
 
+        } finally {
+            em.close();
         }
     }
 
     public void doInTx(Consumer<EntityManager> consumer) {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
             EntityTransaction tx;
             tx = em.getTransaction();
             tx.begin();
@@ -117,14 +124,19 @@ public class EntityManagerProvider implements TestRule {
                 tx.rollback();
             }
             throw e;
+        } finally {
+            em.close();
         }
     }
 
     public <T> T doJDBCReturningWork(Function<Connection, T> function) {
-        try (EntityManager em = emf.createEntityManager()) {
+        EntityManager em = emf.createEntityManager();
+        try {
 
             return em.unwrap(Session.class).doReturningWork(function::apply);
 
+        } finally {
+            em.close();
         }
     }
 }
