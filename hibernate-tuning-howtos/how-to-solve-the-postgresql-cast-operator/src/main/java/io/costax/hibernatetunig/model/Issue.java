@@ -1,8 +1,15 @@
 package io.costax.hibernatetunig.model;
 
 import io.costax.hibernatetunig.model.projections.IssueSummary;
+import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;

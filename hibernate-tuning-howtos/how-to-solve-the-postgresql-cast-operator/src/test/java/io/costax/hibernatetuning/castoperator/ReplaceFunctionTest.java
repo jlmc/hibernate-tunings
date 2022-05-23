@@ -4,16 +4,22 @@ import io.costax.hibernatetunig.model.Project;
 import io.costax.hibernatetunig.model.Project_;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
-import io.github.jlmc.jpa.test.annotation.Sql;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -34,10 +40,6 @@ import java.util.stream.IntStream;
 @JpaTest(persistenceUnit = "it")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Sql(statements = {
-        "delete from Issue where true",
-        "delete from Project where true"
-}, phase = Sql.Phase.AFTER_TEST_METHOD)
 public class ReplaceFunctionTest {
 
     @JpaContext

@@ -6,15 +6,23 @@ import io.costax.hibernatetunig.model.Project;
 import io.costax.hibernatetunig.model.projections.IssueSummary;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
-import io.github.jlmc.jpa.test.annotation.Sql;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -23,10 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @JpaTest(persistenceUnit = "it")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@Sql(statements = {
-        "delete from Issue where true",
-        "delete from Project where true"
-}, phase = Sql.Phase.AFTER_TEST_METHOD)
 public class CastOperatorDatesTest {
 
     private final LocalDate startSearch = LocalDate.of(2018, 1, 20);
@@ -63,15 +67,17 @@ public class CastOperatorDatesTest {
         final EntityManager em = provider.em();
 
         final List<IssueSummary> issues = em.createQuery(
-                "select new io.costax.hibernatetunig.model.projections.IssueSummary(" +
-                        "   i.id, " +
-                        "   i.title," +
-                        "   function('date', i.createAt) " +
-                        ") " +
-                        "from Issue i " +
-                        "where function('date', i.createAt) > :start " +
-                        "   and function('date', i.createAt) < :end " +
-                        "order by function('date_part', 'dow', i.createAt) asc, i.id asc ", IssueSummary.class)
+               """
+                select new io.costax.hibernatetunig.model.projections.IssueSummary(
+                    i.id,
+                    i.title,
+                    function('date', i.createAt)
+                )
+                from Issue i
+                where function('date', i.createAt) > :start
+                   and function('date', i.createAt) < :end
+                order by function('date_part', 'dow', i.createAt) asc, i.id asc
+                """, IssueSummary.class)
                 .setParameter("start", startSearch)
                 .setParameter("end", endSearch)
                 .getResultList();
