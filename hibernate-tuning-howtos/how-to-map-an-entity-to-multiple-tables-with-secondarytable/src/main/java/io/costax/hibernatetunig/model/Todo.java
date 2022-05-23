@@ -1,13 +1,20 @@
 package io.costax.hibernatetunig.model;
 
-import javax.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.SecondaryTables;
+import jakarta.persistence.Table;
+
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
 @Entity(name = "Todo")
 @Table(
-    name = "todo",
-    schema = "tasks")
+        name = "todo",
+        schema = "tasks")
 @SecondaryTables({
         @SecondaryTable(
                 name = "todo_details",

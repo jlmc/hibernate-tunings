@@ -28,7 +28,7 @@ public class SecondaryTableOneToOneTest {
     public JpaProvider provider;
 
     @Test
-    public void create_some_todo() {
+    public void should_persist_an_entity_in_two_tables() {
 
         provider.doInTx(em -> {
             final OffsetDateTime lisbonDate = OffsetDateTime.of(2018, 2, 10, 17, 20, 0, 0, ZoneOffset.UTC);

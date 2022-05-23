@@ -4,21 +4,21 @@ import io.costax.hibernatetunning.entities.Project;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.hibernate.Session;
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.junit.jupiter.api.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
-import javax.persistence.StoredProcedureQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Root;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Root;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -166,52 +166,10 @@ public class StoredProcedureTest {
             return (Integer) addProject.getOutputParameterValue("id");
         });
 
-
-        final BigInteger count = (BigInteger) provider
-                .doItWithReturn(em ->
-                        em.createNativeQuery("select count(id) from project").getSingleResult());
-
+        Long count = (Long)
+                provider.em()
+                        .createNativeQuery("select count(id) from project", Long.class)
+                        .getSingleResult();
         assertEquals(1L, count.longValue());
-    }
-
-    /**
-     * To Use a Cursor we need to have a active transaction or declare the connection as connection.setAutoCommit(false)
-     */
-    @Test
-    @Order(4)
-    public void fetch_projects_using_cursor() throws SQLException {
-        final EntityManager em = provider.em();
-        //em.getTransaction().begin();
-
-
-        // Mark the connection as AutoCommit = false
-        final Session session = em.unwrap(Session.class);
-        SharedSessionContractImplementor sharedSessionContractImplementor = (SharedSessionContractImplementor) session;
-        Connection connection = sharedSessionContractImplementor.connection();
-        connection.setAutoCommit(false);
-
-        /*
-            Session session = em.unwrap(Session.class);
-            session.doWork(new Work() {
-            @Override
-                public void execute(Connection connection) throws SQLException {
-                // do whatever you need to do with the connection
-                connection.setAutoCommit(false);
-             }
-             });
-        */
-
-        StoredProcedureQuery q = em.createNamedStoredProcedureQuery("getProjects");
-        q.setParameter(2, "Lighthouse%");
-        List<Project> projects = q.getResultList();
-
-        for (Project b : projects) {
-            System.out.println("\n >>> " + b.getId() + " ---" + b.getTitle());
-        }
-
-        em.close();
-
-        //assertEquals(2, projects.size());
-        //em.getTransaction().commit();
     }
 }

@@ -1,8 +1,11 @@
 package io.costax.hibernatetuning.howtos.ibook;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import org.hibernate.annotations.SQLInsert;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "book")
