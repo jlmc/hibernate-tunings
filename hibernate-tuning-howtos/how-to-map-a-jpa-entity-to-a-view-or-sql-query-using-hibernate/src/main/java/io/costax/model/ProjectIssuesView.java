@@ -2,12 +2,11 @@ package io.costax.model;
 
 // select p.id as project_id, p.title as project_title, count(i.id) as number_of_issues
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Immutable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "project_issues")
