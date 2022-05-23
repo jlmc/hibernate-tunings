@@ -8,7 +8,7 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Properties;
 import java.util.stream.Stream;
