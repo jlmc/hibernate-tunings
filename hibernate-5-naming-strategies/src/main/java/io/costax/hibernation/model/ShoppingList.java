@@ -1,6 +1,6 @@
 package io.costax.hibernation.model;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;

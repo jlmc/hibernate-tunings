@@ -1,8 +1,13 @@
 package io.costax.relationships.secondarytable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.*;
 
 @DynamicUpdate
 @Entity

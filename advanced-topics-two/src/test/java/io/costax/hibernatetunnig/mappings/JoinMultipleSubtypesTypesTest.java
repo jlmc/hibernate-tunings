@@ -8,7 +8,7 @@ import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Objects;
 

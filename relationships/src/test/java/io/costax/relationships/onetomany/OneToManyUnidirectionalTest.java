@@ -3,7 +3,12 @@ package io.costax.relationships.onetomany;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +95,7 @@ public class OneToManyUnidirectionalTest {
 
                 fail("Should not be here, The movie 1111 contains scenes, Using JPQL or SQL before we remove a movie we have to remove all the dependent object");
 
-            } catch (javax.persistence.PersistenceException e) {
+            } catch (jakarta.persistence.PersistenceException e) {
                 logger.warn("The movie 1111 contains scenes, Using JPQL or SQL before we remove a movie we have to remove all the dependent object");
             }
         });

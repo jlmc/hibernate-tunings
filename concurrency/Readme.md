@@ -190,7 +190,7 @@ and with Query
                 "select distinct a from Author a left join fetch a.books where a.id = :id", Author.class)
                 .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setParameter("id", 1L)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                 .setHint("hibernate.query.passDistinctThrough", false)
                 .getSingleResult();
 ```
 
@@ -283,5 +283,3 @@ But it transform 0 into a NOWAIT
     * **PESSIMISTIC_READ** blocks updates
     * **PESSIMISTIC_WRITE** block all access
 * Lock timeout defines how long the database tries to acquire the log
-
-

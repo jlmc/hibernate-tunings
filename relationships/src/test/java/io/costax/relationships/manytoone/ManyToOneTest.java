@@ -5,9 +5,13 @@ import io.costax.relationships.onetomany.Movie;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityGraph;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.persistence.EntityGraph;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +44,7 @@ public class ManyToOneTest {
             final EntityGraph<Movie> entityGraph = em.createEntityGraph(Movie.class);
             entityGraph.addAttributeNodes("director");
 
-            final Map<String, Object> hints = Map.of("javax.persistence.loadgraph", entityGraph);
+            final Map<String, Object> hints = Map.of("jakarta.persistence.loadgraph", entityGraph);
 
             //  LockModeType.OPTIMISTIC_FORCE_INCREMENT
 

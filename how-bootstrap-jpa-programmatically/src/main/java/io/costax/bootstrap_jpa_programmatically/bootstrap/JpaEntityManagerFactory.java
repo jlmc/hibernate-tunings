@@ -4,12 +4,13 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceProvider;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceProvider;
-import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;

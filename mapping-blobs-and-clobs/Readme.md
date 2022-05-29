@@ -133,7 +133,7 @@ Reader characterStream = articleClob.getContent().getCharacterStream();
 Solution 1: We can use Basic annotation with the `hibernate-enhance-maven-plugin` plugin with the configuration `enableLazyInitialization = true`
 
 ```java
-@javax.persistence.Basic(fetch = FetchType.LAZY)
+@jakarta.persistence.Basic(fetch = FetchType.LAZY)
 ```
 
 Solution 2: we can also create a separated entity to put the the LOB and create a relacionship @OneToOne between the two entities.

@@ -1,9 +1,13 @@
 package io.costax.model;
 
+import jakarta.persistence.EntityManager;
 import org.hibernate.transform.ResultTransformer;
 
-import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class IssueTreeResultTransformer implements ResultTransformer {
 

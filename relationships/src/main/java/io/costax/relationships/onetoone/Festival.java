@@ -1,9 +1,13 @@
 package io.costax.relationships.onetoone;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity

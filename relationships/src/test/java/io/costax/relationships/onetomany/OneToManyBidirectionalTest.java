@@ -1,10 +1,13 @@
 package io.costax.relationships.onetomany;
 
 import io.github.jlmc.jpa.test.annotation.JpaTest;
-import org.junit.jupiter.api.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 @JpaTest(persistenceUnit = "it")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)

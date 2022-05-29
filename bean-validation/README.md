@@ -15,7 +15,7 @@ When your application runs in a Java EE container such as JBoss AS, one implemen
 ```xml
 <dependency>
     <groupId>org.glassfish</groupId>
-    <artifactId>javax.el</artifactId>
+    <artifactId>jakarta.el</artifactId>
     <version>3.0.1-b09</version>
 </dependency>
 ```
@@ -122,11 +122,11 @@ There are two ways to configure validation modes in JPA. The simplest way is to 
 </persistence-unit> 
 ```
 
-The other way is to configure the validation mode programmatically by specifying the javax.persistence.validation.mode property with value auto, callback, or none when creating a new JPA entity manager factory as shown in the following example:
+The other way is to configure the validation mode programmatically by specifying the jakarta.persistence.validation.mode property with value auto, callback, or none when creating a new JPA entity manager factory as shown in the following example:
 
 ```java
 Map<String, String> props = new HashMap<String, String>();
-props.put("javax.persistence.validation.mode", "callback");
+props.put("jakarta.persistence.validation.mode", "callback");
 EntityManagerFactory emf = Persistence.createEntityManagerFactory("validation", props);
 ```
 Bean validation within JPA occurs during JPA life cycle event processing. If enabled, validation occurs at the final stage of the PrePersist, PreUpdate, and PreRemove life cycle events. Validation occurs only after all user-defined life cycle events, since some of those events can modify the entity that is being validated. By default, JPA enables validation for the default validation group for PrePersist and PreUpdate life cycle events. If you must validate other validation groups or enable validation for the PreRemove event, you can specify the validation groups to validate each life cycle event in the persistence.xml as shown in the following example:
@@ -137,9 +137,9 @@ Bean validation within JPA occurs during JPA life cycle event processing. If ena
     <validation-mode>CALLBACK</validation-mode>
     
     <properties>
-            <property name="javax.persistence.validation.group.pre-persist" value="org.apache.openjpa.example.gallery.constraint.SequencedImageGroup"/>
-            <property name="javax.persistence.validation.group.pre-update" value="org.apache.openjpa.example.gallery.constraint.SequencedImageGroup"/>
-        <property name="javax.persistence.validation.group.pre-remove" value="javax.validation.groups.Default"/>
+            <property name="jakarta.persistence.validation.group.pre-persist" value="org.apache.openjpa.example.gallery.constraint.SequencedImageGroup"/>
+            <property name="jakarta.persistence.validation.group.pre-update" value="org.apache.openjpa.example.gallery.constraint.SequencedImageGroup"/>
+        <property name="jakarta.persistence.validation.group.pre-remove" value="jakarta.validation.groups.Default"/>
     </property>
 </persistence-unit>
 ```
@@ -147,7 +147,7 @@ Bean validation within JPA occurs during JPA life cycle event processing. If ena
 
 ##### validation-mode
 
-`javax.persistence.validation.mode`
+`jakarta.persistence.validation.mode`
 
 corresponds to the validation-mode element. Use it if you wish to use the non standard DDL value.
 
@@ -167,7 +167,7 @@ You can fine-tune that if needed:
 Unfortunately, DDL is not standard mode (though extremely useful) and you will not be able to put it in <validation-mode>. To use it, add a regular property
 
 ```xml
-<property name="javax.persistence.validation.mode">
+<property name="jakarta.persistence.validation.mode">
   ddl
 </property>
 ```
@@ -175,7 +175,7 @@ Unfortunately, DDL is not standard mode (though extremely useful) and you will n
 With this approach, you can mix ddl and callback modes:
 
 ```xml
-<property name="javax.persistence.validation.mode">
+<property name="jakarta.persistence.validation.mode">
   ddl, callback
 </property>
 ```
@@ -222,11 +222,11 @@ public interface PublishedVideo { }
     - The next step is to set which ValidationGroups shall be validated before an entity gets persisted, updated, or removed. 
     - By default, your JPA implementation uses the default group before persisting and updating an entity and **doesn’t perform any validation before removing it**. We can change that in your persistence.xml file using the following parameters:
     
-      - javax.persistence.validation.group.pre-persist
-      - javax.persistence.validation.group.pre-update
-      - javax.persistence.validation.group.pre-remove
+      - jakarta.persistence.validation.group.pre-persist
+      - jakarta.persistence.validation.group.pre-update
+      - jakarta.persistence.validation.group.pre-remove
       
-    - In this example, we use the `javax.persistence.validation.group.pre-update` to tell Hibernate to validate the `io.costax.hibernatetunings.entities.PublishedVideo` ValidationGroup before an entity gets updated
+    - In this example, we use the `jakarta.persistence.validation.group.pre-update` to tell Hibernate to validate the `io.costax.hibernatetunings.entities.PublishedVideo` ValidationGroup before an entity gets updated
     
     
 ```xml
@@ -245,7 +245,7 @@ public interface PublishedVideo { }
 
         <properties>
 
-            <property name="javax.persistence.validation.group.pre-update"
+            <property name="jakarta.persistence.validation.group.pre-update"
                       value="io.costax.hibernatetunings.entities.PublishedVideo"/>
 
         </properties>
@@ -257,16 +257,16 @@ public interface PublishedVideo { }
 ###### More about Validation-groups
 
  
-- `javax.persistence.validation.group.pre-persist`
+- `jakarta.persistence.validation.group.pre-persist`
 
-Defines the group or list of groups to validate before persisting an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, javax.validation.groups.Default). Defaults to the Bean Validation default group.
+Defines the group or list of groups to validate before persisting an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, jakarta.validation.groups.Default). Defaults to the Bean Validation default group.
 
-- `javax.persistence.validation.group.pre-update`
-javax.persistence.validation.group.pre-update defines the group or list of groups to validate before updating an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, javax.validation.groups.Default). Defaults to the Bean Validation default group.
+- `jakarta.persistence.validation.group.pre-update`
+jakarta.persistence.validation.group.pre-update defines the group or list of groups to validate before updating an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, jakarta.validation.groups.Default). Defaults to the Bean Validation default group.
 
 
-- `javax.persistence.validation.group.pre-remove`
-javax.persistence.validation.group.pre-remove defines the group or list of groups to validate before persisting an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, javax.validation.groups.Default). Defaults to no group.
+- `jakarta.persistence.validation.group.pre-remove`
+jakarta.persistence.validation.group.pre-remove defines the group or list of groups to validate before persisting an entity. This is a comma separated fully qualified class name string (eg com.acme.groups.Common or com.acme.groups.Common, jakarta.validation.groups.Default). Defaults to no group.
 
 
 

@@ -1,6 +1,11 @@
 package io.costax.relationships.onetomany;
 
-import javax.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
+
 import java.util.HashSet;
 import java.util.Set;
 

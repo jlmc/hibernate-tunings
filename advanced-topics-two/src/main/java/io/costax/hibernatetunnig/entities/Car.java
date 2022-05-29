@@ -1,9 +1,9 @@
 package io.costax.hibernatetunnig.entities;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.validation.constraints.NotBlank;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 
@@ -56,5 +56,3 @@ public class Car extends Vehicle {
                 '}';
     }
 }
-
-

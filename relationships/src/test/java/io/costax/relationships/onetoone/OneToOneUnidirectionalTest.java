@@ -3,12 +3,16 @@ package io.costax.relationships.onetoone;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -42,8 +46,8 @@ public class OneToOneUnidirectionalTest {
 
         LOGGER.info(" ***************** \n ***************** \n *****************");
 
-        
-        
+
+
         final Person person = em.find(Person.class, 11);
 
         LOGGER.info("*** Person [{}]", person);
