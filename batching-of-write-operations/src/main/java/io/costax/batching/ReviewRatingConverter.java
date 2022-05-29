@@ -1,10 +1,9 @@
 package io.costax.batching;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 @Converter(autoApply = true)
 public class ReviewRatingConverter implements AttributeConverter<Review.Rating, Integer> {
