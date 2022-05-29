@@ -14,13 +14,10 @@ public class MacAddrType extends ImmutableType<MacAddr> {
         super(MacAddr.class);
     }
 
-    @Override
-    protected MacAddr get(final ResultSet rs,
-                          final String[] names,
-                          final SharedSessionContractImplementor session,
-                          final Object owner) throws SQLException {
 
-        final String mac = rs.getString(names[0]);
+    @Override
+    protected MacAddr get(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws SQLException {
+        final String mac = rs.getString(position);
         return mac != null ? MacAddr.of(mac) : null;
     }
 
@@ -40,7 +37,7 @@ public class MacAddrType extends ImmutableType<MacAddr> {
     }
 
     @Override
-    public int[] sqlTypes() {
-        return new int[]{Types.OTHER};
+    public int getSqlType() {
+        return Types.OTHER;
     }
 }

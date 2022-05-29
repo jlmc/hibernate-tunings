@@ -1,19 +1,22 @@
 package io.costax.hibernatetunings.entities;
 
-import io.costax.hibernatetunings.customtype.IPv4;
-import io.costax.hibernatetunings.customtype.IPv4Type;
-import io.costax.hibernatetunings.customtype.MacAddr;
-import io.costax.hibernatetunings.customtype.MacAddrType;
-import org.hibernate.annotations.TypeDef;
+import com.vladmihalcea.hibernate.type.basic.Inet;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
 @Table(name = "machine")
-@TypeDef(name = "ipv4", defaultForType = IPv4.class, typeClass = IPv4Type.class)
-@TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class)
+//@TypeDef(name = "ipv4", defaultForType = IPv4.class, typeClass = IPv4Type.class)
+//@TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class)
 public class Machine {
 
     @Enumerated(EnumType.ORDINAL)
@@ -31,23 +34,20 @@ public class Machine {
     //@Column(name = "start", columnDefinition = "time")
     // private LocalTime start;
 
-    @Column(name = "last_know_ip", columnDefinition = "inet")
-    private IPv4 lastKnowIp;
 
-    @Column(name = "mac_address", columnDefinition = "macaddr")
-    private MacAddr macAddress;
+    @Column(name = "last_know_ip", columnDefinition = "inet")
+    private Inet lastKnowIp;
 
     public Machine() {
     }
 
-    private Machine(final String macAddress, final Type type, final LocalDate buyDay) {
-        this.macAddress = MacAddr.of(macAddress);
+    private Machine(final Type type, final LocalDate buyDay) {
         this.type = type;
         this.buyDay = buyDay;
     }
 
-    public static Machine of(final String macAddress, final Type type, final LocalDate buyDay) {
-        return new Machine(macAddress, type, buyDay);
+    public static Machine of(final Type type, final LocalDate buyDay) {
+        return new Machine(type, buyDay);
     }
 
     @Override
@@ -67,9 +67,6 @@ public class Machine {
         return id;
     }
 
-    public MacAddr getMacAddress() {
-        return macAddress;
-    }
 
     public Type getType() {
         return type;
@@ -79,12 +76,12 @@ public class Machine {
         return buyDay;
     }
 
-    public IPv4 getLastKnowIp() {
+    public Inet getLastKnowIp() {
         return lastKnowIp;
     }
 
 
-    public void setLastKnowIp(final IPv4 lastKnowIp) {
+    public void setLastKnowIp(final Inet lastKnowIp) {
         this.lastKnowIp = lastKnowIp;
     }
 

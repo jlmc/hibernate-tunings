@@ -1,12 +1,22 @@
 package io.costax.hibernatetunning.inheritance;
 
-import io.costax.hibernatetunings.entities.blog.*;
+import io.costax.hibernatetunings.entities.blog.Announcement;
+import io.costax.hibernatetunings.entities.blog.Dashboard;
+import io.costax.hibernatetunings.entities.blog.Post;
+import io.costax.hibernatetunings.entities.blog.Topic;
+import io.costax.hibernatetunings.entities.blog.TopicStatistic;
+import io.costax.hibernatetunings.entities.blog.Topics;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Tuple;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,12 +64,12 @@ public class JoinTableTest {
     public void t03_should_get_topic_of_some_dashboard_with_a_polymorphic_query() {
 
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
-                .setParameter("name", "JPA")
-                .getSingleResult();
+                                      .setParameter("name", "JPA")
+                                      .getSingleResult();
 
         final List<Topic> topics = em.createQuery("select t from Topic t where t.dashboard = :dashboard", Topic.class)
-                .setParameter("dashboard", dashboard)
-                .getResultList();
+                                     .setParameter("dashboard", dashboard)
+                                     .getResultList();
 
         assertEquals(2, topics.size());
     }
@@ -67,8 +77,8 @@ public class JoinTableTest {
     @Test
     public void t04_should_get_posts_with_subclass_query() {
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
-                .setParameter("name", "JPA")
-                .getSingleResult();
+                                      .setParameter("name", "JPA")
+                                      .getSingleResult();
 
 
         List<Post> posts = em
@@ -149,8 +159,8 @@ public class JoinTableTest {
     @Test
     public void t10_should_order_the_the_types() {
         final Dashboard dashboard = em.createQuery("select b from Dashboard b where b.name = :name", Dashboard.class)
-                .setParameter("name", "JPA")
-                .getSingleResult();
+                                      .setParameter("name", "JPA")
+                                      .getSingleResult();
 
         List<Topic> topics = em
                 .createQuery(

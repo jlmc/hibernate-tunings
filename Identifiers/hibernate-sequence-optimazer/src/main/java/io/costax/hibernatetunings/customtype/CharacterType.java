@@ -14,14 +14,11 @@ public class CharacterType extends ImmutableType<Character> {
     }
 
     @Override
-    public int[] sqlTypes() {
-        return new int[]{Types.CHAR};
-    }
-
-    @Override
-    public Character get(ResultSet rs, String[] names,
-                         SharedSessionContractImplementor session, Object owner) throws SQLException {
-        String value = rs.getString(names[0]);
+    protected Character get(ResultSet rs,
+                            int position,
+                            SharedSessionContractImplementor session,
+                            Object owner) throws SQLException {
+        String value = rs.getString(position);
         return (value != null && value.length() > 0) ? value.charAt(0) : null;
     }
 
@@ -33,5 +30,10 @@ public class CharacterType extends ImmutableType<Character> {
         } else {
             st.setString(index, String.valueOf(value));
         }
+    }
+
+    @Override
+    public int getSqlType() {
+        return Types.CHAR;
     }
 }

@@ -1,11 +1,12 @@
 package io.costax.hibernatetunings.entities;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import io.costax.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "developer")
@@ -14,7 +15,7 @@ public class Developer extends BaseEntity {
     @Column(name = "name")
     private String nome;
 
-    @Type(type = "jsonb")
+    @Type(JsonBinaryType.class)
     @Column(name = "tiket", columnDefinition = "jsonb")
     private Tiket tiket;
 
