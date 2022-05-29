@@ -9,8 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import static io.github.jlmc.jpa.test.annotation.Sql.Phase.AFTER_TEST_METHOD;
 import static io.github.jlmc.jpa.test.annotation.Sql.Phase.BEFORE_TEST_METHOD;
@@ -63,7 +63,7 @@ public class DirtyCheckingTest {
 
         session.createNativeQuery(
                 "delete from article where id > 0")
-                .setFlushMode(FlushMode.ALWAYS)
+                .setHibernateFlushMode(FlushMode.ALWAYS)
                 .addSynchronizedEntityClass(Article.class)
                 .executeUpdate();
 
