@@ -22,16 +22,6 @@
             <artifactId>hibernate-testing</artifactId>
             <scope>compile</scope>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.vladmihalcea</groupId>
             <artifactId>hibernate-types-60</artifactId>
@@ -44,9 +34,10 @@
         </dependency>
         <!--Generates the jpa Metadata Model, very useful in building and maintaining and JPA Criteria Queries-->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -63,7 +54,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -111,31 +101,6 @@
                         <phase>compile</phase>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- *************** -->
-            <!-- Metamodel generation -->
-            <!-- *************** -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
-                    <compilerArguments>
-                        <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
-                        <AaddGeneratedAnnotation>false</AaddGeneratedAnnotation>
-                        <Adebug>true</Adebug>
-                    </compilerArguments>
-                </configuration>
-            </plugin>
-
-            <!-- Enable run test with jdk 13 preview features -->
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>--enable-preview</argLine>
-                </configuration>
             </plugin>
         </plugins>
     </build>
