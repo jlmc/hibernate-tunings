@@ -1,5 +1,6 @@
 package io.costax.hibernatetunings.entities;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import io.costax.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.Type;
 
@@ -15,7 +16,7 @@ public class Developer extends BaseEntity {
     @Column(name = "name")
     private String nome;
 
-    @Type(type = "jsonb")
+    @Type(value = JsonBinaryType.class)
     @Column(name = "tiket", columnDefinition = "jsonb")
     private Tiket tiket;
 

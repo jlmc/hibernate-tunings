@@ -10,10 +10,10 @@ import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.hibernate.Session;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.RollbackException;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.RollbackException;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.AbstractMap;
@@ -135,7 +135,7 @@ public class SingleTableTest {
     }
 
     //@Test(expected = org.hibernate.exception.ConstraintViolationException.class)
-    @Test//(expected = javax.persistence.RollbackException.class)
+    @Test//(expected = jakarta.persistence.RollbackException.class)
     @Order(6)
     public void should_not_add_invoice_without_content() {
         final EntityManager em = provider.em();

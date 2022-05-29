@@ -3,7 +3,7 @@ package io.costax.hibernatetunings.entities.project;
 import io.costax.hibernatetunings.entities.base.BaseEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 

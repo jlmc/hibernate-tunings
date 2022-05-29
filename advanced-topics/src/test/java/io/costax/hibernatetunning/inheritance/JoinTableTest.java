@@ -1,26 +1,41 @@
 package io.costax.hibernatetunning.inheritance;
 
-import io.costax.hibernatetunings.entities.blog.*;
+import io.costax.hibernatetunings.entities.blog.Announcement;
+import io.costax.hibernatetunings.entities.blog.Dashboard;
+import io.costax.hibernatetunings.entities.blog.Post;
+import io.costax.hibernatetunings.entities.blog.Topic;
+import io.costax.hibernatetunings.entities.blog.TopicStatistic;
+import io.costax.hibernatetunings.entities.blog.Topic_;
+import io.costax.hibernatetunings.entities.blog.Topics;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.hibernate.jpa.QueryHints;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -101,14 +116,14 @@ public class JoinTableTest {
 
     /**
      * Remember that the jpql:
-     *
+     * <p>
      * - order by:
-     *    type( i )  - use the column DiscriminatorValue
-     *    i.class    - use the column DiscriminatorValue
-     *
+     * type( i )  - use the column DiscriminatorValue
+     * i.class    - use the column DiscriminatorValue
+     * <p>
      * - In the projection :
-     *   type(t) is the Class implementation
-     *   i.class is the discriminator column value
+     * type(t) is the Class implementation
+     * i.class is the discriminator column value
      */
 
     @Test
@@ -140,17 +155,17 @@ public class JoinTableTest {
                 provider.doItWithReturn(em ->
 
                         em.createQuery(
-                                """
-                                        select t 
-                                        from Topic t 
-                                        where t.dashboard = (
-                                            select b from Dashboard b where b.name = :_name 
-                                        )
-                                        order by t.class
-                                        """
-                                , Topic.class)
-                                .setParameter("_name", DASHBOARD_TITLE_KEY)
-                                .getResultList()
+                                  """
+                                          select t 
+                                          from Topic t 
+                                          where t.dashboard = (
+                                              select b from Dashboard b where b.name = :_name 
+                                          )
+                                          order by t.class
+                                          """
+                                  , Topic.class)
+                          .setParameter("_name", DASHBOARD_TITLE_KEY)
+                          .getResultList()
 
                 );
 
@@ -179,34 +194,34 @@ public class JoinTableTest {
                     //   inner join topic t on p.id=t.id
                     // ...
                     final List<Post> posts = em.createQuery(
-                            """
-                                    select t 
-                                    from Post t 
-                                    where t.dashboard = (
-                                        select b from Dashboard b where b.name = :_name 
-                                    )
-                                    order by t.id
-                                    """
-                            , Post.class)
-                            .setParameter("_name", DASHBOARD_TITLE_KEY)
-                            .getResultList();
+                                                       """
+                                                               select t 
+                                                               from Post t 
+                                                               where t.dashboard = (
+                                                                   select b from Dashboard b where b.name = :_name 
+                                                               )
+                                                               order by t.id
+                                                               """
+                                                       , Post.class)
+                                               .setParameter("_name", DASHBOARD_TITLE_KEY)
+                                               .getResultList();
 
                     // select *
                     // from from Announcement a
                     //   inner join topic t  on a.id=t.id
                     // ...
                     final List<Announcement> announcements = em.createQuery(
-                            """
-                                    select t 
-                                    from Announcement t 
-                                    where t.dashboard = (
-                                        select b from Dashboard b where b.name = :_name 
-                                    )
-                                    order by t.id
-                                    """
-                            , Announcement.class)
-                            .setParameter("_name", DASHBOARD_TITLE_KEY)
-                            .getResultList();
+                                                                       """
+                                                                               select t 
+                                                                               from Announcement t 
+                                                                               where t.dashboard = (
+                                                                                   select b from Dashboard b where b.name = :_name 
+                                                                               )
+                                                                               order by t.id
+                                                                               """
+                                                                       , Announcement.class)
+                                                               .setParameter("_name", DASHBOARD_TITLE_KEY)
+                                                               .getResultList();
 
                     return Map.of(Post.class, posts, Announcement.class, announcements);
 
@@ -238,17 +253,17 @@ public class JoinTableTest {
                     // order by t.type
                     // ...
                     return em.createQuery(
-                            """
-                                    select t.title 
-                                    from Topic t 
-                                    where t.dashboard = (
-                                        select b from Dashboard b where b.name = :_name 
-                                    )
-                                    order by type (t)
-                                    """
-                            , String.class)
-                            .setParameter("_name", DASHBOARD_TITLE_KEY)
-                            .getResultList();
+                                     """
+                                             select t.title 
+                                             from Topic t 
+                                             where t.dashboard = (
+                                                 select b from Dashboard b where b.name = :_name 
+                                             )
+                                             order by type (t)
+                                             """
+                                     , String.class)
+                             .setParameter("_name", DASHBOARD_TITLE_KEY)
+                             .getResultList();
 
 
                 });
@@ -323,12 +338,12 @@ public class JoinTableTest {
 
         final Dashboard dashboard = provider.doItWithReturn(em ->
 
-            em.createQuery("""
-                    select distinct d from Dashboard d left join fetch d.topics where d.id = :__dashboardId
-                    """, Dashboard.class)
-                .setParameter("__dashboardId", this.dashboardId)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-                .getSingleResult()
+                em.createQuery("""
+                          select distinct d from Dashboard d left join fetch d.topics where d.id = :__dashboardId
+                          """, Dashboard.class)
+                  .setParameter("__dashboardId", this.dashboardId)
+                  .setHint("hibernate.query.passDistinctThrough", false)
+                  .getSingleResult()
 
         );
 
@@ -468,9 +483,9 @@ public class JoinTableTest {
 
                     em.createQuery(
 
-                        query.multiselect( root.get(Topic_.title).alias("the_title") )
-                        .where(criteriaBuilder.equal(root.type(), sublcass))
-                        .orderBy(criteriaBuilder.asc(root.type()))
+                            query.multiselect(root.get(Topic_.title).alias("the_title"))
+                                 .where(criteriaBuilder.equal(root.type(), sublcass))
+                                 .orderBy(criteriaBuilder.asc(root.type()))
 
                     ).getResultList();
 
@@ -508,12 +523,12 @@ public class JoinTableTest {
             //            when t.type=0 then 20
             //        end
             final List<Topic> topics = em.createQuery("""
-                    select t from Topic t
-                    where t.dashboard.id = :__dashboardId
-                    order by case when type (t) = Announcement then 11 when type(t) = Post then 20 end 
-                    """, Topic.class)
-                    .setParameter("__dashboardId", this.dashboardId)
-                    .getResultList();
+                                                 select t from Topic t
+                                                 where t.dashboard.id = :__dashboardId
+                                                 order by case when type (t) = Announcement then 11 when type(t) = Post then 20 end 
+                                                 """, Topic.class)
+                                         .setParameter("__dashboardId", this.dashboardId)
+                                         .getResultList();
 
 
             assertEquals(2, topics.size());
@@ -556,14 +571,14 @@ public class JoinTableTest {
             //        )
             //noinspection JpaQlInspection
             final List<Dashboard> dashboardsOnlyWithPostTopics = em.createQuery("""
-                    select distinct d 
-                    from Dashboard d
-                    where Post  = all ( 
-                       select type(t) from Topic t where t.dashboard = d
-                     )
-                    """, Dashboard.class)
-                   // .setParameter("__dashboardId", this.dashboardId)
-                    .getResultList();
+                                                                           select distinct d 
+                                                                           from Dashboard d
+                                                                           where Post  = all ( 
+                                                                              select type(t) from Topic t where t.dashboard = d
+                                                                            )
+                                                                           """, Dashboard.class)
+                                                                   // .setParameter("__dashboardId", this.dashboardId)
+                                                                   .getResultList();
 
 
             assertEquals(0, dashboardsOnlyWithPostTopics.size());
@@ -604,14 +619,14 @@ public class JoinTableTest {
             //        )
             //noinspection JpaQlInspection
             final List<Dashboard> dashboardsThatContainsAnyTopicOfTypeAnnouncement = em.createQuery("""
-                    select distinct d 
-                    from Dashboard d
-                    where Announcement = any ( 
-                       select type(t) from Topic t where t.dashboard = d
-                     )
-                    """, Dashboard.class)
-                    // .setParameter("__dashboardId", this.dashboardId)
-                    .getResultList();
+                                                                                               select distinct d 
+                                                                                               from Dashboard d
+                                                                                               where Announcement = any ( 
+                                                                                                  select type(t) from Topic t where t.dashboard = d
+                                                                                                )
+                                                                                               """, Dashboard.class)
+                                                                                       // .setParameter("__dashboardId", this.dashboardId)
+                                                                                       .getResultList();
 
 
             assertEquals(1, dashboardsThatContainsAnyTopicOfTypeAnnouncement.size());

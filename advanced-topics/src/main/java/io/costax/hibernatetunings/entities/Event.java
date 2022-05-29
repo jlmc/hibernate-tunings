@@ -1,9 +1,19 @@
 package io.costax.hibernatetunings.entities;
 
+import com.vladmihalcea.hibernate.type.array.IntArrayType;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import io.costax.hibernatetunings.entities.base.BaseEntity;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import org.hibernate.annotations.Type;
 
-import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,13 +28,13 @@ public class Event extends BaseEntity {
     Set<Developer> developers = new HashSet<>();
     @Column(name = "name")
     private String name;
-    @Type(type = "jsonb")
+    @Type(value = JsonBinaryType.class)
     @Column(name = "location")
     private Location location;
-    @Type(type = "int-array")
+    @Type(value = IntArrayType.class)
     @Column(name = "price_base_values", columnDefinition = "integer[]")
     private int[] priceBaseValues = {};
-    @Type(type = "string-array")
+    @Type(value = StringArrayType.class)
     @Column(name = "ports_names", columnDefinition = "text[]")
     private String[] portsName = {};
 
