@@ -5,7 +5,7 @@ import io.costax.hibernatetunings.entities.project.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
