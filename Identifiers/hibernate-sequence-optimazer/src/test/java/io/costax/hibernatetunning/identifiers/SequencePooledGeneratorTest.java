@@ -4,13 +4,18 @@ import io.costax.hibernatetunings.entities.Developer;
 import io.costax.hibernatetunings.entities.TimePeriod;
 import io.costax.hibernatetunings.entities.Timesheet;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @JpaTest(persistenceUnit = "it")

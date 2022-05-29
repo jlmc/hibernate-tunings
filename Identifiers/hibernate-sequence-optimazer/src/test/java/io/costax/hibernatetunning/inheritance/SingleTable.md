@@ -27,7 +27,7 @@ package io.costax.hibernatetunings.entities.financial;
     
 import io.costax.hibernatetunings.entities.financial.FinancialDocument;import org.hibernate.annotations.NaturalId;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
     
@@ -91,7 +91,7 @@ package io.costax.hibernatetunings.entities.financial;
     
 import io.costax.hibernatetunings.entities.financial.Board;import org.hibernate.annotations.CreationTimestamp;
     
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;

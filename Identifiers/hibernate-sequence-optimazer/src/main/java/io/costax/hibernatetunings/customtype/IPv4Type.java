@@ -1,6 +1,7 @@
 package io.costax.hibernatetunings.customtype;
 
 
+import com.vladmihalcea.hibernate.type.ImmutableType;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.postgresql.util.PGobject;
 
@@ -10,38 +11,35 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public class IPv4Type extends ImmutableType<IPv4> {
-
-    public IPv4Type() {
+    protected IPv4Type() {
         super(IPv4.class);
     }
 
     @Override
-    protected IPv4 get(final ResultSet rs,
-                       final String[] names,
-                       final SharedSessionContractImplementor session,
-                       final Object owner) throws SQLException {
-
-        final String ip = rs.getString(names[0]);
+    protected IPv4 get(ResultSet rs,
+                       int position, SharedSessionContractImplementor sharedSessionContractImplementor,
+                       Object o) throws SQLException {
+        String ip = rs.getString(position);
         return ip != null ? new IPv4(ip) : null;
     }
 
     @Override
-    protected void set(final PreparedStatement st,
-                       final IPv4 value,
-                       final int index,
-                       final SharedSessionContractImplementor session) throws SQLException {
+    protected void set(PreparedStatement ps,
+                       IPv4 value,
+                       int position,
+                       SharedSessionContractImplementor sharedSessionContractImplementor) throws SQLException {
         if (value == null) {
-            st.setNull(index, Types.OTHER);
+            ps.setNull(position, Types.OTHER);
         } else {
             PGobject holder = new PGobject();
             holder.setType("inet");
             holder.setValue(value.getAddress());
-            st.setObject(index, holder);
+            ps.setObject(position, holder);
         }
     }
 
     @Override
-    public int[] sqlTypes() {
-        return new int[]{Types.OTHER};
+    public int getSqlType() {
+        return Types.OTHER;
     }
 }

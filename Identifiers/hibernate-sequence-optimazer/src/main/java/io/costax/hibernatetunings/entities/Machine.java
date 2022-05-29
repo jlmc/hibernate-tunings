@@ -3,17 +3,20 @@ package io.costax.hibernatetunings.entities;
 import io.costax.hibernatetunings.customtype.IPv4;
 import io.costax.hibernatetunings.customtype.IPv4Type;
 import io.costax.hibernatetunings.customtype.MacAddr;
-import io.costax.hibernatetunings.customtype.MacAddrType;
-import org.hibernate.annotations.TypeDef;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
 @Table(name = "machine")
-@TypeDef(name = "ipv4", defaultForType = IPv4.class, typeClass = IPv4Type.class)
-@TypeDef(name = "macaddr", defaultForType = MacAddr.class, typeClass = MacAddrType.class)
 public class Machine {
 
     @Enumerated(EnumType.ORDINAL)
@@ -28,9 +31,7 @@ public class Machine {
     @Column(name = "buy_day", nullable = false)
     private LocalDate buyDay;
 
-    //@Column(name = "start", columnDefinition = "time")
-    // private LocalTime start;
-
+    @org.hibernate.annotations.Type(value = IPv4Type.class)
     @Column(name = "last_know_ip", columnDefinition = "inet")
     private IPv4 lastKnowIp;
 
@@ -83,11 +84,9 @@ public class Machine {
         return lastKnowIp;
     }
 
-
     public void setLastKnowIp(final IPv4 lastKnowIp) {
         this.lastKnowIp = lastKnowIp;
     }
-
 
     public enum Type {
         MAC, PC

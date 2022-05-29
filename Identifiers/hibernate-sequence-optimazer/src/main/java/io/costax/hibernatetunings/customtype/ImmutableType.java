@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
-public abstract class ImmutableType<T> implements UserType {
+public abstract class ImmutableType<T> implements UserType<T> {
 
     private final Class<T> clazz;
 
@@ -17,22 +17,25 @@ public abstract class ImmutableType<T> implements UserType {
         this.clazz = clazz;
     }
 
-    protected abstract T get(ResultSet rs, String[] names,
-                             SharedSessionContractImplementor session, Object owner) throws SQLException;
+    protected abstract T get(ResultSet rs, int position,
+                             SharedSessionContractImplementor session,
+                             Object owner) throws SQLException;
 
     protected abstract void set(PreparedStatement st, T value, int index,
                                 SharedSessionContractImplementor session) throws SQLException;
 
-
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names,
-                              SharedSessionContractImplementor session,
-                              Object owner) throws SQLException {
-        return get(rs, names, session, owner);
+    public T nullSafeGet(ResultSet rs,
+                         int position,
+                         SharedSessionContractImplementor session,
+                         Object owner) throws SQLException {
+        return get(rs, position, session, owner);
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index,
+    public void nullSafeSet(PreparedStatement st,
+                            T value,
+                            int index,
                             SharedSessionContractImplementor session) throws SQLException {
         set(st, clazz.cast(value), index, session);
     }
@@ -43,18 +46,18 @@ public abstract class ImmutableType<T> implements UserType {
     }
 
     @Override
-    public boolean equals(Object x, Object y) {
+    public boolean equals(T x, T y) {
         return Objects.equals(x, y);
     }
 
     @Override
-    public int hashCode(Object x) {
+    public int hashCode(T x) {
         return x.hashCode();
     }
 
     @Override
-    public Object deepCopy(Object value) {
-        return value;
+    public T deepCopy(T value) {
+        return (T) value;
     }
 
     @Override
@@ -63,17 +66,17 @@ public abstract class ImmutableType<T> implements UserType {
     }
 
     @Override
-    public Serializable disassemble(Object o) {
+    public Serializable disassemble(T o) {
         return (Serializable) o;
     }
 
     @Override
-    public Object assemble(Serializable cached, Object owner) {
-        return cached;
+    public T assemble(Serializable cached, Object owner) {
+        return (T) cached;
     }
 
     @Override
-    public Object replace(Object o, Object target, Object owner) {
+    public T replace(T o, T target, Object owner) {
         return o;
     }
 }

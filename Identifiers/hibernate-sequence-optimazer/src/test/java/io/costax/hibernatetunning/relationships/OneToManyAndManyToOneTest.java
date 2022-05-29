@@ -3,11 +3,16 @@ package io.costax.hibernatetunning.relationships;
 import io.costax.hibernatetunings.entities.project.Issue;
 import io.costax.hibernatetunings.entities.project.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.TransientPropertyValueException;
-import org.junit.jupiter.api.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
