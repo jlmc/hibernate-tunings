@@ -3,14 +3,14 @@ package io.costax.bootstrap_jpa_programmatically;
 import io.costax.bootstrap_jpa_programmatically.bootstrap.PersistenceUnitInfoImpl;
 import io.costax.bootstrap_jpa_programmatically.database.DataSourceProvider;
 import io.costax.bootstrap_jpa_programmatically.database.Database;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import org.hibernate.integrator.spi.Integrator;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.jpa.boot.spi.IntegratorProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,4 +113,3 @@ public abstract class AbstractJPAProgrammaticBootstrapTest {
         return null;
     }
 }
-

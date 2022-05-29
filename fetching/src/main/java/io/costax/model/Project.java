@@ -1,6 +1,14 @@
 package io.costax.model;
 
-import javax.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
+import jakarta.persistence.Entity;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.Table;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

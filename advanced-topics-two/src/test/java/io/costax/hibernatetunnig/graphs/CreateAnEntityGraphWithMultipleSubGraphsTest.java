@@ -8,8 +8,8 @@ import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
@@ -82,7 +82,7 @@ public class CreateAnEntityGraphWithMultipleSubGraphsTest {
                 provider.doItWithReturn(em -> {
                     EntityGraph<?> graph = em.createEntityGraph("graph.AuthorBooksPublisherEmployee");
                     TypedQuery<Author> q = em.createQuery("SELECT a FROM Author a WHERE a.id = :authorId", Author.class);
-                    q.setHint("javax.persistence.fetchgraph", graph);
+                    q.setHint("jakarta.persistence.fetchgraph", graph);
 
                     return q.setParameter("authorId", SARAMAGO_ID).getSingleResult();
                 });

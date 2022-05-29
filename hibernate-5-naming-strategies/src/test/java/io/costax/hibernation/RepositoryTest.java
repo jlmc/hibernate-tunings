@@ -7,12 +7,20 @@ import io.costax.hibernation.model.Topic_;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.hibernate.annotations.QueryHints;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.ListJoin;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.criteria.*;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,21 +41,23 @@ class RepositoryTest {
     void shouldExecuteJPQLQuery() {
         // 2020-04-11 13:05:02.000000
         final ZonedDateTime zonedDateTime = LocalDate.of(2020, Month.APRIL, 11)
-                .atTime(LocalTime.of(13, 5, 1, 123_456_789))
-                .atZone(ZoneId.of("Europe/Lisbon"));
+                                                     .atTime(LocalTime.of(13, 5, 1, 123_456_789))
+                                                     .atZone(ZoneId.of("Europe/Lisbon"));
 
         List<ShoppingList> result = provider.doItWithReturn(em ->
                 em.createQuery("""
-                                select distinct m 
-                                from ShoppingList m 
-                                left join fetch m.topics t 
-                                where m.createAt >= :time
-                                order by m.id ,t.id 
-                                """
-                        , ShoppingList.class)
-                        .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
-                        .setParameter("time", zonedDateTime.toOffsetDateTime())
-                        .getResultList());
+                                  select distinct m
+                                  from ShoppingList m
+                                  left join fetch m.topics t
+                                  where m.createAt >= :time
+                                  order by m.id ,t.id
+                                  """
+                          , ShoppingList.class)
+
+                  .setHint("hibernate.query.passDistinctThrough", false)
+
+                  .setParameter("time", zonedDateTime.toOffsetDateTime())
+                  .getResultList());
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -58,7 +68,7 @@ class RepositoryTest {
     @Test
     @Order(1)
     void shouldExecuteCriteriaQuery() {
-        final long shoppingListId = 1L;
+        final long shoppingListId = 1001L;
 
         List<Topic> results = provider.doItWithReturn(em -> {
 
@@ -77,8 +87,8 @@ class RepositoryTest {
             }
 
             query.distinct(true)
-                    .where(predicates.toArray(new Predicate[0]))
-                    .orderBy(builder.asc(topics.get(Topic_.numberOfItems)));
+                 .where(predicates.toArray(new Predicate[0]))
+                 .orderBy(builder.asc(topics.get(Topic_.numberOfItems)));
 
             return em.createQuery(query).getResultList();
         });
@@ -92,7 +102,7 @@ class RepositoryTest {
     @Test
     @Order(3)
     void shouldAddMoreTopics() {
-        final long primaryKey = 1L;
+        final long primaryKey = 1001L;
         provider.doInTx(em -> {
             ShoppingList shoppingList = em.find(ShoppingList.class, primaryKey);
 

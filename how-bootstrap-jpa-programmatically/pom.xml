@@ -81,9 +81,5 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.costax</groupId>
-            <artifactId>utils</artifactId>
-        </dependency>
     </dependencies>
 </project>

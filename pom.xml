@@ -56,7 +56,6 @@
         <module>how-to-use-a-sequence-generator-for-a-non-id-field</module>
         <module>the-best-way-to-use-java-records-with-jpa</module>
         <module>how-bootstrap-jpa-programmatically</module>
-        <module>core</module>
     </modules>
     <packaging>pom</packaging>
 

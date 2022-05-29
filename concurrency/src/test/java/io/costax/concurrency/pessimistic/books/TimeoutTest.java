@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.LockTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class TimeoutTest {
              * select * from multimedia.author author0_ where author0_.id=? for update nowait
              */
             Map<String, Object> hints = new HashMap<>();
-            hints.put("javax.persistence.lock.timeout", 0);
+            hints.put("jakarta.persistence.lock.timeout", 0);
 
             Author a2 = em2.find(Author.class, 1L, LockModeType.PESSIMISTIC_WRITE, hints);
 
@@ -95,7 +95,7 @@ public class TimeoutTest {
             try {
 
                 Map<String, Object> hints = new HashMap<>();
-                hints.put("javax.persistence.lock.timeout", 5);
+                hints.put("jakarta.persistence.lock.timeout", 5);
 
                 @SuppressWarnings("unused")
                 Author a2 = em2.find(Author.class, 1L, LockModeType.PESSIMISTIC_WRITE, hints);

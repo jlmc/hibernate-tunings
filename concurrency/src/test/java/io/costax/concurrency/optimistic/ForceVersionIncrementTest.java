@@ -5,9 +5,9 @@ import io.github.jlmc.jpa.test.annotation.JpaTest;
 import org.hibernate.jpa.QueryHints;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceContext;
 
 
 @JpaTest(persistenceUnit = "it")
@@ -24,7 +24,7 @@ public class ForceVersionIncrementTest {
                 "select distinct a from Author a left join fetch a.books where a.id = :id", Author.class)
                 .setLockMode(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                 .setParameter("id", 1L)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                .setHint("hibernate.query.passDistinctThrough", false)
                 .getSingleResult();
 
 

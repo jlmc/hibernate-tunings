@@ -2,8 +2,15 @@ package io.costax.relationships.manytomany;
 
 import io.costax.relationships.onetomany.Actor;
 import io.costax.relationships.onetomany.Movie;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity

@@ -1,9 +1,11 @@
 package io.costax.concurrency.domain.books;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.type.TimestampType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
@@ -15,19 +17,7 @@ public class Publisher {
     @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
-    /**
-     * DbTimestampType
-     *
-     * <tt>dbtimestamp</tt>: An extension of {@link TimestampType} which
-     * maps to the database's current timestamp, rather than the jvm's
-     * current timestamp.
-     * <p/>
-     * Note: May/may-not cause issues on dialects which do not properly support
-     * a true notion of timestamp (Oracle < 8, for example, where only its DATE
-     * datatype is supported).  Depends on the frequency of DML operations...
-     */
     @Version
-    @Type(type = "dbtimestamp")
     @Column(name = "mod_date")
     private Date modDate;
 

@@ -1,9 +1,10 @@
 package io.costax.relationships.manytomany;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

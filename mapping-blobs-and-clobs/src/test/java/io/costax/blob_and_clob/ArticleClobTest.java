@@ -5,6 +5,7 @@ import io.costax.model.ArticleClob;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import jakarta.persistence.EntityManager;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.hibernate.engine.jdbc.ClobProxy;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -13,8 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 

@@ -5,14 +5,13 @@ import io.costax.model.SerieDocument;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.hibernate.query.NativeQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 
 @JpaTest(persistenceUnit = "it")
 public class NativeSQLSynchronizedEntityClassTest {

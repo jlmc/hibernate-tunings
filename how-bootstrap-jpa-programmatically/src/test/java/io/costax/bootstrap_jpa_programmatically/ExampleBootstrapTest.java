@@ -1,11 +1,16 @@
 package io.costax.bootstrap_jpa_programmatically;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
-import javax.persistence.*;
-import java.util.List;
 
 public class ExampleBootstrapTest extends AbstractJPAProgrammaticBootstrapTest {
 

@@ -2,10 +2,10 @@ package io.costax;
 
 import io.costax.model.Project;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @JpaTest(persistenceUnit = "it")

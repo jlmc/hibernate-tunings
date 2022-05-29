@@ -1,6 +1,6 @@
 package io.costax.hibernatetunnig.graphs.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;

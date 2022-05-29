@@ -8,9 +8,7 @@
         <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>bean-validation</artifactId>
-
     <dependencies>
         <dependency>
             <groupId>org.hibernate</groupId>

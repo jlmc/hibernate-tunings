@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,7 +59,7 @@ public class BeanValidationGetStartedTest {
         } catch (Exception e) {
             em.getTransaction().rollback();
 
-            Assertions.assertTrue(e instanceof javax.validation.ConstraintViolationException);
+            Assertions.assertTrue(e instanceof jakarta.validation.ConstraintViolationException);
 
         } finally {
             em.close();
@@ -85,7 +85,7 @@ public class BeanValidationGetStartedTest {
 
             em.getTransaction().commit();
 
-        } catch (javax.validation.ConstraintViolationException e) {
+        } catch (jakarta.validation.ConstraintViolationException e) {
 
             logger.info("--" + e.getMessage());
             logger.info("--" + e.getLocalizedMessage());
@@ -115,7 +115,7 @@ public class BeanValidationGetStartedTest {
 
         } catch (Exception e) {
 
-            assertTrue(e instanceof javax.persistence.RollbackException);
+            assertTrue(e instanceof jakarta.persistence.RollbackException);
             final Throwable cause = e.getCause();
             assertTrue(cause instanceof PersistenceException);
             PersistenceException pe = (PersistenceException) e.getCause();
@@ -177,7 +177,7 @@ public class BeanValidationGetStartedTest {
 
             fail("The Update transaction should throw one exception!!!");
 
-        } catch (javax.validation.ConstraintViolationException e) {
+        } catch (jakarta.validation.ConstraintViolationException e) {
             //System.out.println(e);
         }
 

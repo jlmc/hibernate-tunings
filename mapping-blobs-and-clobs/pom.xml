@@ -54,7 +54,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.github.jlmc</groupId>
             <artifactId>jpa-junit5-extension</artifactId>

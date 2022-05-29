@@ -129,7 +129,7 @@ public class PassDistinctThroughHintTest {
 
         List<Project> projects = em.createQuery(
                                            "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
-                                   //.setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                                   // .setHint("hibernate.query.passDistinctThrough", false)
                                    .setHint("hibernate.query.passDistinctThrough", false)
                                    .getResultList();
 

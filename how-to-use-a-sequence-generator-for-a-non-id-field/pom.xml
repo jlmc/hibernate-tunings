@@ -26,15 +26,10 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
-        <!--
-        Generates the jpa Metadata Model, very useful in building
-         and maintaining and JPA Criteria Queries-->
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -60,7 +55,6 @@
             <artifactId>h2</artifactId>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>io.github.jlmc</groupId>
             <artifactId>jpa-junit5-extension</artifactId>

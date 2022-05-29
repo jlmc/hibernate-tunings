@@ -1,9 +1,9 @@
 package io.costax.models.specification;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Instant;
 
-import static javax.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @Table(name = "occurrence")

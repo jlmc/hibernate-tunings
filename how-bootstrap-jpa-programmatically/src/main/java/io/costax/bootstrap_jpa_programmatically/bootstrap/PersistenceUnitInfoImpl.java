@@ -2,11 +2,12 @@ package io.costax.bootstrap_jpa_programmatically.bootstrap;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
 
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.PersistenceUnitTransactionType;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.spi.PersistenceUnitTransactionType;
+
 import javax.sql.DataSource;
 import java.net.URL;
 import java.util.ArrayList;

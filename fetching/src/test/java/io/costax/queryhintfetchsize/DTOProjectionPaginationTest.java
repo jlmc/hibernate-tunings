@@ -3,17 +3,17 @@ package io.costax.queryhintfetchsize;
 import io.costax.model.Project;
 import io.costax.model.ProjectSummary;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.jpa.QueryHints;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -116,7 +116,7 @@ public class DTOProjectionPaginationTest {
         final Session session = em.unwrap(Session.class);
 
         List<ProjectSummary> pageOfSecondFive =
-                session.createSQLQuery(
+                session.createQuery(
                         """
                                 select p.id as id, p.title as title from project p order by p.id desc
                                 """)

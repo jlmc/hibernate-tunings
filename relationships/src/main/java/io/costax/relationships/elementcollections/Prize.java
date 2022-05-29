@@ -1,6 +1,7 @@
 package io.costax.relationships.elementcollections;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

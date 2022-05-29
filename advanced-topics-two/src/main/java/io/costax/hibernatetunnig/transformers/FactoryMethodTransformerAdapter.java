@@ -1,6 +1,7 @@
 package io.costax.hibernatetunnig.transformers;
 
-import org.hibernate.transform.BasicTransformerAdapter;
+
+import org.hibernate.transform.ResultTransformer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
-public class FactoryMethodTransformerAdapter extends BasicTransformerAdapter {
+public class FactoryMethodTransformerAdapter implements ResultTransformer {
 
     private static final Map<Method, FactoryMethodTransformerAdapter> CACHE = new WeakHashMap<>();
     private final Method factoryMethod;

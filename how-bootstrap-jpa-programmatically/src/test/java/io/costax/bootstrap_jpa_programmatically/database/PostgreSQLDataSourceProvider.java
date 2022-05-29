@@ -1,6 +1,6 @@
 package io.costax.bootstrap_jpa_programmatically.database;
 
-import org.hibernate.dialect.PostgreSQL10Dialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
@@ -10,7 +10,7 @@ public class PostgreSQLDataSourceProvider implements DataSourceProvider {
 
     @Override
     public String hibernateDialect() {
-        return PostgreSQL10Dialect.class.getName();
+        return PostgreSQLDialect.class.getName();
     }
 
     @Override

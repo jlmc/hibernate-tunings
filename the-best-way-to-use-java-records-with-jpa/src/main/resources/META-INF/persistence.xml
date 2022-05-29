@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
-             version="2.2">
+
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
 
     <persistence-unit name="it" transaction-type="RESOURCE_LOCAL">
         <description>Hibernate Performance Tuning</description>
@@ -28,21 +29,21 @@
 
                 jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db
             -->
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>-->
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
-            <property name="javax.persistence.jdbc.url"
+            <!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:test"/>-->
+            <!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:${project.basedir}/db/jpa-example"/>-->
+            <!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS calendar"/>-->
+            <!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:/Users/costax/Documents/junk/projects/hibernate-tunings/relationships/db/example"/>-->
+            <property name="jakarta.persistence.jdbc.url"
                       value="jdbc:h2:./data/the-best-way-to-use-java-records-with-jpa"/>
 
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
 
-            <property name="javax.persistence.jdbc.user" value="sa"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
 
 
             <!--
-             javax.persistence.schema-generation.database.action
+             jakarta.persistence.schema-generation.database.action
              Defines whether the persistence provider shall create the database,
              first drop and then recreate it, only drop it or do nothing at all.
              If this property is not provided, no schema will be created.
@@ -52,28 +53,28 @@
              -->
 
 
-            <!-- javax.persistence.schema-generation.create-source = [metadata, script, metadata-then-script, script-then-metadata]-->
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
+            <!-- jakarta.persistence.schema-generation.create-source = [metadata, script, metadata-then-script, script-then-metadata]-->
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.create-source" value="metadata"/>
             <!-- When the schema is generated using script file, the next two properties should be enable -->
-            <!--property name="javax.persistence.schema-generation.create-source" value="script"/-->
-            <!--property name="javax.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/-->
+            <!--property name="jakarta.persistence.schema-generation.create-source" value="script"/-->
+            <!--property name="jakarta.persistence.schema-generation.create-script-source" value="META-INF/create.sql"/-->
 
             <!-- When the schema is dropped using script file, the next two properties should be enable -->
-            <!--property name="javax.persistence.schema-generation.drop-source" value="script"/-->
-            <!--property name="javax.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/-->
+            <!--property name="jakarta.persistence.schema-generation.drop-source" value="script"/-->
+            <!--property name="jakarta.persistence.schema-generation.drop-script-source" value="META-INF/drop.sql"/-->
 
-            <!--property name="javax.persistence.sql-load-script-source" value="datos/datos.sql"/ -->
+            <!--property name="jakarta.persistence.sql-load-script-source" value="datos/datos.sql"/ -->
 
             <!-- If we want to generate the generation and drop schema scripts to files, then the next 3 properties should be used  -->
             <!--
-            <property name="javax.persistence.schema-generation.scripts.action" value="drop-and-create"/>
-            <property name="javax.persistence.schema-generation.scripts.create-target" value="./create.sql"/>
-            <property name="javax.persistence.schema-generation.scripts.drop-target" value="./drop.sql"/>
+            <property name="jakarta.persistence.schema-generation.scripts.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.scripts.create-target" value="./create.sql"/>
+            <property name="jakarta.persistence.schema-generation.scripts.drop-target" value="./drop.sql"/>
             -->
 
             <!--
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
             -->
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

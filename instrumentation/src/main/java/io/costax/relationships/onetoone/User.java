@@ -5,7 +5,7 @@ import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
 import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class User implements PersistentAttributeInterceptable {

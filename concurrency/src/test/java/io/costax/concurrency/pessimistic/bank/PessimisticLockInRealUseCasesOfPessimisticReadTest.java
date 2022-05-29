@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceException;
-import javax.persistence.PersistenceUnit;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.PersistenceUnit;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -125,7 +125,7 @@ public class PessimisticLockInRealUseCasesOfPessimisticReadTest {
 
         fail("The runnable1#get method execution " +
                 "should throw a ExecutionException with " +
-                "javax.persistence.PersistenceException: org.hibernate.exception.ConstraintViolationException");
+                "jakarta.persistence.PersistenceException: org.hibernate.exception.ConstraintViolationException");
     }
 
     /**

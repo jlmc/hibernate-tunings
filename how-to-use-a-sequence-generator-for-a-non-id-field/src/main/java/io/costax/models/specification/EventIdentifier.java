@@ -1,6 +1,6 @@
 package io.costax.models.specification;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "event_identifier")

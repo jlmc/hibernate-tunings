@@ -1,9 +1,15 @@
 package io.costax.fetchingassociations;
 
-import io.costax.model.*;
+import io.costax.model.Issue;
+import io.costax.model.IssueNodeTree;
+import io.costax.model.IssueNodeTreeResultTransformer;
+import io.costax.model.IssueTreeResultTransformer;
+import io.costax.model.Project;
 import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
 import org.hibernate.Hibernate;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.jpa.QueryHints;
@@ -13,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,7 +84,7 @@ public class FetchAssociationsTest {
         postEntityGraph.addAttributeNodes("project");
 
         Issue comment = entityManager.find(Issue.class, 1L,
-                Collections.singletonMap("javax.persistence.fetchgraph", postEntityGraph)
+                Collections.singletonMap("jakarta.persistence.fetchgraph", postEntityGraph)
         );
 
         entityManager.close();
@@ -107,7 +111,7 @@ public class FetchAssociationsTest {
                         """,
                 Project.class)
                 .setParameter("_id", 1L)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                .setHint("hibernate.query.passDistinctThrough", false)
                 .getSingleResult();
 
         LOGGER.info("Project: [{}]", project);
@@ -143,7 +147,8 @@ public class FetchAssociationsTest {
                         """,
                 Project.class)
                 .setParameter("_id", 1L)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+
+                 .setHint("hibernate.query.passDistinctThrough", false)
                 .getSingleResult();
 
         LOGGER.info("Project: [{}]", project);
@@ -173,7 +178,7 @@ public class FetchAssociationsTest {
                         """
                 , Project.class)
                 .setParameter("_id", 1L)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                 .setHint("hibernate.query.passDistinctThrough", false)
                 .getSingleResult();
 
         LOGGER.info("Project: [{}]", project);
