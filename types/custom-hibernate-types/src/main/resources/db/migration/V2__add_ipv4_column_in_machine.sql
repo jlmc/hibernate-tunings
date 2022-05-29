@@ -1,1 +1,0 @@
-alter table machine add column last_know_ip inet;
