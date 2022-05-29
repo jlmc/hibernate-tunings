@@ -2,7 +2,7 @@ package io.costax.hibernatetunings.entities.financial;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;

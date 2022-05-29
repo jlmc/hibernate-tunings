@@ -6,12 +6,20 @@ import io.github.jlmc.jpa.test.annotation.JpaContext;
 import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.annotation.Sql;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
-import org.hibernate.jpa.QueryHints;
-import org.junit.jupiter.api.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import org.hibernate.annotations.QueryHints;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -28,7 +36,6 @@ public class PassDistinctThroughHintTest {
 
     @JpaContext
     public JpaProvider provider;
-
 
 
     @BeforeEach
@@ -51,8 +58,8 @@ public class PassDistinctThroughHintTest {
                 ZoneOffset.UTC);
 
         IntStream.range(0, NUMBER_OF_ISSUES)
-                .mapToObj(i -> Issue.of(castingDates, "Issue - " + isoOffsetDateTime.format(startProjecTime.plusDays(i))))
-                .forEachOrdered(castingDates::addIssue);
+                 .mapToObj(i -> Issue.of(castingDates, "Issue - " + isoOffsetDateTime.format(startProjecTime.plusDays(i))))
+                 .forEachOrdered(castingDates::addIssue);
 
         em.persist(castingDates);
 
@@ -66,8 +73,8 @@ public class PassDistinctThroughHintTest {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
-                "SELECT a FROM Project a JOIN FETCH a.issues", Project.class)
-                .getResultList();
+                                           "SELECT a FROM Project a JOIN FETCH a.issues", Project.class)
+                                   .getResultList();
 
         for (Project a : projects) {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
@@ -94,8 +101,8 @@ public class PassDistinctThroughHintTest {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
-                "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
-                .getResultList();
+                                           "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
+                                   .getResultList();
 
         for (Project a : projects) {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
@@ -121,9 +128,10 @@ public class PassDistinctThroughHintTest {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
-                "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-                .getResultList();
+                                           "SELECT DISTINCT a FROM Project a JOIN FETCH a.issues", Project.class)
+                                   //.setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
+                                   .setHint("hibernate.query.passDistinctThrough", false)
+                                   .getResultList();
 
         for (Project a : projects) {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
@@ -140,11 +148,9 @@ public class PassDistinctThroughHintTest {
         final EntityManager em = provider.em();
 
         List<Project> projects = em.createQuery(
-                "SELECT a FROM Project a JOIN FETCH a.issues", Project.class)
-
-                .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
-
-                .getResultList();
+                                           "SELECT a FROM Project a JOIN FETCH a.issues", Project.class)
+                                   .setHint("hibernate.query.passDistinctThrough", false)
+                                   .getResultList();
 
         for (Project a : projects) {
             System.out.println("-- " + a.getId() + " " + a.getTitle() + " wrote " + a.getIssues().size() + " issues.");
@@ -157,4 +163,3 @@ public class PassDistinctThroughHintTest {
         assertEquals(projects.size(), NUMBER_OF_ISSUES);
     }
 }
-

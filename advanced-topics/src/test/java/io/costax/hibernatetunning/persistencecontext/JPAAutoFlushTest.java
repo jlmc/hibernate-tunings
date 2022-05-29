@@ -8,8 +8,8 @@ import io.github.jlmc.jpa.test.annotation.JpaTest;
 import io.github.jlmc.jpa.test.junit.JpaProvider;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Tuple;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
 import java.math.BigInteger;
 import java.util.List;
 

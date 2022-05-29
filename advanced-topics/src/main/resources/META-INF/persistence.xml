@@ -21,7 +21,7 @@
 
             <!--
 
-             javax.persistence.schema-generation.database.action
+             jakarta.persistence.schema-generation.database.action
              Defines whether the persistence provider shall create the database, first drop and then recreate it, only drop it or do nothing at all.
              If this property is not provided, no schema will be created.
 
@@ -31,8 +31,8 @@
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
 
             <!--
-            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
-            < property name="javax.persistence.sql-load-script-source" value="db/datos.sql" />
+            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            < property name="jakarta.persistence.sql-load-script-source" value="db/datos.sql" />
             -->
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

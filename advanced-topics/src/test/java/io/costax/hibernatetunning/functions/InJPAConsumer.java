@@ -1,6 +1,6 @@
 package io.costax.hibernatetunning.functions;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.function.Consumer;
 
 @FunctionalInterface
