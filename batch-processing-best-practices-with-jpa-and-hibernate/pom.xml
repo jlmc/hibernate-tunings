@@ -19,7 +19,7 @@
 
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
-        <hibernate-core.version>5.4.17.Final</hibernate-core.version>
+        <hibernate-core.version>5.4.24.Final</hibernate-core.version>
         <log4j-api.version>2.13.3</log4j-api.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
 
